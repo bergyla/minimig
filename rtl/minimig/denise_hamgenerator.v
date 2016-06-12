@@ -2,6 +2,7 @@
 // the module has its own colour pallete bank, this is to let
 // the sprites run simultaneously with a HAM playfield
 
+`timescale 1ns/1ps
 
 module denise_hamgenerator
 (

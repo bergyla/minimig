@@ -1,6 +1,5 @@
 /* ctrl_rst.v */
 
-
 `ifdef SOC_SIM
 `define RST_CNT 16'h00ff      // reset counter length used in simulations
 `else
@@ -60,21 +59,21 @@ end
 // register & synchronize inputs
 always @ (posedge clk)
 begin
-  pll_lock_n_t  <= #1 !pll_lock;
-  rst_ext_t     <= #1 rst_ext;
-  rst_reg_t     <= #1 rst_reg;
+  pll_lock_n_t  <= !pll_lock;
+  rst_ext_t     <= rst_ext;
+  rst_reg_t     <= rst_reg;
 
-  pll_lock_n_r  <= #1 pll_lock_n_t;
-  rst_ext_r     <= #1 rst_ext_t;
-  rst_reg_r     <= #1 rst_reg_t;
+  pll_lock_n_r  <= pll_lock_n_t;
+  rst_ext_r     <= rst_ext_t;
+  rst_reg_r     <= rst_reg_t;
 end
 
 
 // reset counter
 always @ (posedge clk)
 begin
-  if (rst_reg_r || rst_ext_r || pll_lock_n_r) rst_cnt <= #1 `RST_CNT;
-  else if (|rst_cnt)                          rst_cnt <= #1 rst_cnt - 1'd1;
+  if (rst_reg_r || rst_ext_r || pll_lock_n_r) rst_cnt <= `RST_CNT;
+  else if (|rst_cnt)                          rst_cnt <= rst_cnt - 1'd1;
 end
 
 
@@ -85,7 +84,7 @@ assign rst_wire = (|rst_cnt);
 // output reset registers
 always @ (posedge clk)
 begin
-  rst   <= #1 rst_wire;
+  rst   <= rst_wire;
 end
 
 

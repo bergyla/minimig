@@ -302,16 +302,16 @@ assign carry = sr[`OR1200_SR_CY];
 //
 always @(posedge clk or posedge rst)
 	if (rst)
-		sr <= #1 {1'b1, `OR1200_SR_EPH_DEF, {`OR1200_SR_WIDTH-3{1'b0}}, 1'b1};
+		sr <= {1'b1, `OR1200_SR_EPH_DEF, {`OR1200_SR_WIDTH-3{1'b0}}, 1'b1};
 	else if (except_started) begin
-		sr[`OR1200_SR_SM]  <= #1 1'b1;
-		sr[`OR1200_SR_TEE] <= #1 1'b0;
-		sr[`OR1200_SR_IEE] <= #1 1'b0;
-		sr[`OR1200_SR_DME] <= #1 1'b0;
-		sr[`OR1200_SR_IME] <= #1 1'b0;
+		sr[`OR1200_SR_SM]  <= 1'b1;
+		sr[`OR1200_SR_TEE] <= 1'b0;
+		sr[`OR1200_SR_IEE] <= 1'b0;
+		sr[`OR1200_SR_DME] <= 1'b0;
+		sr[`OR1200_SR_IME] <= 1'b0;
 	end
 	else if (sr_we)
-		sr <= #1 to_sr[`OR1200_SR_WIDTH-1:0];
+		sr <= to_sr[`OR1200_SR_WIDTH-1:0];
 
 //
 // MTSPR/MFSPR interface

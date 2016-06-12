@@ -95,9 +95,9 @@ reg              cs_r=0;
 reg              we_r=0;
 
 always @ (posedge clk) begin
-  adr_r <= #1 adr[RAW+2-1:0];
-  cs_r  <= #1 cs;
-  we_r  <= #1 we;
+  adr_r <= adr[RAW+2-1:0];
+  cs_r  <= cs;
+  we_r  <= we;
 end
 
 
@@ -116,13 +116,13 @@ initial cpu_rst = 0;
 // system reset
 always @ (posedge clk, posedge rst) begin
   if (rst) begin
-    sys_rst     <= #1 1'b0;
-    minimig_rst <= #1 1'b0;
-    cpu_rst     <= #1 1'b0;
+    sys_rst     <= 1'b0;
+    minimig_rst <= 1'b0;
+    cpu_rst     <= 1'b0;
   end else if (sys_rst_en) begin
-    sys_rst     <= #1 dat_w[0];
-    minimig_rst <= #1 dat_w[1];
-    cpu_rst     <= #1 dat_w[2];
+    sys_rst     <= dat_w[0];
+    minimig_rst <= dat_w[1];
+    cpu_rst     <= dat_w[2];
   end
 end
 
@@ -137,9 +137,9 @@ reg              sys_stat_en;
 
 always @ (posedge clk, posedge rst) begin
   if (rst)
-    ctrl_status <= #1 4'b0;
+    ctrl_status <= 4'b0;
   else if (ctrl_en)
-    ctrl_status <= #1 dat_w[19:16];
+    ctrl_status <= dat_w[19:16];
 end
 
 
@@ -159,35 +159,35 @@ reg  [ 10-1:0] tx_reg;
 // TX counter
 always @ (posedge clk, posedge rst) begin
   if (rst)
-    tx_counter <= #1 4'd0;
+    tx_counter <= 4'd0;
   else if (tx_en && tx_ready)
-    tx_counter <= #1 4'd11 - 4'd1;
+    tx_counter <= 4'd11 - 4'd1;
   else if ((|tx_counter) && (~|tx_timer))
-    tx_counter <= #1 tx_counter - 4'd1;
+    tx_counter <= tx_counter - 4'd1;
 end
 
 // TX timer
 // set for 115200 Baud
 always @ (posedge clk, posedge rst) begin
   if (rst)
-    tx_timer <= #1 9'd0;
+    tx_timer <= 9'd0;
   else if (tx_en && tx_ready)
-    tx_timer <= #1 TXD_CNT - 9'd1;
+    tx_timer <= TXD_CNT - 9'd1;
   else if (|tx_timer)
-    tx_timer <= #1 tx_timer - 9'd1;
+    tx_timer <= tx_timer - 9'd1;
   else if (|tx_counter)
-    tx_timer <= #1 TXD_CNT - 9'd1;
+    tx_timer <= TXD_CNT - 9'd1;
 end
 
 // TX register
 // 8N1 transmit format
 always @ (posedge clk, posedge rst) begin
   if (rst)
-    tx_reg <= #1 10'b1111111111;
+    tx_reg <= 10'b1111111111;
   else if (tx_en && tx_ready)
-    tx_reg <= #1 {1'b1, dat_w[7:0], 1'b0};
+    tx_reg <= {1'b1, dat_w[7:0], 1'b0};
   else if (~|tx_timer)
-    tx_reg <= #1 {1'b1, tx_reg[9:1]};
+    tx_reg <= {1'b1, tx_reg[9:1]};
 end
 
 // TX ready
@@ -221,53 +221,53 @@ reg            rx_miss=0;
 reg            uart_stat_en;
 
 // sync input
-always @ (posedge clk) rxd_sync <= #1 {rxd_sync[0], uart_rxd};
+always @ (posedge clk) rxd_sync <= {rxd_sync[0], uart_rxd};
 
 // detect start condition
 // start condition is negedge of rx line
-always @ (posedge clk) rxd_bit <= #1 rxd_sync[1];
+always @ (posedge clk) rxd_bit <= rxd_sync[1];
 assign rx_start = rxd_bit && !rxd_sync[1] && ~|rx_bit_cnt;
 
 // sampling counter
 // set for 115200 Baud @ 16x oversample
 always @ (posedge clk) begin
-  if (rx_start || ~|rx_sample_cnt) rx_sample_cnt <= #1 RXD_CNT;
+  if (rx_start || ~|rx_sample_cnt) rx_sample_cnt <= RXD_CNT;
   else if (|rx_bit_cnt) rx_sample_cnt <= rx_sample_cnt -1;
 end
 
 // oversampling counter
 // set for 16x oversampling
 always @ (posedge clk) begin
-  if (rx_start) rx_oversample_cnt <= #1 4'b1111;
-  else if (~|rx_sample_cnt) rx_oversample_cnt <= #1 rx_oversample_cnt - 1;
+  if (rx_start) rx_oversample_cnt <= 4'b1111;
+  else if (~|rx_sample_cnt) rx_oversample_cnt <= rx_oversample_cnt - 1;
 end
 
 assign rx_sample = (rx_oversample_cnt == 4'b1000) && (~|rx_sample_cnt);
-always @ (posedge clk) rx_sample_d <= #1 rx_sample;
+always @ (posedge clk) rx_sample_d <= rx_sample;
 
 // bit counter
 // 8N1 format = 10bits
 always @ (posedge clk) begin
-  if (rx_start) rx_bit_cnt <= #1 4'd10;
-  else if (rx_sample && |rx_bit_cnt) rx_bit_cnt <= #1 rx_bit_cnt - 1;
+  if (rx_start) rx_bit_cnt <= 4'd10;
+  else if (rx_sample && |rx_bit_cnt) rx_bit_cnt <= rx_bit_cnt - 1;
 end
 
 // RX receive register
 // 8N1 format
 always @ (posedge clk) begin
-  if (rx_sample && |rx_bit_cnt) rx_recv <= #1 {rxd_bit, rx_recv[9:1]};
+  if (rx_sample && |rx_bit_cnt) rx_recv <= {rxd_bit, rx_recv[9:1]};
 end
 
 // RX data register
 always @ (posedge clk) begin
-  if (~|rx_bit_cnt && rx_recv[9] && rx_sample_d) rx_reg <= #1 rx_recv[8:1];
+  if (~|rx_bit_cnt && rx_recv[9] && rx_sample_d) rx_reg <= rx_recv[8:1];
 end
 
 // RX valid
 // set when valid frame is received, reset when rx_reg is read
 always @ (posedge clk) begin
-  if (~|rx_bit_cnt && rx_sample_d) rx_valid <= #1 rx_recv[9];
-  else if ((adr_r[RAW+2-1:2] == REG_UART_RX) && cs_r && !we_r) rx_valid <= #1 1'b0;
+  if (~|rx_bit_cnt && rx_sample_d) rx_valid <= rx_recv[9];
+  else if ((adr_r[RAW+2-1:2] == REG_UART_RX) && cs_r && !we_r) rx_valid <= 1'b0;
 end
 
 // RX ready
@@ -277,8 +277,8 @@ assign rx_ready = ~|rx_bit_cnt;
 // RX missed char
 // set when there is a valid char in output reg but it wasn't read, reset by reading the UART status
 always @ (posedge clk) begin
-  if (rx_valid && (~|rx_bit_cnt && rx_recv[9] && rx_sample_d)) rx_miss <= #1 1'b1;
-  else if ((adr_r[RAW+2-1:2] == REG_UART_RX) && cs_r && !we_r) rx_miss <= #1 1'b0;
+  if (rx_valid && (~|rx_bit_cnt && rx_recv[9] && rx_sample_d)) rx_miss <= 1'b1;
+  else if ((adr_r[RAW+2-1:2] == REG_UART_RX) && cs_r && !we_r) rx_miss <= 1'b0;
 end
 
 
@@ -294,24 +294,24 @@ reg            timer_en;
 // pre counter
 always @ (posedge clk, posedge rst) begin
   if (rst)
-    pre_timer <= #1 TIMER_CNT - 16'd1;
+    pre_timer <= TIMER_CNT - 16'd1;
   else if (timer_en)
-    pre_timer <= #1 TIMER_CNT - 16'd1;
+    pre_timer <= TIMER_CNT - 16'd1;
   else if (~|pre_timer)
-    pre_timer <= #1 TIMER_CNT - 16'd1;
+    pre_timer <= TIMER_CNT - 16'd1;
   else 
-    pre_timer <= #1 pre_timer - 16'd1;
+    pre_timer <= pre_timer - 16'd1;
 end
 
 // counter
 // using pre_timer, this increases each milisecond
 always @ (posedge clk, posedge rst) begin
   if (rst)
-    timer <= #1 16'h0000;
+    timer <= 16'h0000;
   else if (timer_en)
-    timer <= #1 dat_w[15:0];
+    timer <= dat_w[15:0];
   else if (~|pre_timer)
-    timer <= #1 timer + 16'h1;
+    timer <= timer + 16'h1;
 end
 
 
@@ -341,57 +341,57 @@ reg  [ 10-1:0] spi_block;
 // unmasket set: if none of the upper 4 bits are set, all four lower bits get overwritten
 always @ (posedge clk, posedge rst) begin
   if (rst)
-    spi_cs_n <= #1 4'b1111;
+    spi_cs_n <= 4'b1111;
   else if (spi_cs_n_en)
-    spi_cs_n <= #1 ~((|dat_w[7:4]) ? ((dat_w[7:4] & dat_w[3:0]) | (~dat_w[7:4] & ~spi_cs_n)) : dat_w[3:0]);
+    spi_cs_n <= ~((|dat_w[7:4]) ? ((dat_w[7:4] & dat_w[3:0]) | (~dat_w[7:4] & ~spi_cs_n)) : dat_w[3:0]);
 end
 
 // SPI active
 always @ (posedge clk, posedge rst) begin
   if (rst)
-    spi_act <= #1 1'b0;
+    spi_act <= 1'b0;
   else if (spi_act && (~|spi_cnt) && (~|spi_div) && (~|spi_block))
-    spi_act <= #1 1'b0;
+    spi_act <= 1'b0;
   else if (spi_dat_en && !spi_act_d)
-    spi_act <= #1 1'b1;
+    spi_act <= 1'b1;
 end
 
 // SPI active - last cycle
 always @ (posedge clk, posedge rst) begin
   if (rst)
-    spi_act_d <= #1 1'b0;
+    spi_act_d <= 1'b0;
   else if (spi_act && (~|spi_cnt) && (~|spi_div) && (~|spi_block))
-    spi_act_d  <= #1 1'b1;
+    spi_act_d  <= 1'b1;
   else if (spi_act_d && (~|spi_div))
-    spi_act_d  <= #1 1'b0;
+    spi_act_d  <= 1'b0;
 end
 
 // SPI clock divider register
 always @ (posedge clk, posedge rst) begin
   if (rst)
-    spi_div_r <= #1 SPI_CNT - 6'd1;
+    spi_div_r <= SPI_CNT - 6'd1;
   else if (spi_div_en && !(spi_act || spi_act_d))
-    spi_div_r <= #1 dat_w[5:0];
+    spi_div_r <= dat_w[5:0];
 end
 
 // SPI clock divider
 always @ (posedge clk, posedge rst) begin
   if (rst)
-    spi_div <= #1 SPI_CNT - 6'd1;
+    spi_div <= SPI_CNT - 6'd1;
   else if (spi_div_en && !(spi_act || spi_act_d))
-    spi_div <= #1 dat_w[5:0];
+    spi_div <= dat_w[5:0];
   else if (spi_act && (~|spi_div))
-    spi_div <= #1 spi_div_r;
+    spi_div <= spi_div_r;
   else if ((spi_act || spi_act_d) && ( |spi_div))
-    spi_div <= #1 spi_div - 6'd1;
+    spi_div <= spi_div - 6'd1;
 end
 
 // SPI counter
 always @ (posedge clk, posedge rst) begin
   if (rst)
-    spi_cnt <= #1 4'b1111;
+    spi_cnt <= 4'b1111;
   else if (spi_act && (~|spi_div))
-    spi_cnt <= #1 spi_cnt - 4'd1;
+    spi_cnt <= spi_cnt - 4'd1;
 end
 
 // SPI clock
@@ -400,9 +400,9 @@ assign spi_clk = spi_cnt[0];
 // SPI write data
 always @ (posedge clk) begin
   if (spi_dat_en && !(spi_act || spi_act_d))
-    spi_dat_w <= #1 dat_w[7:0];
+    spi_dat_w <= dat_w[7:0];
   else if (spi_act && spi_clk && (~|spi_div) && (~(&spi_cnt)))
-    spi_dat_w <= #1 {spi_dat_w[6:0], 1'b1};
+    spi_dat_w <= {spi_dat_w[6:0], 1'b1};
 end
 
 // SPI data out
@@ -411,17 +411,17 @@ assign spi_do = spi_dat_w[7];
 // SPI read data
 always @ (posedge clk) begin
   if (spi_act && !spi_clk && (~|spi_div))
-    spi_dat_r <= #1 {spi_dat_r[6:0], spi_di};
+    spi_dat_r <= {spi_dat_r[6:0], spi_di};
 end
 
 // SPI block count
 always @ (posedge clk, posedge rst) begin
   if (rst)
-    spi_block <= #1 10'd0;
+    spi_block <= 10'd0;
   else if (spi_block_en && !(spi_act || spi_act_d))
-    spi_block <= #1 dat_w[9:0];
+    spi_block <= dat_w[9:0];
   else if (spi_act && (~|spi_div) && (~|spi_cnt) && (|spi_block))
-    spi_block <= #1 spi_block - 10'd1;
+    spi_block <= spi_block - 10'd1;
 end
 
 

@@ -1,5 +1,6 @@
 //on screen display controller
 
+`timescale 1ns/1ps
 
 module userio_osd
 (
@@ -557,10 +558,10 @@ assign host_adr  = mem_adr[23:0];
 reg  [8-1:0] rtl_ver;
 always @ (*) begin
   case (dat_cnt[2:0])
-    2'b00   : rtl_ver = BETA_FLAG;
-    2'b01   : rtl_ver = MAJOR_VER;
-    2'b10   : rtl_ver = MINOR_VER;
-    default : rtl_ver = SEPARATOR;
+    2'b00   : rtl_ver = `BETA_FLAG ;
+    2'b01   : rtl_ver = `MAJOR_VER ;
+    2'b10   : rtl_ver = `MINOR_VER ;
+    default : rtl_ver = `SEPARATOR ;
   endcase
 end
 

@@ -1,6 +1,6 @@
 /* sd_card.v */
 /*  2012, rok.krajnc@gmail.com */
-
+`timescale 1ns/1ps
 
 module sd_card #(
   parameter FNAME=""
@@ -101,7 +101,6 @@ reg         rdy = 0;
 always begin
   @ (posedge sck);
   if (trxdone && !txact && cmddone) begin
-    #2;
     case (rcmd)
       CMD0  : begin txact=1; txlen=1; txdat[0]=8'h01; end
       CMD8  : begin txact=1; txlen=5; txdat[0]=8'h01; txdat[1]=00; txdat[2]=8'h00; txdat[3]=8'h01; txdat[4]=8'haa; end

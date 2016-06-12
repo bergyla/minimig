@@ -26,6 +26,7 @@
 // NOTE: in 28MHz mode this timing model is not (yet?) supported, CPU talks to CIAs with no waitstates
 //
 
+`timescale 1ns/1ps
 
 module minimig_m68k_bridge
 (

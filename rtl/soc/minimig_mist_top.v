@@ -5,6 +5,7 @@
 /* 2012-2015, rok.krajnc@gmail.com          */
 /********************************************/
 
+`timescale 1ns/1ps
 
 // board type define
 `define MINIMIG_MIST
@@ -485,7 +486,9 @@ user_io user_io(
      .KBD_MOUSE_STROBE(kbd_mouse_strobe),
      .KMS_LEVEL(kms_level),
      .CORE_TYPE(8'ha5),    // minimig core id (a1 - old minimig id, a5 - new aga minimig id)
-     .CONF(CORE_CONFIG)
+     .CONF(CORE_CONFIG),
+     .BUTTONS(),     // 1:0
+     .SWITCHES()     // 1:0
   );
 
 

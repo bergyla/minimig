@@ -63,8 +63,8 @@ assign dout [(dqbits/2 - 1) : 0]        = LB_ ? 8'bz : bank0[A];
 assign dout [(dqbits - 1) : (dqbits/2)] = UB_ ? 8'bz : bank1[A];
 
 always @(A or w_en)
+  #Tsa
   begin
-    #Tsa
     if (w_en)
       #Thzwe
       begin

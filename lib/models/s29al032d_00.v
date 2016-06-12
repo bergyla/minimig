@@ -1254,29 +1254,29 @@ specify
     end
 
     always @(posedge START_T1_in)
-    begin:TESTARTT1r
+    begin
         #tdevice_START_T1 START_T1 = START_T1_in;
     end
     always @(negedge START_T1_in)
-    begin:TESTARTT1f
+    begin
         #1 START_T1 = START_T1_in;
     end
 
     always @(posedge CTMOUT_in)
-    begin:TCTMOUTr
+    begin
         #tdevice_CTMOUT CTMOUT = CTMOUT_in;
     end
     always @(negedge CTMOUT_in)
-    begin:TCTMOUTf
+    begin
         #1 CTMOUT = CTMOUT_in;
     end
 
     always @(posedge READY_in)
-    begin:TREADYr
+    begin
         #tdevice_READY READY = READY_in;
     end
     always @(negedge READY_in)
-    begin:TREADYf
+    begin
         #1 READY = READY_in;
     end
     ////////////////////////////////////////////////////////////////////////////
@@ -1349,7 +1349,7 @@ specify
 
     always @(next_state or RESETNeg or CENeg or RST or
          READY or PoweredUp)
-    begin: StateTransition
+    begin
 
         if (PoweredUp)
         begin
@@ -1391,24 +1391,24 @@ specify
     //discarded
     ///////////////////////////////////////////////////////////////////////////
     always @(WENeg)
-    begin: PulseWatch1
+    begin
         if (gWE_n == WENeg)
            $display("Glitch on WE#");
     end
     always @(CENeg)
-    begin: PulseWatch2
+    begin
         if (gCE_n == CENeg)
             $display("Glitch on CE#");
     end
     always @(OENeg)
-    begin: PulseWatch3
+    begin
         if (gOE_n == OENeg)
             $display("Glitch on OE#");
      end
 
     //latch address on rising edge and data on falling edge  of write
     always @(gWE_n or  gCE_n or  gOE_n )
-    begin: write_dc
+    begin
         if (RESETNeg!=1'b0)
         begin
             if (~gWE_n && ~gCE_n && gOE_n)
@@ -1562,7 +1562,7 @@ specify
     end
 
     always @(pdone_event)
-    begin:pdone_process
+    begin
         PDONE = 1'b0;
         #duration_write PDONE = 1'b1;
     end
@@ -1582,7 +1582,7 @@ specify
     end
     event edone_event;
     always @(reseted or ESTART)
-    begin: erase
+    begin
     integer i;
         if (reseted)
         begin
@@ -1662,7 +1662,7 @@ specify
     end
 
     always @(write or reseted)
-    begin: StateGen1
+    begin
         if (reseted!=1'b1)
             next_state = current_state;
         else
@@ -1924,7 +1924,7 @@ specify
     end
 
     always @(posedge PDONE or negedge PERR)
-    begin: StateGen6
+    begin
         if (reseted!=1'b1)
             next_state = current_state;
         else
@@ -1941,7 +1941,7 @@ specify
     end
 
     always @(posedge EDONE or negedge EERR)
-    begin: StateGen2
+    begin
         if (reseted!=1'b1)
             next_state = current_state;
         else
@@ -1952,7 +1952,7 @@ specify
     end
 
     always @(negedge write or reseted)
-    begin: StateGen7 //ok
+    begin //ok
     integer i,j;
         if (reseted!=1'b1)
             next_state = current_state;
@@ -1969,7 +1969,7 @@ specify
     end
 
     always @(CTMOUT or reseted)
-    begin: StateGen4
+    begin
         if (reseted!=1'b1)
             next_state = current_state;
         else
@@ -1979,7 +1979,7 @@ specify
     end
 
     always @(posedge START_T1 or reseted)
-    begin: StateGen5
+    begin
         if (reseted!=1'b1)
             next_state = current_state;
         else
@@ -2007,7 +2007,7 @@ specify
     end
 
     always @(DOut_zd)
-    begin : OutputGen
+    begin
         if (DOut_zd[0] !== 1'bz)
         begin
             CEDQ_t = CENeg_event  + CEDQ_01;
@@ -2252,7 +2252,7 @@ specify
     end
 
     always @(write or reseted)
-    begin : Output_generation
+    begin
         if (reseted)
         begin
         case (current_state)
@@ -2654,7 +2654,7 @@ specify
     end
 
     always @(EERR or EDONE or current_state)
-    begin : ERS2
+    begin
     integer i;
     integer j;
         if (current_state==ERS  && EERR!=1'b1)
@@ -2674,7 +2674,7 @@ specify
     end
 
     always @(CTMOUT or current_state)
-    begin : SERS2
+    begin
         if (current_state==SERS && CTMOUT)
         begin
             CTMOUT_in = 1'b0;
@@ -2687,7 +2687,7 @@ specify
     end
 
     always @(START_T1 or current_state)
-    begin : ESPS2
+    begin
         if (current_state==ESPS && START_T1)
         begin
             ESP_ACT = 1'b1;
@@ -2696,7 +2696,7 @@ specify
     end
 
     always @(EERR or EDONE or current_state)
-    begin: SERS_EXEC2
+    begin
     integer i,j;
         if (current_state==SERS_EXEC)
         begin
@@ -2721,7 +2721,7 @@ specify
     end
 
     always @(current_state or posedge PDONE)
-    begin: PGMS2
+    begin
     integer i,j;
         if (current_state==PGMS)
         begin
@@ -2768,9 +2768,9 @@ specify
     reg  BuffInOE , BuffInCE , BuffInADDR;
     wire BuffOutOE, BuffOutCE, BuffOutADDR;
 
-    BUFFER    BUFOE   (BuffOutOE, BuffInOE);
-    BUFFER    BUFCE   (BuffOutCE, BuffInCE);
-    BUFFER    BUFADDR (BuffOutADDR, BuffInADDR);
+    S29_BUFFER    BUFOE   (BuffOutOE, BuffInOE);
+    S29_BUFFER    BUFCE   (BuffOutCE, BuffInCE);
+    S29_BUFFER    BUFADDR (BuffOutADDR, BuffInADDR);
     initial
     begin
         BuffInOE   = 1'b1;
@@ -2809,7 +2809,7 @@ specify
     endtask
 endmodule
 
-module BUFFER (OUT,IN);
+module S29_BUFFER (OUT,IN);
     input IN;
     output OUT;
     buf   ( OUT, IN);

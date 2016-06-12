@@ -75,9 +75,9 @@ end
 always @ (posedge clk100 or posedge rst)
 begin
   if (rst)
-    state <= #1 S_ID;
+    state <= S_ID;
   else
-    state <= #1 next_state;
+    state <= next_state;
 end
 
 
@@ -88,9 +88,9 @@ reg [17:0] s_adr;
 always @ (posedge clk100)
 begin
   if (next_state == S_HI1)
-    s_adr <= #1 {adr[18:2], 1'b0};
+    s_adr <= {adr[18:2], 1'b0};
   else if (next_state == S_LO1)
-    s_adr <= #1 {adr[18:2], 1'b1};
+    s_adr <= {adr[18:2], 1'b1};
 end
 
 // ce_n
@@ -98,11 +98,11 @@ reg s_ce_n;
 always @ (posedge clk100 or posedge rst)
 begin
   if (rst)
-    s_ce_n <= #1 1'b1;
+    s_ce_n <= 1'b1;
   else if ((next_state == S_HI1) || (next_state == S_HI2) || (next_state == S_LO1) || (next_state == S_LO2))
-    s_ce_n <= #1 1'b0;
+    s_ce_n <= 1'b0;
   else
-    s_ce_n <= #1 1'b1;
+    s_ce_n <= 1'b1;
 end
 
 // we_n
@@ -110,7 +110,7 @@ reg s_we_n;
 always @ (posedge clk100)
 begin
   if ((next_state == S_HI1) || (next_state == S_HI2) || (next_state == S_LO1) || (next_state == S_LO2))
-    s_we_n <= #1 !we;
+    s_we_n <= !we;
 end
 
 // ub_n & lb_n
@@ -118,9 +118,9 @@ reg s_ub_n, s_lb_n;
 always @ (posedge clk100)
 begin
   if (next_state == S_HI1)
-    {s_ub_n, s_lb_n} <= #1 {!sel[3], !sel[2]};
+    {s_ub_n, s_lb_n} <= {!sel[3], !sel[2]};
   else if (next_state == S_LO1)
-    {s_ub_n, s_lb_n} <= #1 {!sel[1], !sel[0]};
+    {s_ub_n, s_lb_n} <= {!sel[1], !sel[0]};
 end
 
 // oe_n
@@ -128,9 +128,9 @@ reg s_oe_n;
 always @ (posedge clk100)
 begin
   if ((next_state == S_HI1) || (next_state == S_HI2) || (next_state == S_LO1) || (next_state == S_LO2))
-    s_oe_n <= #1 we;
+    s_oe_n <= we;
   else
-    s_oe_n <= #1 1'b0;
+    s_oe_n <= 1'b0;
 end
 
 // dat_w
@@ -138,9 +138,9 @@ reg [15:0] s_dat_w;
 always @ (posedge clk100)
 begin
   if (next_state == S_HI1)
-    s_dat_w <= #1 dat_w[31:16];
+    s_dat_w <= dat_w[31:16];
   else if (next_state == S_LO1)
-    s_dat_w <= #1 dat_w[15:0];
+    s_dat_w <= dat_w[15:0];
 end
 
 
@@ -151,9 +151,9 @@ reg [31:0] s_dat_r;
 always @ (posedge clk100)
 begin
   if ((next_state == S_LO1) && !we)
-    dat_r[31:16] <= #1 sram_dat_r;
+    dat_r[31:16] <= sram_dat_r;
   else if ((next_state == S_FH) && !we)
-    dat_r[15: 0] <= #1 sram_dat_r;
+    dat_r[15: 0] <= sram_dat_r;
 end
 
 // ack
@@ -161,11 +161,11 @@ reg s_ack;
 always @ (posedge clk100 or posedge rst)
 begin
   if (rst)
-    s_ack <= #1 1'b0;
+    s_ack <= 1'b0;
   else if ((state == S_LO2) || (state == S_FH))
-    s_ack <= #1 1'b1;
+    s_ack <= 1'b1;
   else
-    s_ack <= #1 1'b0;
+    s_ack <= 1'b0;
 end
 
 
@@ -208,9 +208,9 @@ end
 always @ (posedge clk100 or posedge rst)
 begin
   if (rst)
-    state <= #1 S_ID;
+    state <= S_ID;
   else
-    state <= #1 next_state;
+    state <= next_state;
 end
 
 
@@ -221,9 +221,9 @@ reg [17:0] s_adr;
 always @ (posedge clk100)
 begin
   if (next_state == S_HI)
-    s_adr <= #1 {adr[18:2], 1'b0};
+    s_adr <= {adr[18:2], 1'b0};
   else if (next_state == S_LO)
-    s_adr <= #1 {adr[18:2], 1'b1};
+    s_adr <= {adr[18:2], 1'b1};
 end
 
 // ce_n
@@ -231,11 +231,11 @@ reg s_ce_n;
 always @ (posedge clk100 or posedge rst)
 begin
   if (rst)
-    s_ce_n <= #1 1'b1;
+    s_ce_n <= 1'b1;
   else if ((next_state == S_HI) || (next_state == S_LO))
-    s_ce_n <= #1 1'b0;
+    s_ce_n <= 1'b0;
   else
-    s_ce_n <= #1 1'b1;
+    s_ce_n <= 1'b1;
 end
 
 // we_n
@@ -243,7 +243,7 @@ reg s_we_n;
 always @ (posedge clk100)
 begin
   if ((next_state == S_HI) || (next_state == S_LO))
-    s_we_n <= #1 !we;
+    s_we_n <= !we;
 end
 
 // ub_n & lb_n
@@ -251,9 +251,9 @@ reg s_ub_n, s_lb_n;
 always @ (posedge clk100)
 begin
   if (next_state == S_HI)
-    {s_ub_n, s_lb_n} <= #1 {!sel[3], !sel[2]};
+    {s_ub_n, s_lb_n} <= {!sel[3], !sel[2]};
   else if (next_state == S_LO)
-    {s_ub_n, s_lb_n} <= #1 {!sel[1], !sel[0]};
+    {s_ub_n, s_lb_n} <= {!sel[1], !sel[0]};
 end
 
 // oe_n
@@ -261,9 +261,9 @@ reg s_oe_n;
 always @ (posedge clk100)
 begin
   if ((next_state == S_HI) || (next_state == S_LO))
-    s_oe_n <= #1 we;
+    s_oe_n <= we;
   else
-    s_oe_n <= #1 1'b0;
+    s_oe_n <= 1'b0;
 end
 
 // dat_w
@@ -271,9 +271,9 @@ reg [15:0] s_dat_w;
 always @ (posedge clk100)
 begin
   if (next_state == S_HI)
-    s_dat_w <= #1 dat_w[31:16];
+    s_dat_w <= dat_w[31:16];
   else if (next_state == S_LO)
-    s_dat_w <= #1 dat_w[15:0];
+    s_dat_w <= dat_w[15:0];
 end
 
 
@@ -284,9 +284,9 @@ reg [31:0] s_dat_r;
 always @ (posedge clk100)
 begin
   if ((state == S_LO) && !we)
-    dat_r[31:16] <= #1 sram_dat_r;
+    dat_r[31:16] <= sram_dat_r;
   else if ((state == S_FH) && !we)
-    dat_r[15: 0] <= #1 sram_dat_r;
+    dat_r[15: 0] <= sram_dat_r;
 end
 
 // ack
@@ -294,11 +294,11 @@ reg s_ack;
 always @ (posedge clk100 or posedge rst)
 begin
   if (rst)
-    s_ack <= #1 1'b0;
+    s_ack <= 1'b0;
   else if (state == S_LO)
-    s_ack <= #1 1'b1;
+    s_ack <= 1'b1;
   else
-    s_ack <= #1 1'b0;
+    s_ack <= 1'b0;
 end
 
 
@@ -329,7 +329,7 @@ reg  [ 16-1:0] rdat_r;
 
 
 /* address change */
-always @ (posedge clk50) adr_r <= #1 adr;
+always @ (posedge clk50) adr_r <= adr;
 assign adr_changed = (adr != adr_r);
 
 
@@ -337,21 +337,21 @@ assign adr_changed = (adr != adr_r);
 always @ (posedge clk50 or posedge rst)
 begin
   if (rst)
-    cnt <= #1 1'b0;
+    cnt <= 1'b0;
   else if (adr_changed)
-    cnt <= #1 1'b0;
+    cnt <= 1'b0;
   else if (cs)
-    cnt <= #1 !cnt;
+    cnt <= !cnt;
 end
 
 
 /* read data reg */
-always @ (posedge clk50) if (cs && !cnt && !we) rdat_r <= #1 sram_dat_r;
+always @ (posedge clk50) if (cs && !cnt && !we) rdat_r <= sram_dat_r;
 
 
 /* qmem outputs */
 // TODO dat_r - check if a reg is needed! maybe should use address register!
-always @ (posedge clk50) if (cs && cnt && !we) dat_r <= #1 {sram_dat_r, rdat_r};
+always @ (posedge clk50) if (cs && cnt && !we) dat_r <= {sram_dat_r, rdat_r};
 //assign dat_r = {sram_dat_r, rdat_r};
 assign ack = cnt;
 assign err = 1'b0;

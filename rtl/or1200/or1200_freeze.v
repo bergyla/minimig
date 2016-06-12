@@ -124,12 +124,12 @@ assign wb_freeze = (lsu_stall | (~lsu_unstall & if_stall) | multicycle_freeze) |
 //
 always @(posedge clk or posedge rst)
 	if (rst)
-		flushpipe_r <= #1 1'b0;
+		flushpipe_r <= 1'b0;
 	else if (icpu_ack_i | icpu_err_i)
 //	else if (!if_stall)
-		flushpipe_r <= #1 flushpipe;
+		flushpipe_r <= flushpipe;
 	else if (!flushpipe)
-		flushpipe_r <= #1 1'b0;
+		flushpipe_r <= 1'b0;
 		
 //
 // Multicycle freeze
@@ -141,10 +141,10 @@ assign multicycle_freeze = |multicycle_cnt;
 //
 always @(posedge clk or posedge rst)
 	if (rst)
-		multicycle_cnt <= #1 2'b00;
+		multicycle_cnt <= 2'b00;
 	else if (|multicycle_cnt)
-		multicycle_cnt <= #1 multicycle_cnt - 2'd1;
+		multicycle_cnt <= multicycle_cnt - 2'd1;
 	else if (|multicycle & !ex_freeze)
-		multicycle_cnt <= #1 multicycle;
+		multicycle_cnt <= multicycle;
 
 endmodule

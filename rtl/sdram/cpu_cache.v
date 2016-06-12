@@ -115,22 +115,22 @@ reg  [16-1:0] mem_dat_r_1_reg;
 // register CPU bus
 always @ (posedge clk) begin
   if (rst) begin
-    cpu_state_r <= #1 6'b111111;
+    cpu_state_r <= 6'b111111;
   end else if (state == ST_IDLE) begin
-    cpu_state_r <= #1 cpu_state;
+    cpu_state_r <= cpu_state;
   end
 end
 
 always @ (posedge clk) begin
   if (state == ST_IDLE) begin
-    cpu_adr_r   <= #1 cpu_adr;
-    cpu_bs_r    <= #1 cpu_bs;
-    cpu_dat_w_r <= #1 cpu_dat_w;
+    cpu_adr_r   <= cpu_adr;
+    cpu_bs_r    <= cpu_bs;
+    cpu_dat_w_r <= cpu_dat_w;
   end
 end
 
 always @ (posedge clk) begin
-  sdr_dat_r_r <= #1 sdr_dat_r;
+  sdr_dat_r_r <= sdr_dat_r;
 end
 
 // decode cpu control signals
@@ -152,11 +152,11 @@ assign adr_tag = cpu_adr[24:10];
 // CPU read register
 always @ (posedge clk) begin
   if (cache_ena && cpu_cs && tag_w0_match && (state == ST_CPU_READ))
-    cpu_dat_r <= #1 mem_dat_r_0;
+    cpu_dat_r <= mem_dat_r_0;
   else if (cache_ena && cpu_cs && tag_w1_match && (state == ST_CPU_READ))
-    cpu_dat_r <= #1 mem_dat_r_1;
+    cpu_dat_r <= mem_dat_r_1;
   else if (sdr_cpucycle && (sdr_state == ph9))
-    cpu_dat_r <= #1 sdr_dat_r;
+    cpu_dat_r <= sdr_dat_r;
 end
 
 // CPU write buffer
@@ -165,47 +165,47 @@ reg [16-1:0] cpu_wb = 0;
 
 always @ (posedge clk) begin
   if (rst)
-    cpu_wb_act <= #1 1'b0;
+    cpu_wb_act <= 1'b0;
   else if (sdr_cpucycle && (sdr_state == ph11) && !sdr_cas && (sdr_adr[24:1] == cpu_adr))
-    cpu_wb_act <= #1 1'b0;
+    cpu_wb_act <= 1'b0;
   else if (cpu_cs && cpu_wr)
-    cpu_wb_act <= #1 1'b1;
+    cpu_wb_act <= 1'b1;
 end
 
 always @ (posedge clk) begin
   if (cpu_cs && cpu_wr && !cpu_wb_act)
-    cpu_wb <= #1 cpu_dat_w;
+    cpu_wb <= cpu_dat_w;
 end
 
 // CPU acknowledge
 reg ack;
 always @ (posedge clk) begin
   if (rst)
-    ack <= #1 1'b0;
+    ack <= 1'b0;
   else begin
     if (cpu_state[5])
-      ack <= #1 1'b0;
+      ack <= 1'b0;
     else if (cache_ena && cpu_cs && (state == ST_CPU_READ) && (tag_w0_match || tag_w1_match))
-      ack <= #1 1'b1;
+      ack <= 1'b1;
   end
 end
 
 always @ (posedge clk) begin
   if (rst)
-    cpu_ack <= #1 1'b0;
+    cpu_ack <= 1'b0;
   else begin
     if (cpu_state[5])
-      cpu_ack <= #1 1'b0;
+      cpu_ack <= 1'b0;
     else if (cache_ena && cpu_cs && tag_w0_match && (state == ST_CPU_READ))
-      cpu_ack <= #1 1'b1;
+      cpu_ack <= 1'b1;
     else if (cache_ena && cpu_cs && tag_w1_match && (state == ST_CPU_READ))
-      cpu_ack <= #1 1'b1;
+      cpu_ack <= 1'b1;
 //    else if (cpu_cs && cpu_wr && !cpu_wb_act)
-//      cpu_ack <= #1 1'b1;
+//      cpu_ack <= 1'b1;
 //    else if (ack)
-//      cpu_ack <= #1 1'b1;
+//      cpu_ack <= 1'b1;
     else if (sdr_cpucycle && (sdr_state == ph11) && !sdr_cas && (sdr_adr[24:1] == cpu_adr))
-      cpu_ack <= #1 1'b1;
+      cpu_ack <= 1'b1;
   end
 end
 
@@ -213,106 +213,106 @@ end
 //// cache control state machine ////
 always @ (posedge clk) begin
   if (rst) begin
-    state         <= #1 ST_INIT;
-    st_adr        <= #1 9'd0;
-    st_lru        <= #1 1'b0;
-    st_tag_we     <= #1 1'b1;
-    st_tag_dat_w  <= #1 32'd0;
-    st_mem_we_0   <= #1 1'b1;
-    st_mem_we_1   <= #1 1'b1;
-    st_mem_bs     <= #1 2'b11;
-    st_mem_dat_w  <= #1 16'd0;
+    state         <= ST_INIT;
+    st_adr        <= 9'd0;
+    st_lru        <= 1'b0;
+    st_tag_we     <= 1'b1;
+    st_tag_dat_w  <= 32'd0;
+    st_mem_we_0   <= 1'b1;
+    st_mem_we_1   <= 1'b1;
+    st_mem_bs     <= 2'b11;
+    st_mem_dat_w  <= 16'd0;
   end else begin
-    state         <= #1 ST_IDLE;
-    st_adr        <= #1 {adr_idx, adr_blk};
-    st_tag_we     <= #1 1'b0;
-    st_tag_dat_w  <= #1 32'd0;
-    st_mem_we_0   <= #1 1'b0;
-    st_mem_we_1   <= #1 1'b0;
-    st_mem_bs     <= #1 2'b11;
-    st_mem_dat_w  <= #1 16'd0;
+    state         <= ST_IDLE;
+    st_adr        <= {adr_idx, adr_blk};
+    st_tag_we     <= 1'b0;
+    st_tag_dat_w  <= 32'd0;
+    st_mem_we_0   <= 1'b0;
+    st_mem_we_1   <= 1'b0;
+    st_mem_bs     <= 2'b11;
+    st_mem_dat_w  <= 16'd0;
     case (state)
       ST_INIT : begin
         // clear cache, should be done on every CPU reset
-        st_adr <= #1 st_adr + 9'd1;
-        st_tag_we <= #1 1'b1;
-        //st_mem_we_0 <= #1 1'b1;
-        //st_mem_we_1 <= #1 1'b1;
-        if (&st_adr) state <= #1 ST_IDLE;
-        else state <= #1 ST_INIT;
+        st_adr <= st_adr + 9'd1;
+        st_tag_we <= 1'b1;
+        //st_mem_we_0 <= 1'b1;
+        //st_mem_we_1 <= 1'b1;
+        if (&st_adr) state <= ST_IDLE;
+        else state <= ST_INIT;
       end
       ST_IDLE : begin
         if (cpu_cs && !cpu_ack)
-          state <= #1 ST_PREP;
+          state <= ST_PREP;
         else
-          state <= #1 ST_IDLE;
+          state <= ST_IDLE;
       end
       ST_PREP : begin
         if (cpu_cs) begin
-          // state <= #1 cpu_rw ? ST_CPU_READ : ST_CPU_WRITE;
-          if (cpu_wr) state <= #1 ST_CPU_WRITE;
-          else if (cpu_rd) state <= #1 ST_CPU_READ;
+          // state <= cpu_rw ? ST_CPU_READ : ST_CPU_WRITE;
+          if (cpu_wr) state <= ST_CPU_WRITE;
+          else if (cpu_rd) state <= ST_CPU_READ;
         end
       end
       ST_CPU_WRITE : begin
         // on hit, update cache, on miss, no update neccessary
-        st_mem_bs <= #1 ~cpu_bs;
-        st_mem_dat_w <= #1 cpu_dat_w;
-        st_mem_we_0 <= #1 tag_w0_match;
-        st_mem_we_1 <= #1 tag_w1_match;
-        state <= #1 cpu_ack ? ST_IDLE : ST_CPU_WRITE;
+        st_mem_bs <= ~cpu_bs;
+        st_mem_dat_w <= cpu_dat_w;
+        st_mem_we_0 <= tag_w0_match;
+        st_mem_we_1 <= tag_w1_match;
+        state <= cpu_ack ? ST_IDLE : ST_CPU_WRITE;
         //if (cpu_cs) begin
         //  if (tag_w0_match || tag_w1_match) begin
-        //    st_tag_we <= #1 1'b1;
-        //    st_tag_dat_w <= #1 32'd0;
+        //    st_tag_we <= 1'b1;
+        //    st_tag_dat_w <= 32'd0;
         //  end
-        //  state <= #1 cpu_ack ? ST_IDLE : ST_CPU_WRITE;
+        //  state <= cpu_ack ? ST_IDLE : ST_CPU_WRITE;
         //end
       end
       ST_CPU_READ : begin
         //if (cpu_cs) begin
           // on hit, update LRU flag in tag memory
           if (tag_w0_match) begin
-            st_tag_we <= #1 1'b1;
-            st_tag_dat_w <= #1 {1'b0, tag_dat_r[30:0]};
-            state <= #1 cpu_ack ? ST_IDLE : ST_CPU_READ;
+            st_tag_we <= 1'b1;
+            st_tag_dat_w <= {1'b0, tag_dat_r[30:0]};
+            state <= cpu_ack ? ST_IDLE : ST_CPU_READ;
           end else if (tag_w1_match) begin
-            st_tag_we <= #1 1'b1;
-            st_tag_dat_w <= #1 {1'b1, tag_dat_r[30:0]};
-            state <= #1 cpu_ack ? ST_IDLE : ST_CPU_READ;
+            st_tag_we <= 1'b1;
+            st_tag_dat_w <= {1'b1, tag_dat_r[30:0]};
+            state <= cpu_ack ? ST_IDLE : ST_CPU_READ;
           end else begin
             // on miss, fetch data from SDRAM & update tag
-            st_lru <= #1 tag_lru;
-            state <= #1 ST_FILL;
+            st_lru <= tag_lru;
+            state <= ST_FILL;
           end
         //end
       end
       ST_FILL : begin
         if (sdr_cpucycle) begin
-          st_mem_bs <= #1 2'b11;
-          st_mem_dat_w <= #1 sdr_dat_r;
+          st_mem_bs <= 2'b11;
+          st_mem_dat_w <= sdr_dat_r;
           case (sdr_state)
             ph9,
             ph10,
             ph11,
             ph12 : begin
-              st_mem_we_0 <= #1 st_lru;
-              st_mem_we_1 <= #1 !st_lru;
+              st_mem_we_0 <= st_lru;
+              st_mem_we_1 <= !st_lru;
             end
           endcase
           case (sdr_state)
             ph10,
             ph11,
             ph12 : begin
-              st_adr <= #1 {st_adr[8:2], {st_adr[1:0] + 2'b01}};
+              st_adr <= {st_adr[8:2], {st_adr[1:0] + 2'b01}};
             end
           endcase
           if (sdr_state == ph12) begin
-            st_tag_we <= #1 1'b1;
-            st_tag_dat_w <= #1 {!st_lru, st_lru ? {tag_dat_r[30:16], 1'b0, adr_tag} : {adr_tag, tag_dat_r[15:0]}};
+            st_tag_we <= 1'b1;
+            st_tag_dat_w <= {!st_lru, st_lru ? {tag_dat_r[30:16], 1'b0, adr_tag} : {adr_tag, tag_dat_r[15:0]}};
           end
         end
-        state <= #1 cpu_ack ? ST_IDLE : ST_FILL;
+        state <= cpu_ack ? ST_IDLE : ST_FILL;
       end
     endcase    
   end
@@ -342,7 +342,7 @@ tag_ram (
   .rdaddress  (tag_radr   ),
   .q          (tag_dat_r  )
 );
-always @ (posedge clk) tag_dat_r_reg <= #1 tag_dat_r;
+always @ (posedge clk) tag_dat_r_reg <= tag_dat_r;
 
 
 //// data RAM ////
@@ -367,7 +367,7 @@ mem_ram_0 (
   .rdaddress  (mem_radr   ),
   .q          (mem_dat_r_0)
 );
-always @ (posedge clk) mem_dat_r_0_reg <= #1 mem_dat_r_0;
+always @ (posedge clk) mem_dat_r_0_reg <= mem_dat_r_0;
 
 `ifdef SOC_SIM
 tpram_inf_be_512x16
@@ -383,7 +383,7 @@ mem_ram_1 (
   .rdaddress  (mem_radr   ),
   .q          (mem_dat_r_1)
 );
-always @ (posedge clk) mem_dat_r_1_reg <= #1 mem_dat_r_1;
+always @ (posedge clk) mem_dat_r_1_reg <= mem_dat_r_1;
 
 
 endmodule

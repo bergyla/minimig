@@ -2,6 +2,7 @@
 // channel 1&2 --> left
 // channel 0&3 --> right
 
+`timescale 1ns/1ps
 
 module paula_audio_mixer (
   input   clk,        //bus clock

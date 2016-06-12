@@ -25,6 +25,7 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
+`timescale 1ns/1ps
 
 module agnus_bitplanedma (
   input  wire           clk,              // 28MHz clock

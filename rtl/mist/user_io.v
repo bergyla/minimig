@@ -1,3 +1,6 @@
+
+`timescale 1ns/1ps
+
 module user_io( 
 	   input      SPI_CLK,
 	   input      SPI_SS_IO,

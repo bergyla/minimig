@@ -5,6 +5,7 @@
 /* 2011, rok.krajnc@gmail.com               */
 /********************************************/
 
+`timescale 1ns/1ps
 
 module sync_fifo #(
   parameter FD    = 16,               // fifo depth

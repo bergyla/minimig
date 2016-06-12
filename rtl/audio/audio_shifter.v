@@ -28,8 +28,8 @@ reg [16-1:0] rdata_mux;
 reg [16-1:0] ldata_mux;
 
 always @ (posedge clk) begin
-  rdata_mux <= #1 (mix) ? rdata_mix : {rdata, rdata[13]};
-  ldata_mux <= #1 (mix) ? ldata_mix : {ldata, ldata[13]};
+  rdata_mux <= (mix) ? rdata_mix : {rdata, rdata[13]};
+  ldata_mux <= (mix) ? ldata_mix : {ldata, ldata[13]};
 end
 
 
@@ -48,9 +48,9 @@ end
 always @ (posedge clk) begin
   if(~|shiftcnt[2:0]) begin
     if (~|shiftcnt[6:3])
-      shift <= #1 (exchan ^ shiftcnt[7]) ? ldata_mux : rdata_mux;
+      shift <= (exchan ^ shiftcnt[7]) ? ldata_mux : rdata_mux;
     else
-      shift <= #1 {shift[14:0], 1'b0};
+      shift <= {shift[14:0], 1'b0};
   end
 end
 

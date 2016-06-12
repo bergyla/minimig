@@ -131,76 +131,76 @@ assign burst = (state == `OR1200_ICFSM_CFETCH) & tagcomp_miss & !cache_inhibit
 //
 always @(posedge clk or posedge rst) begin
 	if (rst) begin
-		state <= #1 `OR1200_ICFSM_IDLE;
-		saved_addr_r <= #1 32'b0;
-		hitmiss_eval <= #1 1'b0;
-		load <= #1 1'b0;
-		cnt <= #1 3'b000;
-		cache_inhibit <= #1 1'b0;
+		state <= `OR1200_ICFSM_IDLE;
+		saved_addr_r <= 32'b0;
+		hitmiss_eval <= 1'b0;
+		load <= 1'b0;
+		cnt <= 3'b000;
+		cache_inhibit <= 1'b0;
 	end
 	else
 	case (state)	// synopsys parallel_case
 		`OR1200_ICFSM_IDLE :
 			if (ic_en & icqmem_cycstb_i) begin		// fetch
-				state <= #1 `OR1200_ICFSM_CFETCH;
-				saved_addr_r <= #1 start_addr;
-				hitmiss_eval <= #1 1'b1;
-				load <= #1 1'b1;
-				cache_inhibit <= #1 1'b0;
+				state <= `OR1200_ICFSM_CFETCH;
+				saved_addr_r <= start_addr;
+				hitmiss_eval <= 1'b1;
+				load <= 1'b1;
+				cache_inhibit <= 1'b0;
 			end
 			else begin							// idle
-				hitmiss_eval <= #1 1'b0;
-				load <= #1 1'b0;
-				cache_inhibit <= #1 1'b0;
+				hitmiss_eval <= 1'b0;
+				load <= 1'b0;
+				cache_inhibit <= 1'b0;
 			end
 		`OR1200_ICFSM_CFETCH: begin	// fetch
 			if (icqmem_cycstb_i & icqmem_ci_i)
-				cache_inhibit <= #1 1'b1;
+				cache_inhibit <= 1'b1;
 			if (hitmiss_eval)
-				saved_addr_r[31:13] <= #1 start_addr[31:13];
+				saved_addr_r[31:13] <= start_addr[31:13];
 			if ((!ic_en) ||
 			    (hitmiss_eval & !icqmem_cycstb_i) ||	// fetch aborted (usually caused by IMMU)
 			    (biudata_error) ||						// fetch terminated with an error
 			    (cache_inhibit & biudata_valid)) begin	// fetch from cache-inhibited page
-				state <= #1 `OR1200_ICFSM_IDLE;
-				hitmiss_eval <= #1 1'b0;
-				load <= #1 1'b0;
-				cache_inhibit <= #1 1'b0;
+				state <= `OR1200_ICFSM_IDLE;
+				hitmiss_eval <= 1'b0;
+				load <= 1'b0;
+				cache_inhibit <= 1'b0;
 			end
 			else if (tagcomp_miss & biudata_valid) begin	// fetch missed, finish current external fetch and refill
-				state <= #1 `OR1200_ICFSM_LREFILL3;
-				saved_addr_r[3:2] <= #1 saved_addr_r[3:2] + 1'd1;
-				hitmiss_eval <= #1 1'b0;
-				cnt <= #1 `OR1200_ICLS-2;
-				cache_inhibit <= #1 1'b0;
+				state <= `OR1200_ICFSM_LREFILL3;
+				saved_addr_r[3:2] <= saved_addr_r[3:2] + 1'd1;
+				hitmiss_eval <= 1'b0;
+				cnt <= `OR1200_ICLS-2;
+				cache_inhibit <= 1'b0;
 			end
 			else if (!tagcomp_miss & !icqmem_ci_i) begin	// fetch hit, finish immediately
-				saved_addr_r <= #1 start_addr;
-				cache_inhibit <= #1 1'b0;
+				saved_addr_r <= start_addr;
+				cache_inhibit <= 1'b0;
 			end
 			else if (!icqmem_cycstb_i) begin	// fetch aborted (usually caused by exception)
-				state <= #1 `OR1200_ICFSM_IDLE;
-				hitmiss_eval <= #1 1'b0;
-				load <= #1 1'b0;
-				cache_inhibit <= #1 1'b0;
+				state <= `OR1200_ICFSM_IDLE;
+				hitmiss_eval <= 1'b0;
+				load <= 1'b0;
+				cache_inhibit <= 1'b0;
 			end
 			else						// fetch in-progress
-				hitmiss_eval <= #1 1'b0;
+				hitmiss_eval <= 1'b0;
 		end
 		`OR1200_ICFSM_LREFILL3 : begin
 			if (biudata_valid && (|cnt)) begin		// refill ack, more fetchs to come
-				cnt <= #1 cnt - 3'd1;
-				saved_addr_r[3:2] <= #1 saved_addr_r[3:2] + 1'd1;
+				cnt <= cnt - 3'd1;
+				saved_addr_r[3:2] <= saved_addr_r[3:2] + 1'd1;
 			end
 			else if (biudata_valid) begin			// last fetch of line refill
-				state <= #1 `OR1200_ICFSM_IDLE;
-				saved_addr_r <= #1 start_addr;
-				hitmiss_eval <= #1 1'b0;
-				load <= #1 1'b0;
+				state <= `OR1200_ICFSM_IDLE;
+				saved_addr_r <= start_addr;
+				hitmiss_eval <= 1'b0;
+				load <= 1'b0;
 			end
 		end
 		default:
-			state <= #1 `OR1200_ICFSM_IDLE;
+			state <= `OR1200_ICFSM_IDLE;
 	endcase
 end
 

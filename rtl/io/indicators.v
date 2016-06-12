@@ -56,15 +56,15 @@ reg [1:0] r0, r1, g0, g1;
 
 always @ (posedge clk or posedge rst) begin
   if (rst) begin
-    r0 <= #1 2'b00;
-    r1 <= #1 2'b00;
-    g0 <= #1 2'b00;
-    g1 <= #1 2'b00;
+    r0 <= 2'b00;
+    r1 <= 2'b00;
+    g0 <= 2'b00;
+    g1 <= 2'b00;
   end else begin
-    r0 <= #1 {r0[0], f_wr};
-    r1 <= #1 {r1[0], h_wr};
-    g0 <= #1 {g0[0], f_rd};
-    g1 <= #1 {g1[0], h_rd};
+    r0 <= {r0[0], f_wr};
+    r1 <= {r1[0], h_wr};
+    g0 <= {g0[0], f_rd};
+    g1 <= {g1[0], h_rd};
   end
 end
 
@@ -78,9 +78,9 @@ assign g1_out = |g1;
 reg  [  4-1:0] ctrl_leds;
 always @ (posedge clk, posedge rst) begin
   if (rst)
-    ctrl_leds <= #1 4'b0;
+    ctrl_leds <= 4'b0;
   else
-    ctrl_leds <= #1 ctrl_status;
+    ctrl_leds <= ctrl_status;
 end
 
 assign led_g = {ctrl_leds, 1'b0,fifo_full,      g1_out, g0_out};

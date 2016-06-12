@@ -117,38 +117,38 @@ assign except_ibuserr = icpu_err_i & (icpu_tag_i == `OR1200_ITAG_BE) & !no_more_
 //
 always @(posedge clk or posedge rst)
 	if (rst)
-		saved <= #1 1'b0;
+		saved <= 1'b0;
 	else if (flushpipe)
-		saved <= #1 1'b0;
+		saved <= 1'b0;
 	else if (icpu_ack_i & if_freeze & !saved)
-		saved <= #1 1'b1;
+		saved <= 1'b1;
 	else if (!if_freeze)
-		saved <= #1 1'b0;
+		saved <= 1'b0;
 
 //
 // Store fetched instruction
 //
 always @(posedge clk or posedge rst)
 	if (rst)
-		insn_saved <= #1 {`OR1200_OR32_NOP, 26'h041_0000};
+		insn_saved <= {`OR1200_OR32_NOP, 26'h041_0000};
 	else if (flushpipe)
-		insn_saved <= #1 {`OR1200_OR32_NOP, 26'h041_0000};
+		insn_saved <= {`OR1200_OR32_NOP, 26'h041_0000};
 	else if (icpu_ack_i & if_freeze & !saved)
-		insn_saved <= #1 icpu_dat_i;
+		insn_saved <= icpu_dat_i;
 	else if (!if_freeze)
-		insn_saved <= #1 {`OR1200_OR32_NOP, 26'h041_0000};
+		insn_saved <= {`OR1200_OR32_NOP, 26'h041_0000};
 
 //
 // Store fetched instruction's address
 //
 always @(posedge clk or posedge rst)
 	if (rst)
-		addr_saved <= #1 32'h00000000;
+		addr_saved <= 32'h00000000;
 	else if (flushpipe)
-		addr_saved <= #1 32'h00000000;
+		addr_saved <= 32'h00000000;
 	else if (icpu_ack_i & if_freeze & !saved)
-		addr_saved <= #1 icpu_adr_i;
+		addr_saved <= icpu_adr_i;
 	else if (!if_freeze)
-		addr_saved <= #1 icpu_adr_i;
+		addr_saved <= icpu_adr_i;
 
 endmodule

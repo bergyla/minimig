@@ -1,6 +1,11 @@
 /* amiga_clk.v */
 /* 2012, rok.krajnc@gmail.com */
 
+// synopsys translate_off
+`timescale 1 ps / 1 ps
+// synopsys translate_on
+
+`include "../parameter.vh"
 
 module amiga_clk (
   input  wire           rst,        // asynhronous reset input

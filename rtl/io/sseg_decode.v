@@ -57,9 +57,9 @@ generate if (REG == 1) begin
   reg [  7-1:0] sseg_reg;
   always @ (posedge clk, posedge rst) begin
     if (rst)
-      sseg_reg <= #1 7'h0;
+      sseg_reg <= 7'h0;
     else
-      sseg_reg <= #1 INV ? ~sseg_decode : sseg_decode;
+      sseg_reg <= INV ? ~sseg_decode : sseg_decode;
   end
   assign sseg = sseg_reg;
 end else begin

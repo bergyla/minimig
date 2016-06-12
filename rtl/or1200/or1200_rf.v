@@ -160,9 +160,9 @@ assign rf_dataw = (spr_valid & spr_write) ? spr_dat_i : dataw;
 //
 always @(posedge rst or posedge clk)
 	if (rst)
-		rf_we_allow <= #1 1'b1;
+		rf_we_allow <= 1'b1;
 	else if (~wb_freeze)
-		rf_we_allow <= #1 ~flushpipe;
+		rf_we_allow <= ~flushpipe;
 
 assign rf_we = ((spr_valid & spr_write) | (we & ~wb_freeze)) & rf_we_allow & (supv | (|rf_addrw));
 
@@ -187,26 +187,26 @@ assign rf_enb = rdb & ~id_freeze | spr_valid;
 //
 always @(posedge clk or posedge rst)
 	if (rst) begin
-		dataa_saved <= #1 33'b0;
+		dataa_saved <= 33'b0;
 	end
 	else if (id_freeze & !dataa_saved[32]) begin
-		dataa_saved <= #1 {1'b1, from_rfa};
+		dataa_saved <= {1'b1, from_rfa};
 	end
 	else if (!id_freeze)
-		dataa_saved <= #1 33'b0;
+		dataa_saved <= 33'b0;
 
 //
 // Stores operand from RF_B into temp reg when pipeline is frozen
 //
 always @(posedge clk or posedge rst)
 	if (rst) begin
-		datab_saved <= #1 33'b0;
+		datab_saved <= 33'b0;
 	end
 	else if (id_freeze & !datab_saved[32]) begin
-		datab_saved <= #1 {1'b1, from_rfb};
+		datab_saved <= {1'b1, from_rfb};
 	end
 	else if (!id_freeze)
-		datab_saved <= #1 33'b0;
+		datab_saved <= 33'b0;
 
 `ifdef OR1200_RFRAM_TWOPORT
 

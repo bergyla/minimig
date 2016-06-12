@@ -1,6 +1,8 @@
 // audio data processing
 // stereo sigma/delta bitstream modulator
 
+`timescale 1ns/1ps
+
 module paula_audio_sigmadelta
 (
   input   clk,        //bus clock

@@ -87,7 +87,7 @@ always @(posedge CLK or posedge RST)
         if (RST)
                 p0 <= `OR1200_WW'b0;
         else
-                p0 <= #1 xi * yi;
+                p0 <= xi * yi;
 
 //
 // Second multiply stage
@@ -96,7 +96,7 @@ always @(posedge CLK or posedge RST)
         if (RST)
                 p1 <= `OR1200_WW'b0;
         else
-                p1 <= #1 p0;
+                p1 <= p0;
 
 assign P = p1;
 

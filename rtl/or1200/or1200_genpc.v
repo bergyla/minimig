@@ -130,11 +130,11 @@ assign icpu_tag_o = `OR1200_ITAG_NI;
 //
 always @(posedge clk or posedge rst)
 	if (rst)
-		genpc_refetch_r <= #1 1'b0;
+		genpc_refetch_r <= 1'b0;
 	else if (genpc_refetch)
-		genpc_refetch_r <= #1 1'b1;
+		genpc_refetch_r <= 1'b1;
 	else
-		genpc_refetch_r <= #1 1'b0;
+		genpc_refetch_r <= 1'b0;
 
 //
 // Async calculation of new PC value. This value is used for addressing the IC.
@@ -246,12 +246,12 @@ end
 //
 always @(posedge clk or posedge rst)
 	if (rst)
-//		pcreg <= #1 30'd63;
-		pcreg <= #1 ({`OR1200_EXCEPT_EPH0_P, `OR1200_EXCEPT_RESET, `OR1200_EXCEPT_V} - 1) >> 2;
+//		pcreg <= 30'd63;
+		pcreg <= ({`OR1200_EXCEPT_EPH0_P, `OR1200_EXCEPT_RESET, `OR1200_EXCEPT_V} - 1) >> 2;
 	else if (spr_pc_we)
-		pcreg <= #1 spr_dat_i[31:2];
+		pcreg <= spr_dat_i[31:2];
 	else if (no_more_dslot | except_start | !genpc_freeze & !icpu_rty_i & !genpc_refetch)
 //	else if (except_start | !genpc_freeze & !icpu_rty_i & !genpc_refetch)
-		pcreg <= #1 pc[31:2];
+		pcreg <= pc[31:2];
 
 endmodule

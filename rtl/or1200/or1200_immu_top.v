@@ -166,9 +166,9 @@ reg				dis_spr_access;
 `ifdef OR1200_REGISTERED_OUTPUTS
 always @(posedge rst or posedge clk)
 	if (rst)
-		icpu_adr_o <= #1 ({`OR1200_EXCEPT_EPH0_P, `OR1200_EXCEPT_RESET, `OR1200_EXCEPT_V});
+		icpu_adr_o <= ({`OR1200_EXCEPT_EPH0_P, `OR1200_EXCEPT_RESET, `OR1200_EXCEPT_V});
 	else
-		icpu_adr_o <= #1 icpu_adr_i;
+		icpu_adr_o <= icpu_adr_i;
 `else
 Unsupported !!!
 `endif
@@ -186,9 +186,9 @@ assign page_cross = icpu_adr_i[31:`OR1200_IMMU_PS] != icpu_vpn_r;
 //
 always @(posedge clk or posedge rst)
 	if (rst)
-		icpu_vpn_r <= #1 {32-`OR1200_IMMU_PS{1'b0}};
+		icpu_vpn_r <= {32-`OR1200_IMMU_PS{1'b0}};
 	else
-		icpu_vpn_r <= #1 icpu_adr_i[31:`OR1200_IMMU_PS];
+		icpu_vpn_r <= icpu_adr_i[31:`OR1200_IMMU_PS];
 
 `ifdef OR1200_NO_IMMU
 
@@ -231,11 +231,11 @@ assign itlb_spr_access = spr_cs & ~dis_spr_access;
 //
 always @(posedge clk or posedge rst)
 	if (rst)
-		dis_spr_access <= #1 1'b0;
+		dis_spr_access <= 1'b0;
 	else if (!icpu_rty_o)
-		dis_spr_access <= #1 1'b0;
+		dis_spr_access <= 1'b0;
 	else if (spr_cs)
-		dis_spr_access <= #1 1'b1;
+		dis_spr_access <= 1'b1;
 
 //
 // Tags:
@@ -262,9 +262,9 @@ assign icpu_err_o = miss | fault | qmemimmu_err_i;
 //
 always @(posedge clk or posedge rst)
 	if (rst)
-		itlb_en_r <= #1 1'b0;
+		itlb_en_r <= 1'b0;
 	else
-		itlb_en_r <= #1 itlb_en & ~itlb_spr_access;
+		itlb_en_r <= itlb_en & ~itlb_spr_access;
 
 //
 // ITLB lookup successful

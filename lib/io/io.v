@@ -5,7 +5,7 @@
 /*                                          */
 /* 2012, rok.krajnc@gmail.com               */
 /********************************************/
-
+`timescale 1ns/1ps
 
 module io #(
   parameter SW  = 1,    // signal width

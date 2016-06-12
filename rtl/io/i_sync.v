@@ -20,8 +20,8 @@ reg [ DW-1:0] sync_1 = {DW{RS}};
 
 
 always @ (posedge clk) begin
-  sync_0 <= #1 i;
-  sync_1 <= #1 sync_0;
+  sync_0 <= i;
+  sync_1 <= sync_0;
 end
 
 

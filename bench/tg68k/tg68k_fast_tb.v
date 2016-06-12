@@ -27,9 +27,9 @@ wire [  2-1:0] tg68_CPU;
 wire [  2-1:0] tg68_state;
 wire           tg68_d_OPC;
 wire           tg68_rst_out;
-wire [  2-1:0] tg68_FC;
+wire [  3-1:0] tg68_FC;
 wire           skipFetch;
-wire [ 32-1:0] regin;
+wire [ 32-1:0] tg68_regin;
 
 wire [ 18-1:0] sram_addr;
 wire           sram_ce_n;
@@ -177,8 +177,9 @@ TG68KdotC_Kernel /*#(
   .data_in        (tg68_dat_r     ),
   .IPL            (tg68_IPL       ),
   .IPL_autovector (tg68_t_IPL     ),
+  .berr           (1'b0),
   .CPU            (tg68_CPU       ),  // 00->68000  01->68010  11->68020(only some parts - yet)
-  .addr           (tg68_adr       ),
+  .addr_out       (tg68_adr       ),
   .data_write     (tg68_dat_w     ),
   .nWr            (tg68_we        ),
   .nUDS           (tg68_uds       ),
@@ -187,7 +188,7 @@ TG68KdotC_Kernel /*#(
   .nResetOut      (tg68_rst_out   ),
   .FC             (tg68_FC        ),
   .skipFetch      (tg68_skipfetch ),  // for debug
-  .regin          (tg68_regin     )   // for debug 
+  .regin_out      (tg68_regin     )   // for debug 
 );
 
 

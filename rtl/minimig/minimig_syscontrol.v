@@ -16,11 +16,11 @@
 
 module minimig_syscontrol
 (
-	input	clk,			//bus clock
-  input clk7_en,
-	input	cnt,			//pulses for counting
-	input	mrst,			//master/user reset input
-	output	reset			//global synchronous system reset
+    input	clk,			//bus clock
+    input clk7_en,
+    input	cnt,			//pulses for counting
+    input	mrst,			//master/user reset input
+    output	reset			//global synchronous system reset
 );
 
 //local signals

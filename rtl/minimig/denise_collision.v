@@ -1,5 +1,6 @@
 //this is the collision detection module
 
+`timescale 1ns/1ps
 
 module denise_collision
 (

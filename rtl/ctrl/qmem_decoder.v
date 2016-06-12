@@ -46,7 +46,7 @@ generate if (SN == 7) assign ss_a =         ss[6]?6:ss[5]?5:ss[4]?4:ss[3]?3:ss[2
 generate if (SN == 8) assign ss_a = ss[7]?7:ss[6]?6:ss[5]?5:ss[4]?4:ss[3]?3:ss[2]?2:ss[1]?1:0; endgenerate
 
 always @ (posedge clk)
-if (qm_cs & (qm_ack | qm_err) & ~qm_we)  ss_r <= #1 ss_a;
+if (qm_cs & (qm_ack | qm_err) & ~qm_we)  ss_r <= ss_a;
 
 genvar i;
 

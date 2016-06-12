@@ -145,124 +145,124 @@ assign burst = (state == `OR1200_DCFSM_CLOAD) & tagcomp_miss & !cache_inhibit
 //
 always @(posedge clk or posedge rst) begin
 	if (rst) begin
-		state <= #1 `OR1200_DCFSM_IDLE;
-		saved_addr_r <= #1 32'b0;
-		hitmiss_eval <= #1 1'b0;
-		store <= #1 1'b0;
-		load <= #1 1'b0;
-		cnt <= #1 3'b000;
-		cache_inhibit <= #1 1'b0;
+		state <= `OR1200_DCFSM_IDLE;
+		saved_addr_r <= 32'b0;
+		hitmiss_eval <= 1'b0;
+		store <= 1'b0;
+		load <= 1'b0;
+		cnt <= 3'b000;
+		cache_inhibit <= 1'b0;
 	end
 	else
 	case (state)	// synopsys parallel_case
 		`OR1200_DCFSM_IDLE :
 			if (dc_en & dcqmem_cycstb_i & dcqmem_we_i) begin	// store
-				state <= #1 `OR1200_DCFSM_CSTORE;
-				saved_addr_r <= #1 start_addr;
-				hitmiss_eval <= #1 1'b1;
-				store <= #1 1'b1;
-				load <= #1 1'b0;
-				cache_inhibit <= #1 1'b0;
+				state <= `OR1200_DCFSM_CSTORE;
+				saved_addr_r <= start_addr;
+				hitmiss_eval <= 1'b1;
+				store <= 1'b1;
+				load <= 1'b0;
+				cache_inhibit <= 1'b0;
 			end
 			else if (dc_en & dcqmem_cycstb_i) begin		// load
-				state <= #1 `OR1200_DCFSM_CLOAD;
-				saved_addr_r <= #1 start_addr;
-				hitmiss_eval <= #1 1'b1;
-				store <= #1 1'b0;
-				load <= #1 1'b1;
-				cache_inhibit <= #1 1'b0;
+				state <= `OR1200_DCFSM_CLOAD;
+				saved_addr_r <= start_addr;
+				hitmiss_eval <= 1'b1;
+				store <= 1'b0;
+				load <= 1'b1;
+				cache_inhibit <= 1'b0;
 			end
 			else begin							// idle
-				hitmiss_eval <= #1 1'b0;
-				store <= #1 1'b0;
-				load <= #1 1'b0;
-				cache_inhibit <= #1 1'b0;
+				hitmiss_eval <= 1'b0;
+				store <= 1'b0;
+				load <= 1'b0;
+				cache_inhibit <= 1'b0;
 			end
 		`OR1200_DCFSM_CLOAD: begin		// load
 			if (dcqmem_cycstb_i & dcqmem_ci_i)
-				cache_inhibit <= #1 1'b1;
+				cache_inhibit <= 1'b1;
 			if (hitmiss_eval)
-				saved_addr_r[31:13] <= #1 start_addr[31:13];
+				saved_addr_r[31:13] <= start_addr[31:13];
 			if ((hitmiss_eval & !dcqmem_cycstb_i) ||					// load aborted (usually caused by DMMU)
 			    (biudata_error) ||										// load terminated with an error
 			    ((cache_inhibit | dcqmem_ci_i) & biudata_valid)) begin	// load from cache-inhibited area
-				state <= #1 `OR1200_DCFSM_IDLE;
-				hitmiss_eval <= #1 1'b0;
-				load <= #1 1'b0;
-				cache_inhibit <= #1 1'b0;
+				state <= `OR1200_DCFSM_IDLE;
+				hitmiss_eval <= 1'b0;
+				load <= 1'b0;
+				cache_inhibit <= 1'b0;
 			end
 			else if (tagcomp_miss & biudata_valid) begin	// load missed, finish current external load and refill
-				state <= #1 `OR1200_DCFSM_LREFILL3;
-				saved_addr_r[3:2] <= #1 saved_addr_r[3:2] + 1'd1;
-				hitmiss_eval <= #1 1'b0;
-				cnt <= #1 `OR1200_DCLS-2;
-				cache_inhibit <= #1 1'b0;
+				state <= `OR1200_DCFSM_LREFILL3;
+				saved_addr_r[3:2] <= saved_addr_r[3:2] + 1'd1;
+				hitmiss_eval <= 1'b0;
+				cnt <= `OR1200_DCLS-2;
+				cache_inhibit <= 1'b0;
 			end
 			else if (!tagcomp_miss & !dcqmem_ci_i) begin	// load hit, finish immediately
-				state <= #1 `OR1200_DCFSM_IDLE;
-				hitmiss_eval <= #1 1'b0;
-				load <= #1 1'b0;
-				cache_inhibit <= #1 1'b0;
+				state <= `OR1200_DCFSM_IDLE;
+				hitmiss_eval <= 1'b0;
+				load <= 1'b0;
+				cache_inhibit <= 1'b0;
 			end
 			else						// load in-progress
-				hitmiss_eval <= #1 1'b0;
+				hitmiss_eval <= 1'b0;
 		end
 		`OR1200_DCFSM_LREFILL3 : begin
 			if (biudata_valid && (|cnt)) begin		// refill ack, more loads to come
-				cnt <= #1 cnt - 3'd1;
-				saved_addr_r[3:2] <= #1 saved_addr_r[3:2] + 1'd1;
+				cnt <= cnt - 3'd1;
+				saved_addr_r[3:2] <= saved_addr_r[3:2] + 1'd1;
 			end
 			else if (biudata_valid) begin			// last load of line refill
-				state <= #1 `OR1200_DCFSM_IDLE;
-				load <= #1 1'b0;
+				state <= `OR1200_DCFSM_IDLE;
+				load <= 1'b0;
 			end
 		end
 		`OR1200_DCFSM_CSTORE: begin		// store
 			if (dcqmem_cycstb_i & dcqmem_ci_i)
-				cache_inhibit <= #1 1'b1;
+				cache_inhibit <= 1'b1;
 			if (hitmiss_eval)
-				saved_addr_r[31:13] <= #1 start_addr[31:13];
+				saved_addr_r[31:13] <= start_addr[31:13];
 			if ((hitmiss_eval & !dcqmem_cycstb_i) ||	// store aborted (usually caused by DMMU)
 			    (biudata_error) ||						// store terminated with an error
 			    ((cache_inhibit | dcqmem_ci_i) & biudata_valid)) begin	// store to cache-inhibited area
-				state <= #1 `OR1200_DCFSM_IDLE;
-				hitmiss_eval <= #1 1'b0;
-				store <= #1 1'b0;
-				cache_inhibit <= #1 1'b0;
+				state <= `OR1200_DCFSM_IDLE;
+				hitmiss_eval <= 1'b0;
+				store <= 1'b0;
+				cache_inhibit <= 1'b0;
 			end
 `ifdef OR1200_DC_STORE_REFILL
 			else if (tagcomp_miss & biudata_valid) begin	// store missed, finish write-through and doq load refill
-				state <= #1 `OR1200_DCFSM_SREFILL4;
-				hitmiss_eval <= #1 1'b0;
-				store <= #1 1'b0;
-				load <= #1 1'b1;
-				cnt <= #1 `OR1200_DCLS-1;
-				cache_inhibit <= #1 1'b0;
+				state <= `OR1200_DCFSM_SREFILL4;
+				hitmiss_eval <= 1'b0;
+				store <= 1'b0;
+				load <= 1'b1;
+				cnt <= `OR1200_DCLS-1;
+				cache_inhibit <= 1'b0;
 			end
 `endif
 			else if (biudata_valid) begin			// store hit, finish write-through
-				state <= #1 `OR1200_DCFSM_IDLE;
-				hitmiss_eval <= #1 1'b0;
-				store <= #1 1'b0;
-				cache_inhibit <= #1 1'b0;
+				state <= `OR1200_DCFSM_IDLE;
+				hitmiss_eval <= 1'b0;
+				store <= 1'b0;
+				cache_inhibit <= 1'b0;
 			end
 			else						// store write-through in-progress
-				hitmiss_eval <= #1 1'b0;
+				hitmiss_eval <= 1'b0;
 			end
 `ifdef OR1200_DC_STORE_REFILL
 		`OR1200_DCFSM_SREFILL4 : begin
 			if (biudata_valid && (|cnt)) begin		// refill ack, more loads to come
-				cnt <= #1 cnt - 1'd1;
-				saved_addr_r[3:2] <= #1 saved_addr_r[3:2] + 1'd1;
+				cnt <= cnt - 1'd1;
+				saved_addr_r[3:2] <= saved_addr_r[3:2] + 1'd1;
 			end
 			else if (biudata_valid) begin			// last load of line refill
-				state <= #1 `OR1200_DCFSM_IDLE;
-				load <= #1 1'b0;
+				state <= `OR1200_DCFSM_IDLE;
+				load <= 1'b0;
 			end
 		end
 `endif
 		default:
-			state <= #1 `OR1200_DCFSM_IDLE;
+			state <= `OR1200_DCFSM_IDLE;
 	endcase
 end
 

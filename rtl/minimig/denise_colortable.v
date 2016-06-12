@@ -3,6 +3,7 @@
 // it actually has a 6bit colour select input
 // the 6th bit selects EHB colour while the lower 5 bit select the actual colour register
 
+`timescale 1ns/1ps
 
 module denise_colortable
 (

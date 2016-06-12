@@ -83,6 +83,8 @@ If new vstart is specified to be the same as the line during which it's fetched,
 but is one line shorter.
 */
 
+`timescale 1ns/1ps
+
 module agnus_spritedma (
   input   clk,              // bus clock
   input clk7_en,

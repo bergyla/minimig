@@ -5,7 +5,7 @@
 /*                                          */
 /* 2012, rok.krajnc@gmail.com               */
 /********************************************/
-
+`timescale 1ns/1ps
 
 module generic_output #(
   parameter OW  = 1,    // output width

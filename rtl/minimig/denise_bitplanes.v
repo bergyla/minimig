@@ -22,6 +22,7 @@
 // It supports all ocs modes and also handles the pf1<->pf2 priority handling in
 // a seperate module.
 
+`timescale 1ns/1ps
 
 module denise_bitplanes
 (

@@ -12,6 +12,7 @@
 //be registered at the out output. At the same time, new data is read from the in input.
 //The data at input in is also sent as the first byte after _scs is asserted (without strobe!). 
 
+`timescale 1ns/1ps
 
 module userio_osd_spi
 (

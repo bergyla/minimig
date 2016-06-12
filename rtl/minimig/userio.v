@@ -23,7 +23,7 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-
+`timescale 1ns/1ps
 
 module userio (
   input  wire           clk,                // bus clock
@@ -132,7 +132,8 @@ reg   [1:0] autofire_cnt;
 wire  cd32pad;
 reg   autofire;
 reg   sel_autofire;     // select autofire and permanent fire
-
+reg [8-1:0] cd32pad2_reg;  // ABER - moved declaration - otherwise it will be used before assignment
+reg [8-1:0] cd32pad1_reg;  // ABER
 
 //--------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------
@@ -185,7 +186,6 @@ always @ (posedge clk) begin
 end
 wire cd32pad1_reg_load  = !(potreg[9] && !potreg[8]);
 wire cd32pad1_reg_shift = _fire0_dat && !fire1_d;
-reg [8-1:0] cd32pad1_reg;
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (reset)
@@ -209,7 +209,7 @@ always @ (posedge clk) begin
 end
 wire cd32pad2_reg_load  = !(potreg[13] && !potreg[12]);
 wire cd32pad2_reg_shift = _fire1_dat && !fire2_d;
-reg [8-1:0] cd32pad2_reg;
+
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (reset)

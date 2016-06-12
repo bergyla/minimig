@@ -76,6 +76,8 @@
 // 2009-12-15	- fixed channel B data flow
 // 2009-12-19	- ECS extensions available only with ECS chipset selected
 
+`timescale 1ns/1ps
+
 module agnus_blitter
 (
 	input 	clk,	 					// bus clock
@@ -96,6 +98,8 @@ module agnus_blitter
 	output 	[20:1] address_out, 		// chip address outputs
 	output 	reg [8:1] reg_address_out	// register address outputs
 );
+
+`timescale 1ns/1ps
 
 //register names and adresses		
 parameter BLTCON0  = 9'h040;

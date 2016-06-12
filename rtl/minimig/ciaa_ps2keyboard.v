@@ -274,25 +274,25 @@ end
 wire ctrl,aleft,aright,caps;
 ciaa_ps2keyboard_map km1
 (
-	.clk(clk),
-  .clk7_en(clk7_en),
-	.reset(reset),
-	.enable(prready),
-	.ps2key(preceive[8:1]),
-	.valid(valid),
-	.akey(keydat[7:0]),
-	.ctrl(ctrl),
-	.aleft(aleft),
-	.aright(aright),
-	.caps(caps),
-	.numlock(numlock),
-	.osd_ctrl(osd_ctrl),
-	._lmb(_lmb),
-	._rmb(_rmb),
-	._joy2(_joy2),
-	.freeze(freeze),
-  .mou_emu(mou_emu),
-  .joy_emu(joy_emu)
+	.clk        (clk),
+    .clk7_en    (clk7_en),
+	.reset      (reset),
+	.enable     (prready),
+	.ps2key     (preceive[8:1]),
+	.valid      (valid),
+	.akey       (keydat[7:0]),
+	.ctrl       (ctrl),
+	.aleft      (aleft),
+	.aright     (aright),
+	.caps       (caps),
+	.numlock    (numlock),
+	.osd_ctrl   (osd_ctrl),
+	._lmb       (_lmb),
+	._rmb       (_rmb),
+	._joy2      (_joy2),
+	.freeze     (freeze),
+    .mou_emu    (mou_emu),
+    .joy_emu    (joy_emu)
 );
 
 //Duplicate key filter and caps lock handling.

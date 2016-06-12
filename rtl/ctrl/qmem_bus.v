@@ -5,7 +5,6 @@
 /* 2012, rok.krajnc@gmail.com               */
 /********************************************/
 
-
 //// slave address map ////
 // 0 - (0x000000 - 0x3fffff) adr[23:22] == 2'b00 - ROM
 // 1 - (0x400000 - 0x7fffff) adr[23:22] == 2'b01 - RAM
@@ -330,10 +329,10 @@ assign m0_s3_err   = s3_err  ;
 ////////////////////////////////////////
 
 always @ (posedge clk) begin
-  rom_s  <= #1 s0_cs;
-  ram_s  <= #1 s1_cs;
-  reg_s  <= #1 s2_cs;
-  dram_s <= #1 s3_cs;
+  rom_s  <= s0_cs;
+  ram_s  <= s1_cs;
+  reg_s  <= s2_cs;
+  dram_s <= s3_cs;
 end
 
 

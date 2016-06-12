@@ -20,6 +20,7 @@
 // This is the sprites part of denise
 // It supports all OCS sprite modes.
 
+`timescale 1ns/1ps
 
 module denise_sprites
 (

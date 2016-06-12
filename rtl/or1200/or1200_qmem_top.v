@@ -308,14 +308,14 @@ assign daddr_qmem_hit = 1'b0;
 always @(posedge rst or posedge clk)
 begin
 	if (rst) begin
-		qmem_dack <= #1 1'b0;
-		qmem_iack <= #1 1'b0;
+		qmem_dack <= 1'b0;
+		qmem_iack <= 1'b0;
   end else if(du_stall) begin
-    qmem_dack <= #1 1'b0;
-    qmem_iack <= #1 1'b0;
+    qmem_dack <= 1'b0;
+    qmem_iack <= 1'b0;
 	end else begin
-    qmem_dack <= #1 dqmem_ack_i;
-    qmem_iack <= #1 iqmem_ack_i;
+    qmem_dack <= dqmem_ack_i;
+    qmem_iack <= iqmem_ack_i;
   end
 end
 

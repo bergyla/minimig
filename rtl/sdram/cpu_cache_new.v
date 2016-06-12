@@ -209,9 +209,9 @@ localparam [3:0]
 // cpu cache control
 always @ (posedge clk) begin
   if (rst)
-    cc_clr_r <= #1 2'd0;
+    cc_clr_r <= 2'd0;
   else if (!cpu_cs)
-    cc_clr_r <= #1 {cc_clr_r[0], cpu_cache_ctrl[3]};
+    cc_clr_r <= {cc_clr_r[0], cpu_cache_ctrl[3]};
 end
 
 assign cpu_cache_enable = cpu_cache_ctrl[0];
@@ -220,13 +220,13 @@ assign cpu_cache_clear  = cc_clr_r[0] && !cc_clr_r[1];
 
 always @ (posedge clk) begin
   if (rst) begin
-    cc_en  <= #1 1'b0;
-    cc_fr  <= #1 1'b0;
-    cc_clr <= #1 1'b0;
+    cc_en  <= 1'b0;
+    cc_fr  <= 1'b0;
+    cc_clr <= 1'b0;
   end else if (!cpu_cs) begin
-    cc_en  <= #1 cpu_cache_enable;
-    cc_fr  <= #1 cpu_cache_freeze;
-    cc_clr <= #1 cpu_cache_clear;
+    cc_en  <= cpu_cache_enable;
+    cc_fr  <= cpu_cache_freeze;
+    cc_clr <= cpu_cache_clear;
   end
 end 
 
@@ -238,193 +238,193 @@ assign cpu_adr_tag = cpu_adr[24:11];  // tag, 14 bits
 // cpu side state machine
 always @ (posedge clk) begin
   if (rst) begin
-    fill              <= #1 1'b0;
-    sdr_read_req      <= #1 1'b0;
-    wb_en             <= #1 1'b0;
-    cpu_ack           <= #1 1'b0;
-    cpu_sm_state      <= #1 CPU_SM_INIT;
-    cpu_sm_itag_we    <= #1 1'b0;
-    cpu_sm_dtag_we    <= #1 1'b0;
-    cpu_sm_iram0_we   <= #1 1'b0;
-    cpu_sm_iram1_we   <= #1 1'b0;
-    cpu_sm_dram0_we   <= #1 1'b0;
-    cpu_sm_dram1_we   <= #1 1'b0;
-    cpu_sm_bs         <= #1 2'b11;
+    fill              <= 1'b0;
+    sdr_read_req      <= 1'b0;
+    wb_en             <= 1'b0;
+    cpu_ack           <= 1'b0;
+    cpu_sm_state      <= CPU_SM_INIT;
+    cpu_sm_itag_we    <= 1'b0;
+    cpu_sm_dtag_we    <= 1'b0;
+    cpu_sm_iram0_we   <= 1'b0;
+    cpu_sm_iram1_we   <= 1'b0;
+    cpu_sm_dram0_we   <= 1'b0;
+    cpu_sm_dram1_we   <= 1'b0;
+    cpu_sm_bs         <= 2'b11;
   end else begin
     // default values
-    fill              <= #1 1'b0;
-    sdr_read_req      <= #1 1'b0;
-    wb_en             <= #1 1'b0;
-    cpu_sm_itag_we    <= #1 1'b0;
-    cpu_sm_dtag_we    <= #1 1'b0;
-    cpu_sm_iram0_we   <= #1 1'b0;
-    cpu_sm_iram1_we   <= #1 1'b0;
-    cpu_sm_dram0_we   <= #1 1'b0;
-    cpu_sm_dram1_we   <= #1 1'b0;
-    cpu_sm_bs         <= #1 2'b11;
+    fill              <= 1'b0;
+    sdr_read_req      <= 1'b0;
+    wb_en             <= 1'b0;
+    cpu_sm_itag_we    <= 1'b0;
+    cpu_sm_dtag_we    <= 1'b0;
+    cpu_sm_iram0_we   <= 1'b0;
+    cpu_sm_iram1_we   <= 1'b0;
+    cpu_sm_dram0_we   <= 1'b0;
+    cpu_sm_dram1_we   <= 1'b0;
+    cpu_sm_bs         <= 2'b11;
     // state machine
     case (cpu_sm_state)
       CPU_SM_INIT : begin
         // waiting for cache init
         if (cache_init_done) begin
-          cpu_sm_state <= #1 CPU_SM_IDLE;
+          cpu_sm_state <= CPU_SM_IDLE;
         end else begin
-          cpu_sm_state <= #1 CPU_SM_INIT;
+          cpu_sm_state <= CPU_SM_INIT;
         end
       end
       CPU_SM_IDLE : begin
         // waiting for CPU access
         if (cpu_cs) begin
           if (cpu_we) begin
-            cpu_sm_state <= #1 CPU_SM_WRITE;
+            cpu_sm_state <= CPU_SM_WRITE;
           end else begin
-            cpu_sm_state <= #1 CPU_SM_READ;
+            cpu_sm_state <= CPU_SM_READ;
           end
         end else begin
           if (cc_clr)
-            cpu_sm_state <= #1 CPU_SM_INIT;
+            cpu_sm_state <= CPU_SM_INIT;
           else
-            cpu_sm_state <= #1 CPU_SM_IDLE;
+            cpu_sm_state <= CPU_SM_IDLE;
         end
       end
       CPU_SM_WRITE : begin
         // on hit update cache, on miss no update neccessary; tags don't get updated on writes
-        cpu_sm_bs <= #1 cpu_bs;
-        cpu_sm_mem_dat_w <= #1 cpu_dat_w;
-        cpu_sm_iram0_we <= #1 itag0_match && itag0_valid /*&& !cc_fr*/;
-        cpu_sm_iram1_we <= #1 itag1_match && itag1_valid /*&& !cc_fr*/;
-        cpu_sm_dram0_we <= #1 dtag0_match && dtag0_valid /*&& !cc_fr*/;
-        cpu_sm_dram1_we <= #1 dtag1_match && dtag1_valid /*&& !cc_fr*/;
-        cpu_sm_state <= #1 CPU_SM_WB;
+        cpu_sm_bs <= cpu_bs;
+        cpu_sm_mem_dat_w <= cpu_dat_w;
+        cpu_sm_iram0_we <= itag0_match && itag0_valid /*&& !cc_fr*/;
+        cpu_sm_iram1_we <= itag1_match && itag1_valid /*&& !cc_fr*/;
+        cpu_sm_dram0_we <= dtag0_match && dtag0_valid /*&& !cc_fr*/;
+        cpu_sm_dram1_we <= dtag1_match && dtag1_valid /*&& !cc_fr*/;
+        cpu_sm_state <= CPU_SM_WB;
       end
       CPU_SM_WB : begin
-        wb_en <= #1 1'b1;
-        if (!cpu_cs) cpu_sm_state <= #1 CPU_SM_IDLE;
+        wb_en <= 1'b1;
+        if (!cpu_cs) cpu_sm_state <= CPU_SM_IDLE;
       end
       CPU_SM_READ : begin
         // on hit update LRU flag in tag memory
         if (cc_en && itag0_match && itag0_valid) begin
           // data is already in instruction cache way 0
-          cpu_dat_r <= #1 idram0_cpu_dat_r;
-          cpu_ack <= #1 1'b1;
-          cpu_sm_itag_we <= #1 1'b1;
-          cpu_sm_tag_dat_w <= #1 {1'b0, itram_cpu_dat_r[30:0]};
-          cpu_sm_state <= #1 CPU_SM_WAIT;
+          cpu_dat_r <= idram0_cpu_dat_r;
+          cpu_ack <= 1'b1;
+          cpu_sm_itag_we <= 1'b1;
+          cpu_sm_tag_dat_w <= {1'b0, itram_cpu_dat_r[30:0]};
+          cpu_sm_state <= CPU_SM_WAIT;
         end else if (cc_en && itag1_match && itag1_valid) begin
           // data is already in instruction cache way 1
-          cpu_dat_r <= #1 idram1_cpu_dat_r;
-          cpu_ack <= #1 1'b1;
-          cpu_sm_itag_we <= #1 1'b1;
-          cpu_sm_tag_dat_w <= #1 {1'b1, itram_cpu_dat_r[30:0]};
-          cpu_sm_state <= #1 CPU_SM_WAIT;
+          cpu_dat_r <= idram1_cpu_dat_r;
+          cpu_ack <= 1'b1;
+          cpu_sm_itag_we <= 1'b1;
+          cpu_sm_tag_dat_w <= {1'b1, itram_cpu_dat_r[30:0]};
+          cpu_sm_state <= CPU_SM_WAIT;
         end else if (cc_en && dtag0_match && dtag0_valid) begin
           // data is already in data cache way 0
-          cpu_dat_r <= #1 ddram0_cpu_dat_r;
-          cpu_ack <= #1 1'b1;
-          cpu_sm_dtag_we <= #1 1'b1;
-          cpu_sm_tag_dat_w <= #1 {1'b0, dtram_cpu_dat_r[30:0]};
-          cpu_sm_state <= #1 CPU_SM_WAIT;
+          cpu_dat_r <= ddram0_cpu_dat_r;
+          cpu_ack <= 1'b1;
+          cpu_sm_dtag_we <= 1'b1;
+          cpu_sm_tag_dat_w <= {1'b0, dtram_cpu_dat_r[30:0]};
+          cpu_sm_state <= CPU_SM_WAIT;
         end else if (cc_en && dtag1_match && dtag1_valid) begin
           // data is already in data cache way 1
-          cpu_dat_r <= #1 ddram1_cpu_dat_r;
-          cpu_ack <= #1 1'b1;
-          cpu_sm_dtag_we <= #1 1'b1;
-          cpu_sm_tag_dat_w <= #1 {1'b1, dtram_cpu_dat_r[30:0]};
-          cpu_sm_state <= #1 CPU_SM_WAIT;
+          cpu_dat_r <= ddram1_cpu_dat_r;
+          cpu_ack <= 1'b1;
+          cpu_sm_dtag_we <= 1'b1;
+          cpu_sm_tag_dat_w <= {1'b1, dtram_cpu_dat_r[30:0]};
+          cpu_sm_state <= CPU_SM_WAIT;
         end else begin
           // on miss fetch data from SDRAM
-          sdr_read_req <= #1 1'b1;
-          cpu_sm_state <= #1 CPU_SM_FILL1;
+          sdr_read_req <= 1'b1;
+          cpu_sm_state <= CPU_SM_FILL1;
         end
       end
       CPU_SM_WAIT : begin
-        if (!cpu_cs) cpu_sm_state <= #1 CPU_SM_IDLE;
+        if (!cpu_cs) cpu_sm_state <= CPU_SM_IDLE;
       end
       CPU_SM_FILL1 : begin
-        fill <= #1 1'b1;
-        cpu_sm_adr <= #1 cpu_adr[10:1]; 
+        fill <= 1'b1;
+        cpu_sm_adr <= cpu_adr[10:1]; 
         if (!sdr_read_ack) begin
-          sdr_read_req <= #1 1'b1;
+          sdr_read_req <= 1'b1;
         end else begin
-          sdr_read_req <= #1 1'b0;
+          sdr_read_req <= 1'b0;
           // read data to cpu
-          cpu_dat_r <= #1 sdr_dat_r;
-          cpu_ack <= #1 1'b1;
+          cpu_dat_r <= sdr_dat_r;
+          cpu_ack <= 1'b1;
           if (cache_inhibit) begin
             // don't update cache if caching is inhibited
-            cpu_sm_state <= #1 CPU_SM_FILLW;
+            cpu_sm_state <= CPU_SM_FILLW;
           end else begin      
             // update tag ram
             if (cpu_ir) begin
               if (itag_lru) begin
-                cpu_sm_tag_dat_w <= #1 {1'b0, 1'b1, itram_cpu_dat_r[29], 1'b0, itram_cpu_dat_r[27:14], cpu_adr_tag};
+                cpu_sm_tag_dat_w <= {1'b0, 1'b1, itram_cpu_dat_r[29], 1'b0, itram_cpu_dat_r[27:14], cpu_adr_tag};
               end else begin
-                cpu_sm_tag_dat_w <= #1 {1'b1, itram_cpu_dat_r[30], 1'b1, 1'b0, cpu_adr_tag, itram_cpu_dat_r[13: 0]};
+                cpu_sm_tag_dat_w <= {1'b1, itram_cpu_dat_r[30], 1'b1, 1'b0, cpu_adr_tag, itram_cpu_dat_r[13: 0]};
               end
             end else begin
               if (dtag_lru) begin
-                cpu_sm_tag_dat_w <= #1 {1'b0, 1'b1, dtram_cpu_dat_r[29], 1'b0, dtram_cpu_dat_r[27:14], cpu_adr_tag};
+                cpu_sm_tag_dat_w <= {1'b0, 1'b1, dtram_cpu_dat_r[29], 1'b0, dtram_cpu_dat_r[27:14], cpu_adr_tag};
               end else begin
-                cpu_sm_tag_dat_w <= #1 {1'b1, dtram_cpu_dat_r[30], 1'b1, 1'b0, cpu_adr_tag, dtram_cpu_dat_r[13: 0]};
+                cpu_sm_tag_dat_w <= {1'b1, dtram_cpu_dat_r[30], 1'b1, 1'b0, cpu_adr_tag, dtram_cpu_dat_r[13: 0]};
               end
             end
-            cpu_sm_itag_we <= #1  cpu_ir;
-            cpu_sm_dtag_we <= #1 !cpu_ir;
+            cpu_sm_itag_we <=  cpu_ir;
+            cpu_sm_dtag_we <= !cpu_ir;
             // cache line fill 1st word
-            cpu_sm_tag_adr <= #1 cpu_adr_tag;
-            cpu_sm_id   <= #1 cpu_ir;
-            cpu_sm_ilru <= #1 itag_lru;
-            cpu_sm_dlru <= #1 dtag_lru;
-            cpu_sm_mem_dat_w <= #1 sdr_dat_r;
-            cpu_sm_iram0_we <= #1  itag_lru &&  cpu_ir;
-            cpu_sm_iram1_we <= #1 !itag_lru &&  cpu_ir;
-            cpu_sm_dram0_we <= #1  dtag_lru && !cpu_ir;
-            cpu_sm_dram1_we <= #1 !dtag_lru && !cpu_ir;
-            cpu_sm_state <= #1 CPU_SM_FILL2;
+            cpu_sm_tag_adr <= cpu_adr_tag;
+            cpu_sm_id   <= cpu_ir;
+            cpu_sm_ilru <= itag_lru;
+            cpu_sm_dlru <= dtag_lru;
+            cpu_sm_mem_dat_w <= sdr_dat_r;
+            cpu_sm_iram0_we <=  itag_lru &&  cpu_ir;
+            cpu_sm_iram1_we <= !itag_lru &&  cpu_ir;
+            cpu_sm_dram0_we <=  dtag_lru && !cpu_ir;
+            cpu_sm_dram1_we <= !dtag_lru && !cpu_ir;
+            cpu_sm_state <= CPU_SM_FILL2;
           end
         end
       end
       CPU_SM_FILL2 : begin
         // cache line fill 2nd word
-        fill <= #1 1'b1;
-        cpu_sm_adr[1:0] <= #1 cpu_sm_adr[1:0] + 2'b01;
-        cpu_sm_mem_dat_w <= #1 sdr_dat_r;
-        cpu_sm_iram0_we <= #1  cpu_sm_ilru &&  cpu_sm_id;
-        cpu_sm_iram1_we <= #1 !cpu_sm_ilru &&  cpu_sm_id;
-        cpu_sm_dram0_we <= #1  cpu_sm_dlru && !cpu_sm_id;
-        cpu_sm_dram1_we <= #1 !cpu_sm_dlru && !cpu_sm_id;
-        cpu_sm_state <= #1 CPU_SM_FILL3;
+        fill <= 1'b1;
+        cpu_sm_adr[1:0] <= cpu_sm_adr[1:0] + 2'b01;
+        cpu_sm_mem_dat_w <= sdr_dat_r;
+        cpu_sm_iram0_we <=  cpu_sm_ilru &&  cpu_sm_id;
+        cpu_sm_iram1_we <= !cpu_sm_ilru &&  cpu_sm_id;
+        cpu_sm_dram0_we <=  cpu_sm_dlru && !cpu_sm_id;
+        cpu_sm_dram1_we <= !cpu_sm_dlru && !cpu_sm_id;
+        cpu_sm_state <= CPU_SM_FILL3;
       end
       CPU_SM_FILL3 : begin
         // cache line fill 3rd word
-        fill <= #1 1'b1;
-        cpu_sm_adr[1:0] <= #1 cpu_sm_adr[1:0] + 2'b01;
-        cpu_sm_mem_dat_w <= #1 sdr_dat_r;
-        cpu_sm_iram0_we <= #1  cpu_sm_ilru &&  cpu_sm_id;
-        cpu_sm_iram1_we <= #1 !cpu_sm_ilru &&  cpu_sm_id;
-        cpu_sm_dram0_we <= #1  cpu_sm_dlru && !cpu_sm_id;
-        cpu_sm_dram1_we <= #1 !cpu_sm_dlru && !cpu_sm_id;
-        cpu_sm_state <= #1 CPU_SM_FILL4;
+        fill <= 1'b1;
+        cpu_sm_adr[1:0] <= cpu_sm_adr[1:0] + 2'b01;
+        cpu_sm_mem_dat_w <= sdr_dat_r;
+        cpu_sm_iram0_we <=  cpu_sm_ilru &&  cpu_sm_id;
+        cpu_sm_iram1_we <= !cpu_sm_ilru &&  cpu_sm_id;
+        cpu_sm_dram0_we <=  cpu_sm_dlru && !cpu_sm_id;
+        cpu_sm_dram1_we <= !cpu_sm_dlru && !cpu_sm_id;
+        cpu_sm_state <= CPU_SM_FILL4;
       end
       CPU_SM_FILL4 : begin
         // cache line fill 4th word
-        fill <= #1 1'b1;
-        cpu_sm_adr[1:0] <= #1 cpu_sm_adr[1:0] + 2'b01;
-        cpu_sm_mem_dat_w <= #1 sdr_dat_r;
-        cpu_sm_iram0_we <= #1  cpu_sm_ilru &&  cpu_sm_id;
-        cpu_sm_iram1_we <= #1 !cpu_sm_ilru &&  cpu_sm_id;
-        cpu_sm_dram0_we <= #1  cpu_sm_dlru && !cpu_sm_id;
-        cpu_sm_dram1_we <= #1 !cpu_sm_dlru && !cpu_sm_id;
-        cpu_sm_state <= #1 CPU_SM_FILLW;
+        fill <= 1'b1;
+        cpu_sm_adr[1:0] <= cpu_sm_adr[1:0] + 2'b01;
+        cpu_sm_mem_dat_w <= sdr_dat_r;
+        cpu_sm_iram0_we <=  cpu_sm_ilru &&  cpu_sm_id;
+        cpu_sm_iram1_we <= !cpu_sm_ilru &&  cpu_sm_id;
+        cpu_sm_dram0_we <=  cpu_sm_dlru && !cpu_sm_id;
+        cpu_sm_dram1_we <= !cpu_sm_dlru && !cpu_sm_id;
+        cpu_sm_state <= CPU_SM_FILLW;
       end
       CPU_SM_FILLW : begin
         if (!cpu_ack) begin
-          cpu_sm_state <= #1 CPU_SM_IDLE;
+          cpu_sm_state <= CPU_SM_IDLE;
         end
       end
     endcase
     // when CPU lowers its request signal, lower ack too
-    if (!cpu_cs) cpu_ack <= #1 1'b0;
+    if (!cpu_cs) cpu_ack <= 1'b0;
   end
 end
 
@@ -434,134 +434,134 @@ end
 // sdram side state machine
 always @ (posedge clk) begin
   if (rst) begin
-    cache_init_done   <= #1 1'b0;
-    sdr_sm_state      <= #1 SDR_SM_INIT0;
-    sdr_sm_itag_we    <= #1 1'b0;
-    sdr_sm_dtag_we    <= #1 1'b0;
-    sdr_sm_iram0_we   <= #1 1'b0;
-    sdr_sm_iram1_we   <= #1 1'b0;
-    sdr_sm_dram0_we   <= #1 1'b0;
-    sdr_sm_dram1_we   <= #1 1'b0;
+    cache_init_done   <= 1'b0;
+    sdr_sm_state      <= SDR_SM_INIT0;
+    sdr_sm_itag_we    <= 1'b0;
+    sdr_sm_dtag_we    <= 1'b0;
+    sdr_sm_iram0_we   <= 1'b0;
+    sdr_sm_iram1_we   <= 1'b0;
+    sdr_sm_dram0_we   <= 1'b0;
+    sdr_sm_dram1_we   <= 1'b0;
   end else begin
     // default values
-    cache_init_done   <= #1 1'b1;
-    sdr_sm_itag_we    <= #1 1'b0;
-    sdr_sm_dtag_we    <= #1 1'b0;
-    sdr_sm_iram0_we   <= #1 1'b0;
-    sdr_sm_iram1_we   <= #1 1'b0;
-    sdr_sm_dram0_we   <= #1 1'b0;
-    sdr_sm_dram1_we   <= #1 1'b0;
+    cache_init_done   <= 1'b1;
+    sdr_sm_itag_we    <= 1'b0;
+    sdr_sm_dtag_we    <= 1'b0;
+    sdr_sm_iram0_we   <= 1'b0;
+    sdr_sm_iram1_we   <= 1'b0;
+    sdr_sm_dram0_we   <= 1'b0;
+    sdr_sm_dram1_we   <= 1'b0;
     // state machine
     case (sdr_sm_state)
       SDR_SM_INIT0 : begin
         // prepare to clear cache
-        cache_init_done <= #1 1'b0;
-        sdr_sm_adr <= #1 10'd0;
-        sdr_sm_tag_dat_w <= #1 32'd0;
-        sdr_sm_itag_we <= #1 1'b1;
-        sdr_sm_dtag_we <= #1 1'b1;
-        sdr_sm_state <= #1 SDR_SM_INIT1;
+        cache_init_done <= 1'b0;
+        sdr_sm_adr <= 10'd0;
+        sdr_sm_tag_dat_w <= 32'd0;
+        sdr_sm_itag_we <= 1'b1;
+        sdr_sm_dtag_we <= 1'b1;
+        sdr_sm_state <= SDR_SM_INIT1;
       end
       SDR_SM_INIT1 : begin
         // clear cache
-        cache_init_done <= #1 1'b0;
-        sdr_sm_adr <= #1 sdr_sm_adr + 10'd4;
-        sdr_sm_itag_we <= #1 1'b1;
-        sdr_sm_dtag_we <= #1 1'b1;
+        cache_init_done <= 1'b0;
+        sdr_sm_adr <= sdr_sm_adr + 10'd4;
+        sdr_sm_itag_we <= 1'b1;
+        sdr_sm_dtag_we <= 1'b1;
         if (&sdr_sm_adr[9:2]) begin
-          sdr_sm_state <= #1 SDR_SM_IDLE;
+          sdr_sm_state <= SDR_SM_IDLE;
         end else begin
-          sdr_sm_state <= #1 SDR_SM_INIT1;
+          sdr_sm_state <= SDR_SM_INIT1;
         end
       end
       SDR_SM_IDLE : begin
         // wait for action
-        cache_init_done <= #1 1'b1;
-        sdr_sm_adr <= #1 snoop_adr[10:1];
+        cache_init_done <= 1'b1;
+        sdr_sm_adr <= snoop_adr[10:1];
         if (cc_clr) begin
-          sdr_sm_state <= #1 SDR_SM_INIT0;
+          sdr_sm_state <= SDR_SM_INIT0;
         end
         else if (1'b0/*snoop_act*/) begin
           // chip write happening
-          sdr_sm_state <= #1 SDR_SM_SNOOP;
+          sdr_sm_state <= SDR_SM_SNOOP;
         end/* else if (sdr_read_req) begin
           // cpu read cache request
-          sdr_sm_tag_adr <= #1 cpu_adr_tag;
-          sdr_sm_adr <= #1 {cpu_adr_idx, cpu_adr_blk};
-          sdr_sm_state <= #1 SDR_SM_FILL;
+          sdr_sm_tag_adr <= cpu_adr_tag;
+          sdr_sm_adr <= {cpu_adr_idx, cpu_adr_blk};
+          sdr_sm_state <= SDR_SM_FILL;
         end*/
       end
       SDR_SM_SNOOP : begin
         // update if a matching address is in cache
-        sdr_sm_mem_dat_w <= #1 snoop_dat_w;
-        sdr_sm_iram0_we <= #1 sdr_itag0_match && sdr_itag0_valid;
-        sdr_sm_iram1_we <= #1 sdr_itag1_match && sdr_itag1_valid;
-        sdr_sm_dram0_we <= #1 sdr_dtag0_match && sdr_dtag0_valid;
-        sdr_sm_dram1_we <= #1 sdr_dtag1_match && sdr_dtag1_valid;
-        sdr_sm_state <= #1 SDR_SM_IDLE;
+        sdr_sm_mem_dat_w <= snoop_dat_w;
+        sdr_sm_iram0_we <= sdr_itag0_match && sdr_itag0_valid;
+        sdr_sm_iram1_we <= sdr_itag1_match && sdr_itag1_valid;
+        sdr_sm_dram0_we <= sdr_dtag0_match && sdr_dtag0_valid;
+        sdr_sm_dram1_we <= sdr_dtag1_match && sdr_dtag1_valid;
+        sdr_sm_state <= SDR_SM_IDLE;
       end
 /*
       SDR_SM_FILL : begin
         if (sdr_read_ack) begin
-          sdr_sm_mem_dat_w <= #1 sdr_dat_r;
-          sdr_sm_id   <= #1 cpu_ir;
-          sdr_sm_ilru <= #1 sdr_itag_lru;
-          sdr_sm_dlru <= #1 sdr_dtag_lru;
-          sdr_sm_iram0_we <= #1 sdr_itag_lru && cpu_ir;
-          sdr_sm_iram1_we <= #1 !sdr_itag_lru && cpu_ir;
-          sdr_sm_dram0_we <= #1 sdr_dtag_lru && !cpu_ir;
-          sdr_sm_dram1_we <= #1 !sdr_dtag_lru && !cpu_ir;
-          sdr_sm_state <= #1 SDR_SM_FILL1;
+          sdr_sm_mem_dat_w <= sdr_dat_r;
+          sdr_sm_id   <= cpu_ir;
+          sdr_sm_ilru <= sdr_itag_lru;
+          sdr_sm_dlru <= sdr_dtag_lru;
+          sdr_sm_iram0_we <= sdr_itag_lru && cpu_ir;
+          sdr_sm_iram1_we <= !sdr_itag_lru && cpu_ir;
+          sdr_sm_dram0_we <= sdr_dtag_lru && !cpu_ir;
+          sdr_sm_dram1_we <= !sdr_dtag_lru && !cpu_ir;
+          sdr_sm_state <= SDR_SM_FILL1;
         end
       end
       SDR_SM_FILL1 : begin
         // writing 1st word, preparing 2nd word
-        sdr_sm_adr[1:0] <= #1 sdr_sm_adr[1:0] + 2'b01;
-        sdr_sm_mem_dat_w <= #1 sdr_dat_r;
-        sdr_sm_iram0_we <= #1 sdr_sm_ilru && sdr_sm_id;
-        sdr_sm_iram1_we <= #1 !sdr_sm_ilru && sdr_sm_id;
-        sdr_sm_dram0_we <= #1 sdr_sm_dlru && !sdr_sm_id;
-        sdr_sm_dram1_we <= #1 !sdr_sm_dlru && !sdr_sm_id;
-        sdr_sm_state <= #1 SDR_SM_FILL2;
+        sdr_sm_adr[1:0] <= sdr_sm_adr[1:0] + 2'b01;
+        sdr_sm_mem_dat_w <= sdr_dat_r;
+        sdr_sm_iram0_we <= sdr_sm_ilru && sdr_sm_id;
+        sdr_sm_iram1_we <= !sdr_sm_ilru && sdr_sm_id;
+        sdr_sm_dram0_we <= sdr_sm_dlru && !sdr_sm_id;
+        sdr_sm_dram1_we <= !sdr_sm_dlru && !sdr_sm_id;
+        sdr_sm_state <= SDR_SM_FILL2;
       end
       SDR_SM_FILL2 : begin
         // writing 2nd word, preparing 3rd word
-        sdr_sm_adr[1:0] <= #1 sdr_sm_adr[1:0] + 2'b01;
-        sdr_sm_mem_dat_w <= #1 sdr_dat_r;
-        sdr_sm_iram0_we <= #1 sdr_sm_ilru && sdr_sm_id;
-        sdr_sm_iram1_we <= #1 !sdr_sm_ilru && sdr_sm_id;
-        sdr_sm_dram0_we <= #1 sdr_sm_dlru && !sdr_sm_id;
-        sdr_sm_dram1_we <= #1 !sdr_sm_dlru && !sdr_sm_id;
-        sdr_sm_state <= #1 SDR_SM_FILL3;
+        sdr_sm_adr[1:0] <= sdr_sm_adr[1:0] + 2'b01;
+        sdr_sm_mem_dat_w <= sdr_dat_r;
+        sdr_sm_iram0_we <= sdr_sm_ilru && sdr_sm_id;
+        sdr_sm_iram1_we <= !sdr_sm_ilru && sdr_sm_id;
+        sdr_sm_dram0_we <= sdr_sm_dlru && !sdr_sm_id;
+        sdr_sm_dram1_we <= !sdr_sm_dlru && !sdr_sm_id;
+        sdr_sm_state <= SDR_SM_FILL3;
       end
       SDR_SM_FILL3 : begin
         // writing 3rd word, preparing 4th word, updating tags
-        sdr_sm_adr[1:0] <= #1 sdr_sm_adr[1:0] + 2'b01;
-        sdr_sm_mem_dat_w <= #1 sdr_dat_r;
-        sdr_sm_iram0_we <= #1 sdr_sm_ilru && sdr_sm_id;
-        sdr_sm_iram1_we <= #1 !sdr_sm_ilru && sdr_sm_id;
-        sdr_sm_dram0_we <= #1 sdr_sm_dlru && !sdr_sm_id;
-        sdr_sm_dram1_we <= #1 !sdr_sm_dlru && !sdr_sm_id;
+        sdr_sm_adr[1:0] <= sdr_sm_adr[1:0] + 2'b01;
+        sdr_sm_mem_dat_w <= sdr_dat_r;
+        sdr_sm_iram0_we <= sdr_sm_ilru && sdr_sm_id;
+        sdr_sm_iram1_we <= !sdr_sm_ilru && sdr_sm_id;
+        sdr_sm_dram0_we <= sdr_sm_dlru && !sdr_sm_id;
+        sdr_sm_dram1_we <= !sdr_sm_dlru && !sdr_sm_id;
         if (sdr_sm_id) begin
           if (sdr_sm_ilru) begin
-            sdr_sm_tag_dat_w <= #1 {1'b0, 1'b1, itram_sdr_dat_r[29], 1'b0, itram_sdr_dat_r[27:14], sdr_sm_tag_adr};
+            sdr_sm_tag_dat_w <= {1'b0, 1'b1, itram_sdr_dat_r[29], 1'b0, itram_sdr_dat_r[27:14], sdr_sm_tag_adr};
           end else begin
-            sdr_sm_tag_dat_w <= #1 {1'b1, itram_sdr_dat_r[30], 1'b1, 1'b0, sdr_sm_tag_adr, itram_sdr_dat_r[13: 0]};
+            sdr_sm_tag_dat_w <= {1'b1, itram_sdr_dat_r[30], 1'b1, 1'b0, sdr_sm_tag_adr, itram_sdr_dat_r[13: 0]};
           end
         end else begin
           if (sdr_sm_dlru) begin
-            sdr_sm_tag_dat_w <= #1 {1'b0, 1'b1, dtram_sdr_dat_r[29], 1'b0, dtram_sdr_dat_r[27:14], sdr_sm_tag_adr};
+            sdr_sm_tag_dat_w <= {1'b0, 1'b1, dtram_sdr_dat_r[29], 1'b0, dtram_sdr_dat_r[27:14], sdr_sm_tag_adr};
           end else begin
-            sdr_sm_tag_dat_w <= #1 {1'b1, dtram_sdr_dat_r[30], 1'b1, 1'b0, sdr_sm_tag_adr, dtram_sdr_dat_r[13: 0]};
+            sdr_sm_tag_dat_w <= {1'b1, dtram_sdr_dat_r[30], 1'b1, 1'b0, sdr_sm_tag_adr, dtram_sdr_dat_r[13: 0]};
           end
         end
-        sdr_sm_itag_we <= #1 sdr_sm_id;
-        sdr_sm_dtag_we <= #1 !sdr_sm_id;
-        sdr_sm_state <= #1 SDR_SM_WAIT;
+        sdr_sm_itag_we <= sdr_sm_id;
+        sdr_sm_dtag_we <= !sdr_sm_id;
+        sdr_sm_state <= SDR_SM_WAIT;
       end
       SDR_SM_WAIT : begin // TODO needed?
-        sdr_sm_adr <= #1 snoop_adr[10:1];
-        sdr_sm_state <= #1 SDR_SM_IDLE;
+        sdr_sm_adr <= snoop_adr[10:1];
+        sdr_sm_state <= SDR_SM_IDLE;
       end
 */
     endcase

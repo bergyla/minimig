@@ -45,9 +45,9 @@ generate for (i=1; i<MN; i=i+1) begin : loop_arbiter
 end endgenerate
 
 always @(posedge clk, posedge rst) begin
-  if (rst)                   ms_reg <= #1 0;
-  else if (qs_ack | qs_err)  ms_reg <= #1 0;
-  else if (!(|ms_reg))       ms_reg <= #1 ms_tmp;
+  if (rst)                   ms_reg <= 0;
+  else if (qs_ack | qs_err)  ms_reg <= 0;
+  else if (!(|ms_reg))       ms_reg <= ms_tmp;
 end
 
 assign ms = |ms_reg ? ms_reg : ms_tmp;

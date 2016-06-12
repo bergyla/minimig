@@ -33,6 +33,8 @@
 // 2010-04-13	- changed sector buffer size
 // 2010-08-10	- improved BSY signal handling
 
+`timescale 1ns/1ps
+
 module gayle
 (
 	input	clk,

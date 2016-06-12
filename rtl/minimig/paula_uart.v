@@ -1,5 +1,6 @@
 /* uart */
 
+`timescale 1ns/1ps
 
 module paula_uart (
   input  wire           clk,
