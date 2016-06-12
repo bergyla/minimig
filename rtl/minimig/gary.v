@@ -48,46 +48,46 @@
 
 module gary
 (
-	input 	[23:1] cpu_address_in,	//cpu address bus input
-	input	[20:1] dma_address_in,	//agnus dma memory address input
-	output	[18:1] ram_address_out, //ram address bus output
-	input	[15:0] cpu_data_out,
-	output	[15:0] cpu_data_in,
-	input	[15:0] custom_data_out,
-	output	[15:0] custom_data_in,
-	input	[15:0] ram_data_out,
-	output	[15:0] ram_data_in,
-  input a1k,
-	input	cpu_rd,					//cpu read
-	input	cpu_hwr,				//cpu high write
-	input	cpu_lwr,				//cpu low write
-  input cpu_hlt,
-	
-	input	ovl,					//overlay kickstart rom over chipram
-	input	dbr,					//Agns takes the bus
-	input	dbwe,					//Agnus does a write cycle
-	output	dbs,					//data bus slow down
-	output	xbs,					//cross bridge select, active dbr prevents access
-	
-	input	[3:0] memory_config,	//selected memory configuration
-  input ecs,            // ECS chipset enable
-	input	hdc_ena,				//enables hdd interface
-	
-	output	ram_rd,					//bus read
-	output	ram_hwr,				//bus high write
-	output	ram_lwr,				//bus low write
-	
-	output 	sel_reg,  				//select chip register bank
-	output 	reg [3:0] sel_chip, 	//select chip memory
-	output	reg [2:0] sel_slow,		//select slowfast memory ($C0000)
-	output 	reg sel_kick,		    //select kickstart rom
-  output  reg sel_kick1mb, // 1MB kickstart rom 'upper' half
-	output	sel_cia,				//select CIA space
-	output 	sel_cia_a,				//select cia A
-	output 	sel_cia_b, 				//select cia B
-	output	sel_rtc,				//select $DCxxxx
-	output	sel_ide,				//select $DAxxxx
-	output	sel_gayle				//select $DExxxx
+    input   [23:1] cpu_address_in,  //cpu address bus input
+    input   [20:1] dma_address_in,  //agnus dma memory address input
+    output  [18:1] ram_address_out, //ram address bus output
+    input   [15:0] cpu_data_out,
+    output  [15:0] cpu_data_in,
+    input   [15:0] custom_data_out,
+    output  [15:0] custom_data_in,
+    input   [15:0] ram_data_out,
+    output  [15:0] ram_data_in,
+    input   a1k,
+    input   cpu_rd,                 //cpu read
+    input   cpu_hwr,                //cpu high write
+    input   cpu_lwr,                //cpu low write
+    input   cpu_hlt,
+
+    input   ovl,                    //overlay kickstart rom over chipram
+    input   dbr,                    //Agns takes the bus
+    input   dbwe,                   //Agnus does a write cycle
+    output  dbs,                    //data bus slow down
+    output  xbs,                    //cross bridge select, active dbr prevents access
+
+    input   [3:0] memory_config,    //selected memory configuration
+    input   ecs,                    // ECS chipset enable
+    input   hdc_ena,                //enables hdd interface
+
+    output  ram_rd,                 //bus read
+    output  ram_hwr,                //bus high write
+    output  ram_lwr,                //bus low write
+
+    output  sel_reg,                //select chip register bank
+    output  reg [3:0] sel_chip,     //select chip memory
+    output  reg [2:0] sel_slow,     //select slowfast memory ($C0000)
+    output  reg sel_kick,           //select kickstart rom
+    output  reg sel_kick1mb,        // 1MB kickstart rom 'upper' half
+    output  sel_cia,                //select CIA space
+    output  sel_cia_a,              //select cia A
+    output  sel_cia_b,              //select cia B
+    output  sel_rtc,                //select $DCxxxx
+    output  sel_ide,                //select $DAxxxx
+    output  sel_gayle               //select $DExxxx
 );
 
 wire	[2:0] t_sel_slow;

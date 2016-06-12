@@ -204,7 +204,7 @@ architecture logic of TG68KdotC_Kernel is
   signal set_V_Flag             : bit;
   signal set_vectoraddr         : bit;
   signal writeSR                : bit;
-  signal trap_berr              : bit;
+  signal trap_berr              : bit := '0';
   signal trap_illegal           : bit;
   signal trap_addr_error        : bit;
   signal trap_priv              : bit;

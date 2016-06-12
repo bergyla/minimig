@@ -30,49 +30,47 @@
 
 module minimig_m68k_bridge
 (
-	input	clk,					// 28 MHz system clock
-  input clk7_en,
-  input clk7n_en,
-  input blk,
-	input	c1,						// clock enable signal
-	input	c3,						// clock enable signal
-	input	[9:0] eclk,				// ECLK enable signal
-	input	vpa,					// valid peripheral address (CIAs)
-	input	dbr, 					// data bus request, Gary keeps CPU off the bus (custom chips transfer data)
-	input	dbs,					// data bus slowdown (access to chip ram or custom registers)
-	input	xbs,					// cross bridge access (active dbr holds off CPU access)
-  input nrdy,         // target device is not ready
-	output	bls,					// blitter slowdown, tells the blitter that CPU wants the bus
-	input	cck,					// colour clock enable, active when dma can access the memory bus
-	input	cpu_speed,				// CPU speed select request
-  input [3:0] memory_config,  // system memory config
-	output	reg turbo,				// indicates current CPU speed mode
-	input	_as,					// m68k adress strobe
-	input	_lds,					// m68k lower data strobe d0-d7
-	input	_uds,					// m68k upper data strobe d8-d15
-	input	r_w,					// m68k read / write
-	output	 _dtack,				// m68k data acknowledge to cpu
-	output	rd,						// bus read 
-	output	hwr,					// bus high write
-	output	lwr,					// bus low write
-	input	[23:1] address,			// external cpu address bus
-//	output	reg [23:1] address_out,	// internal cpu address bus output
-	output	[23:1] address_out,	// internal cpu address bus output
-  output  [15:0] data,      // external cpu data bus
-  input [15:0] cpudatain,
-//  output  reg [15:0] data_out,  // internal data bus output
-  output  [15:0] data_out,  // internal data bus output
-  input [15:0] data_in,      // internal data bus input
-  // UserIO interface
-  input _cpu_reset,
-  input cpu_halt,
-  input host_cs,
-  input [23:1] host_adr,
-  input host_we,
-  input [1:0] host_bs,
-  input [15:0] host_wdat,
-  output [15:0] host_rdat,
-  output host_ack
+    input   clk,                    // 28 MHz system clock
+    input   clk7_en,
+    input   clk7n_en,
+    input   blk,
+    input   c1,                     // clock enable signal
+    input   c3,                     // clock enable signal
+    input   [9:0] eclk,             // ECLK enable signal
+    input   vpa,                    // valid peripheral address (CIAs)
+    input   dbr,                    // data bus request, Gary keeps CPU off the bus (custom chips transfer data)
+    input   dbs,                    // data bus slowdown (access to chip ram or custom registers)
+    input   xbs,                    // cross bridge access (active dbr holds off CPU access)
+    input   nrdy,                   // target device is not ready
+    output  bls,                    // blitter slowdown, tells the blitter that CPU wants the bus
+    input   cck,                    // colour clock enable, active when dma can access the memory bus
+    input   cpu_speed,              // CPU speed select request
+    //input   [3:0] memory_config,    // system memory config
+    output  reg turbo,              // indicates current CPU speed mode
+    input   _as,                    // m68k adress strobe
+    input   _lds,                   // m68k lower data strobe d0-d7
+    input   _uds,                   // m68k upper data strobe d8-d15
+    input   r_w,                    // m68k read / write
+    output  _dtack,                 // m68k data acknowledge to cpu
+    output  rd,                     // bus read 
+    output  hwr,                    // bus high write
+    output  lwr,                    // bus low write
+    input   [23:1] address,         // external cpu address bus
+    output  [23:1] address_out,     // internal cpu address bus output
+    output  [15:0] data,            // external cpu data bus
+    input   [15:0] cpudatain,
+    output  [15:0] data_out,        // internal data bus output
+    input   [15:0] data_in,         // internal data bus input
+    // UserIO interface
+    input   _cpu_reset,
+    input   cpu_halt,
+    input   host_cs,
+    input   [23:1] host_adr,
+    input   host_we,
+    input   [1:0] host_bs,
+    input   [15:0] host_wdat,
+    output  [15:0] host_rdat,
+    output  host_ack
 );
 
 

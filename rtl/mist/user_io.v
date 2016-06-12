@@ -2,59 +2,59 @@
 `timescale 1ns/1ps
 
 module user_io( 
-	   input      SPI_CLK,
-	   input      SPI_SS_IO,
-	   output     reg SPI_MISO,
-	   input      SPI_MOSI,
-	   input [7:0] CORE_TYPE,
+    input   SPI_CLK,
+    input   SPI_SS_IO,
+    output  reg SPI_MISO,
+    input   SPI_MOSI,
+    input   [7:0] CORE_TYPE,
 
-		output [7:0] JOY0,
-		output [7:0] JOY1,
+    output  [7:0] JOY0,
+    output  [7:0] JOY1,
 
-		output [2:0] MOUSE_BUTTONS,
-		output       KBD_MOUSE_STROBE,
-    output       KMS_LEVEL,
-		output [1:0] KBD_MOUSE_TYPE,
-		output [7:0] KBD_MOUSE_DATA,
+    output  [2:0] MOUSE_BUTTONS,
+    output  KBD_MOUSE_STROBE,
+    output  KMS_LEVEL,
+    output  [1:0] KBD_MOUSE_TYPE,
+    output  [7:0] KBD_MOUSE_DATA,
 
-		output [1:0] BUTTONS,
-		output [1:0] SWITCHES,
-    output [3:0] CONF
-	   );
+    output  [1:0] BUTTONS,
+    output  [1:0] SWITCHES,
+    output  [3:0] CONF
+);
 
-   reg [6:0]         sbuf;
-   reg [7:0]         cmd;
-   reg [5:0] 	      cnt;
-   reg [7:0]         joystick0;
-   reg [7:0]         joystick1;
-   reg [7:0] 	      but_sw;
+    reg [6:0]         sbuf;
+    reg [7:0]         cmd;
+    reg [5:0] 	      cnt;
+    reg [7:0]         joystick0;
+    reg [7:0]         joystick1;
+    reg [7:0] 	      but_sw;
 
-	 reg               kbd_mouse_strobe;
-   reg               kbd_mouse_strobe_level;
-   reg [1:0]         kbd_mouse_type;
-   reg [7:0]         kbd_mouse_data;
-   reg [2:0]         mouse_buttons;
+    reg               kbd_mouse_strobe;
+    reg               kbd_mouse_strobe_level;
+    reg [1:0]         kbd_mouse_type;
+    reg [7:0]         kbd_mouse_data;
+    reg [2:0]         mouse_buttons;
 
-	assign JOY0 = joystick0;
-	assign JOY1 = joystick1;
+    assign JOY0 = joystick0;
+    assign JOY1 = joystick1;
 
-	assign KBD_MOUSE_DATA = kbd_mouse_data; // 8 bit movement data
-	assign KBD_MOUSE_TYPE = kbd_mouse_type; // 0=mouse x,1=mouse y, 2=keycode, 3=OSD kbd
-	assign KBD_MOUSE_STROBE = kbd_mouse_strobe; // strobe, data valid on rising edge
-  assign KMS_LEVEL = kbd_mouse_strobe_level; // level change of kbd_mouse_strobe
-	assign MOUSE_BUTTONS = mouse_buttons; // state of the two mouse buttons
+    assign KBD_MOUSE_DATA = kbd_mouse_data; // 8 bit movement data
+    assign KBD_MOUSE_TYPE = kbd_mouse_type; // 0=mouse x,1=mouse y, 2=keycode, 3=OSD kbd
+    assign KBD_MOUSE_STROBE = kbd_mouse_strobe; // strobe, data valid on rising edge
+    assign KMS_LEVEL = kbd_mouse_strobe_level; // level change of kbd_mouse_strobe
+    assign MOUSE_BUTTONS = mouse_buttons; // state of the two mouse buttons
 
-	assign BUTTONS  = but_sw[1:0];
-	assign SWITCHES = but_sw[3:2];
-  assign CONF     = but_sw[7:4];
-   
-   always@(negedge SPI_CLK) begin
+    assign BUTTONS  = but_sw[1:0];
+    assign SWITCHES = but_sw[3:2];
+    assign CONF     = but_sw[7:4];
+
+    always@(negedge SPI_CLK) begin
       if(cnt < 8)
-		  SPI_MISO <= CORE_TYPE[7-cnt];
-	end
+          SPI_MISO <= CORE_TYPE[7-cnt];
+    end
 		
    always@(posedge SPI_CLK) begin
-    kbd_mouse_strobe_level <= #1 kbd_mouse_strobe_level ^ kbd_mouse_strobe;
+    kbd_mouse_strobe_level <= kbd_mouse_strobe_level ^ kbd_mouse_strobe;
     
 		if(SPI_SS_IO == 1) begin
         cnt <= 0;

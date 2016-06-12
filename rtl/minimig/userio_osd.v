@@ -4,47 +4,47 @@
 
 module userio_osd
 (
-	input 	clk,		    	// 28MHz clock
-	input	clk7_en,
-  input clk7n_en,
-	input	reset,				//reset
-	input	c1,					//clk28m domain clock enable
-	input	c3,
-	input	sol,				//start of video line
-	input	sof,				//start of video frame 
-  input varbeamen,
-	input	[7:0] osd_ctrl,		//keycode for OSD control (Amiga keyboard codes + additional keys coded as values > 80h)
-	input	_scs,				//SPI enable
-	input	sdi,		  		//SPI data in
-	output	sdo,	 			//SPI data out
-	input	sck,	  			//SPI clock
-	output	osd_blank,			//osd overlay, normal video blank output
-	output	osd_pixel,			//osd video pixel
-	output	reg osd_enable = 0,			//osd enable
-  output  reg key_disable = 0,      // keyboard disable
-	output	reg [1:0] lr_filter = 0,
-	output	reg [1:0] hr_filter = 0,
-	output	reg [6:0] memory_config = 7'b0_00_01_01,
-	output	reg [4:0] chipset_config = 0,
-	output	reg [3:0] floppy_config = 0,
-	output	reg [1:0] scanline = 0,
-  output  reg [1:0] dither = 0,
-	output	reg	[2:0] ide_config = 0,		//enable hard disk support
-  output  reg [3:0] cpu_config = 0,
-  output  reg [1:0] autofire_config = 0,
-  output  reg       cd32pad = 0,
-	output	reg usrrst=1'b0,
-  output reg cpurst=1'b1,
-  output reg cpuhlt=1'b1,
-  output wire fifo_full,
-  // host
-  output reg            host_cs,
-  output wire [ 24-1:0] host_adr,
-  output reg            host_we,
-  output reg  [  2-1:0] host_bs,
-  output wire [ 16-1:0] host_wdat,
-  input  wire [ 16-1:0] host_rdat,
-  input  wire           host_ack
+    input   clk,		    	// 28MHz clock
+    input   clk7_en,
+    input   clk7n_en,
+    input   reset,				//reset
+    input   c1,					//clk28m domain clock enable
+    input   c3,
+    input   sol,				//start of video line
+    input   sof,				//start of video frame 
+    input   varbeamen,
+    input   [7:0] osd_ctrl,		//keycode for OSD control (Amiga keyboard codes + additional keys coded as values > 80h)
+    input   _scs,				//SPI enable
+    input   sdi,		  		//SPI data in
+    output  sdo,	 			//SPI data out
+    input   sck,	  			//SPI clock
+    output  osd_blank,			//osd overlay, normal video blank output
+    output  osd_pixel,			//osd video pixel
+    output  reg osd_enable = 0,			//osd enable
+    output  reg key_disable = 0,      // keyboard disable
+    output  reg [1:0] lr_filter = 0,
+    output  reg [1:0] hr_filter = 0,
+    output  reg [6:0] memory_config = 7'b0_00_01_01,
+    output  reg [4:0] chipset_config = 0,
+    output  reg [3:0] floppy_config = 0,
+    output  reg [1:0] scanline = 0,
+    output  reg [1:0] dither = 0,
+    output  reg	[2:0] ide_config = 0,		//enable hard disk support
+    output  reg [3:0] cpu_config = 0,
+    output  reg [1:0] autofire_config = 0,
+    output  reg       cd32pad = 0,
+    output  reg usrrst=1'b0,
+    output  reg cpurst=1'b1,
+    output  reg cpuhlt=1'b1,
+    output  fifo_full,
+    // host
+    output  reg host_cs,
+    output  [ 24-1:0] host_adr,
+    output  reg host_we,
+    output  reg [  2-1:0] host_bs,
+    output  [ 16-1:0] host_wdat,
+    input   [ 16-1:0] host_rdat,
+    input   host_ack
 );
 
 
@@ -88,7 +88,7 @@ always @(posedge clk)
 always @(posedge clk) begin
   if (clk7_en) begin
     cpu_config[3:2] <= t_cpu_config[3:2];
-    memory_config[6] <= #1 t_memory_config[6];
+    memory_config[6] <= t_memory_config[6];
   end
 end
 
@@ -211,23 +211,23 @@ wire [7:0] rddat;
 //instantiate spi interface
 userio_osd_spi spi0
 (
-	.clk(clk),
-  .clk7_en(clk7_en),
-  .clk7n_en(clk7n_en),
-	._scs(_scs),
-	.sdi(sdi),
-	.sdo(sdo),
-	.sck(sck),
-	.in(rddat),
-	.out(wrdat),
-	.rx(rx),
-	.cmd(cmd),
-  .vld(vld)
+    .clk            (clk),
+    .clk7_en        (clk7_en),
+    .clk7n_en       (clk7n_en),
+    ._scs           (_scs),
+    .sdi            (sdi),
+    .sdo            (sdo),
+    .sck            (sck),
+    .in             (rddat),
+    .out            (wrdat),
+    .rx             (rx),
+    .cmd            (cmd),
+    .vld            (vld)
 );
 
 always @ (posedge clk) begin
   if (clk7_en) begin
-    vld_d <= #1 vld;
+    vld_d <= vld;
   end
 end
 assign spi_invalidate = ~vld && vld_d;
@@ -291,8 +291,8 @@ localparam [5:0]
 reg [5:0] cmd_dat = 6'h00;
 always @ (posedge clk) begin
   if (clk7_en) begin
-    if (rx && cmd) cmd_dat <= #1 wrdat[7:2];
-    //else if (spi_invalidate) cmd_dat <= #1 8'h00; // TODO!
+    if (rx && cmd) cmd_dat <= wrdat[7:2];
+    //else if (spi_invalidate) cmd_dat <= 8'h00; // TODO!
   end
 end
 
@@ -302,9 +302,9 @@ reg [2:0] dat_cnt = 3'h0;
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (rx && cmd)
-      dat_cnt <= #1 3'h0;
+      dat_cnt <= 3'h0;
     else if (rx && (dat_cnt != 4))
-      dat_cnt <= #1 dat_cnt + 3'h1;
+      dat_cnt <= dat_cnt + 3'h1;
   end
 end
 
@@ -392,18 +392,18 @@ end
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (rx && !cmd) begin
-      if (spi_reset_ctrl_sel)   begin if (dat_cnt == 0) {cpuhlt, cpurst, usrrst} <= #1 wrdat[2:0]; end
+      if (spi_reset_ctrl_sel)   begin if (dat_cnt == 0) {cpuhlt, cpurst, usrrst} <= wrdat[2:0]; end
   //    if (spi_clock_ctrl_sel)   begin if (dat_cnt == 0) end
-      if (spi_osd_ctrl_sel)     begin if (dat_cnt == 0) {key_disable, osd_enable} <= #1 wrdat[1:0]; end
-      if (spi_chip_cfg_sel)     begin if (dat_cnt == 0) t_chipset_config <= #1 wrdat[4:0]; end
-      if (spi_cpu_cfg_sel)      begin if (dat_cnt == 0) t_cpu_config <= #1 wrdat[3:0]; end
-      if (spi_memory_cfg_sel)   begin if (dat_cnt == 0) t_memory_config <= #1 wrdat[6:0]; end
-      if (spi_video_cfg_sel)    begin if (dat_cnt == 0) {dither, hr_filter, lr_filter, scanline} <= #1 wrdat[7:0]; end
-      if (spi_floppy_cfg_sel)   begin if (dat_cnt == 0) floppy_config <= #1 wrdat[3:0]; end
-      if (spi_harddisk_cfg_sel) begin if (dat_cnt == 0) t_ide_config <= #1 wrdat[2:0]; end 
-      //if (spi_joystick_cfg_sel) begin if (dat_cnt == 0) {cd32pad, autofire_config} <= #1 wrdat[2:0]; end
-      if (spi_joystick_cfg_sel) begin if (dat_cnt == 0) {autofire_config} <= #1 wrdat[1:0]; end
-  //    if (spi_osd_buffer_sel)   begin if (dat_cnt == 3) highlight <= #1 wrdat[3:0]; end
+      if (spi_osd_ctrl_sel)     begin if (dat_cnt == 0) {key_disable, osd_enable} <= wrdat[1:0]; end
+      if (spi_chip_cfg_sel)     begin if (dat_cnt == 0) t_chipset_config <= wrdat[4:0]; end
+      if (spi_cpu_cfg_sel)      begin if (dat_cnt == 0) t_cpu_config <= wrdat[3:0]; end
+      if (spi_memory_cfg_sel)   begin if (dat_cnt == 0) t_memory_config <= wrdat[6:0]; end
+      if (spi_video_cfg_sel)    begin if (dat_cnt == 0) {dither, hr_filter, lr_filter, scanline} <= wrdat[7:0]; end
+      if (spi_floppy_cfg_sel)   begin if (dat_cnt == 0) floppy_config <= wrdat[3:0]; end
+      if (spi_harddisk_cfg_sel) begin if (dat_cnt == 0) t_ide_config <= wrdat[2:0]; end 
+      //if (spi_joystick_cfg_sel) begin if (dat_cnt == 0) {cd32pad, autofire_config} <= wrdat[2:0]; end
+      if (spi_joystick_cfg_sel) begin if (dat_cnt == 0) {autofire_config} <= wrdat[1:0]; end
+  //    if (spi_osd_buffer_sel)   begin if (dat_cnt == 3) highlight <= wrdat[3:0]; end
   //    if (spi_mem_write_sel)    begin if (dat_cnt == 0) end
   //    if (spi_version_sel)      begin if (dat_cnt == 0) end
   //    if (spi_mem_read_sel)     begin if (dat_cnt == 0) end
@@ -422,9 +422,9 @@ reg wr_en_r = 1'b0;
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (rx && (dat_cnt == 3) && spi_osd_buffer_sel)
-      wr_en_r <= #1 1'b1;
+      wr_en_r <= 1'b1;
     else if (rx && cmd)
-      wr_en_r <= #1 1'b0;
+      wr_en_r <= 1'b0;
   end
 end
 
@@ -446,9 +446,9 @@ end
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (~osd_enable)
-      highlight <= #1 4'b1000;
+      highlight <= 4'b1000;
     else if (rx && !cmd && spi_osd_buffer_sel && (dat_cnt == 3) && wrdat[4])
-      highlight <= #1 wrdat[3:0];
+      highlight <= wrdat[3:0];
   end
 end
 
@@ -458,11 +458,11 @@ reg mem_toggle = 1'b0, mem_toggle_d = 1'b0;
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (cmd) begin
-      mem_toggle <= #1 1'b0;
-      mem_toggle_d <= #1 1'b0;
+      mem_toggle <= 1'b0;
+      mem_toggle_d <= 1'b0;
     end else if (rx && !cmd && spi_mem_write_sel && (dat_cnt == 4)) begin
-      mem_toggle <= #1 ~mem_toggle;
-      mem_toggle_d <= #1 mem_toggle;
+      mem_toggle <= ~mem_toggle;
+      mem_toggle_d <= mem_toggle;
     end
   end
 end
@@ -470,7 +470,7 @@ end
 reg  [ 8-1:0] mem_dat_r;
 always @ (posedge clk) begin
   if (clk7_en) begin
-    if (rx && !cmd && spi_mem_write_sel && !mem_toggle) mem_dat_r <= #1 wrdat[7:0];
+    if (rx && !cmd && spi_mem_write_sel && !mem_toggle) mem_dat_r <= wrdat[7:0];
   end
 end
 
@@ -501,51 +501,51 @@ localparam ST_WR_WAIT = 2'b11;
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (reset || cmd)
-      wr_state <= #1 ST_WR_IDLE;
+      wr_state <= ST_WR_IDLE;
     else begin
       case (wr_state)
         ST_WR_IDLE: begin
-          wr_fifo_rd_en <= #1 1'b0;
-          host_cs <= #1 1'b0;
-          host_we <= #1 1'b0;
-          host_bs <= #1 2'b00;
-          wr_fifo_rd_en <= #1 1'b0;
-          if (!wr_fifo_empty && !wr_fifo_rd_en) wr_state <= #1 ST_WR_WRITE;
+          wr_fifo_rd_en <= 1'b0;
+          host_cs <= 1'b0;
+          host_we <= 1'b0;
+          host_bs <= 2'b00;
+          wr_fifo_rd_en <= 1'b0;
+          if (!wr_fifo_empty && !wr_fifo_rd_en) wr_state <= ST_WR_WRITE;
         end
         ST_WR_WRITE: begin
-          host_cs <= #1 1'b1;
-          host_we <= #1 1'b1;
-          host_bs <= #1 2'b11;
+          host_cs <= 1'b1;
+          host_we <= 1'b1;
+          host_bs <= 2'b11;
           if (host_ack) begin
-            wr_fifo_rd_en <= #1 1'b1;
-            wr_state <= #1 ST_WR_IDLE;
+            wr_fifo_rd_en <= 1'b1;
+            wr_state <= ST_WR_IDLE;
           end
         end
         ST_WR_WAIT: begin
-          host_cs <= #1 1'b0;
-          host_we <= #1 1'b0;
-          host_bs <= #1 2'b00;
-          wr_state <= #1 ST_WR_IDLE;
-          wr_fifo_rd_en <= #1 1'b0;
+          host_cs <= 1'b0;
+          host_we <= 1'b0;
+          host_bs <= 2'b00;
+          wr_state <= ST_WR_IDLE;
+          wr_fifo_rd_en <= 1'b0;
         end
       endcase
     end
   end
 end
 
-reg  [ 8-1:0] mem_page;
-reg  [24-1:0] mem_cnt;
+reg  [ 8-1:0] mem_page = 8'b0;
+reg  [24-1:0] mem_cnt = 24'b0;
 wire [32-1:0] mem_adr;
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (rx && !cmd && spi_mem_write_sel) begin
       case (dat_cnt)
-        0 : mem_cnt [ 7: 0] <= #1 wrdat[7:0];
-        1 : mem_cnt [15: 8] <= #1 wrdat[7:0];
-        2 : mem_cnt [23:16] <= #1 wrdat[7:0];
-        3 : mem_page[ 7: 0] <= #1 wrdat[7:0];
+        0 : mem_cnt [ 7: 0] <= wrdat[7:0];
+        1 : mem_cnt [15: 8] <= wrdat[7:0];
+        2 : mem_cnt [23:16] <= wrdat[7:0];
+        3 : mem_page[ 7: 0] <= wrdat[7:0];
       endcase
-    end else if (wr_fifo_rd_en) mem_cnt [23:0] <= #1 mem_cnt + 24'd2;
+    end else if (wr_fifo_rd_en) mem_cnt [23:0] <= mem_cnt + 24'd2;
   end
 end
 
@@ -572,4 +572,3 @@ assign rddat =  (spi_version_sel)  ? rtl_ver :
 
 
 endmodule
-

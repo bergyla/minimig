@@ -55,7 +55,7 @@ entity TG68K is
     cpu           : in      std_logic_vector(1 downto 0);
     fastramcfg    : in      std_logic_vector(2 downto 0);
     eth_en        : in      std_logic:='0';
-    sel_eth       : buffer  std_logic;
+    sel_eth       : buffer  std_logic:='Z';     -- ABER not implemented right now
     frometh       : in      std_logic_vector(15 downto 0);
     ethready      : in      std_logic;
     turbochipram  : in      std_logic;

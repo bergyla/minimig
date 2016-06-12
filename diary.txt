@@ -1,1 +1,4 @@
 ﻿20160611 - ABER Entferne todo und readme.md da diese Ziele bucht vorrangige Aufgabe diese Forks
+20160612 - ABER - Codecleanup in diversen Coreteilen, u.a. in Mimimig-Cores (Whitespace Beatifieing)
+20160612 - ABER - Finding: mist/user_io.v Clockdomaincrossing in later modules SPI -> (Amiga) CLK will fail when SPI_CLK will rise against CLK/2 and will definitly fail beyound...
+           To Be fixed
