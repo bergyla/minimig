@@ -111,7 +111,7 @@ DOUT   -------------------------------------------------<___________________>---
 */
 
 wire	doe;					// data buffer output enable
-reg		[15:0] ldata_in;		// latched data_in
+reg		[15:0] ldata_in = 16'b0;		// latched data_in
 wire	enable;					// enable
 reg		lr_w,l_as,l_dtack;  	// synchronised inputs
 reg		l_uds,l_lds;

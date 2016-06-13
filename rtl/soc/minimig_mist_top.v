@@ -347,7 +347,7 @@ sdram_ctrl sdram (
   .ena7WRreg    (tg68_ena7WR      )
 );
 
-assign tg68_cout = 16'bz;          // some kind of bus Termination 
+assign tg68_cout = 16'bz;          // ABER - some kind of bus Termination 
 
 // multiplex spi_do, drive it from user_io if that's selected, drive
 // it from minimig if it's selected and leave it open else (also

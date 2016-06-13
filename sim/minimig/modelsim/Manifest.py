@@ -3,7 +3,7 @@ sim_tool = "modelsim"
 top_module = "soc_tb"
 
 sim_post_cmd = "vsim -L altera_mf_ver -novopt -do vsim.do -i soc_tb"
-#sim_post_cmd = "vsim -L altera_mf_ver +acc=v -do vsim.do -i soc_tb"
+#sim_post_cmd = "vsim -L altera_mf_ver -voptargs=+acc=v -do vsim.do -i soc_tb"
 
 files = [
    #"../../../rtl/soc/minimig_de1_top.v",
@@ -21,13 +21,14 @@ modules = {
     
     "../../../rtl/minimig",
     "../../../rtl/audio",
-    "../../../rtl/or1200",
+    #"../../../rtl/or1200",
     "../../../rtl/sdram",
     
     "../../../rtl/tg68k",
     "../../../lib/models",
     "../../../lib/io",
-    "../../../bench/minimig",    
+    "../../../bench/minimig", 
+    "../../../lib/spi",
     ],
 }
 

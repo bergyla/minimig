@@ -232,24 +232,6 @@ always @ (posedge clk) begin
 end
 assign spi_invalidate = ~vld && vld_d;
 
-// !!! OLD !!! OSD SPI commands:
- // 8'b00000000  NOP
- // 8'b001H0NNN  write data to osd buffer line <NNN> (H - highlight)
- // 8'b0100--KE  enable OSD display (E) and disable Amiga keyboard (K)
- // 8'b1000000B  reset Minimig (B - reset to bootloader)
- // 8'b100001AA  set autofire rate
- // 8'b1001---S  set cpu speed
- // 8'b1010--SS  set scanline mode
- // 8'b1011-SMC  set hard disk config (C - enable HDC, M - enable Master HDD, S - enable Slave HDD)
- // 8'b1100FF-S  set floppy speed and drive number
- // 8'b1101-EAN  set chipset features (N - ntsc, A - OCS A1000, E - ECS)
- // 8'b1110HHLL  set interpolation filter (H - Hires, L - Lores)
- // 8'b111100CC  set memory configuration (S - Slow, C - Chip, F - Fast)
- // 8'b111101SS  set memory configuration (S - Slow, C - Chip, F - Fast)
- // 8'b111110FF  set memory configuration (S - Slow, C - Chip, F - Fast)
- // 8'b111111TT  set cpu type TT=00-68000, 01-68010, 11-68020
-
-
 // OSD SPI commands
 //
 // 8'b0_000_0000 NOP
@@ -467,7 +449,7 @@ always @ (posedge clk) begin
   end
 end
 
-reg  [ 8-1:0] mem_dat_r;
+reg  [ 8-1:0] mem_dat_r = 8'b0;
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (rx && !cmd && spi_mem_write_sel && !mem_toggle) mem_dat_r <= wrdat[7:0];

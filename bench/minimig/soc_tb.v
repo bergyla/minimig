@@ -13,6 +13,7 @@
 module soc_tb();
 
 `include "../../../rtl/parameter.vh"
+`include "spi_commands.vh"
 
 ////////////////////////////////////////
 // defines                            //
@@ -222,94 +223,25 @@ initial begin
   repeat (10) @ (posedge CLOCK_50);
   #1;
 
-  // disable ctrl CPU
-//  force soc_top.ctrl_top.ctrl_cpu.dcpu_cs  = 1'b0;
-//  force soc_top.ctrl_top.ctrl_cpu.icpu_cs  = 1'b0;
-//  force soc_top.ctrl_top.ctrl_cpu.dcpu_ack = 1'b0;
-//  force soc_top.ctrl_top.ctrl_cpu.icpu_ack = 1'b0;
-  // force reset TG68
-  force soc_top.tg68_rst = 1'b0;
+    // disable ctrl CPU
+    //  force soc_top.ctrl_top.ctrl_cpu.dcpu_cs  = 1'b0;
+    //  force soc_top.ctrl_top.ctrl_cpu.icpu_cs  = 1'b0;
+    //  force soc_top.ctrl_top.ctrl_cpu.dcpu_ack = 1'b0;
+    //  force soc_top.ctrl_top.ctrl_cpu.icpu_ack = 1'b0;
+    // force reset TG68
+//  force soc_top.tg68_rst = 1'b0;
 
-  // wait for reset
-  //while (!soc_top.ctrl_top.rst) @ (posedge soc_top.ctrl_top.clk); #1;
-//  wait (!soc_top.ctrl_top.ctrl_regs.rst);
+    // wait for reset
+    //while (!soc_top.ctrl_top.rst) @ (posedge soc_top.ctrl_top.clk); #1;
+    //  wait (!soc_top.ctrl_top.ctrl_regs.rst);
 
-  // force unreset minimig
-  force soc_top.minimig.reset = 1'b0;
+    // force unreset minimig
+//  force soc_top.minimig.reset = 1'b0;
 
-  force soc_top.tg68_rst = 1'b1;
-  repeat(10) @ (posedge soc_top.clk_7);
-  force soc_top.tg68_rst = 1'b0;
-  repeat(10) @ (posedge soc_top.clk_7);
-
-  // try qmem bridge
-  ctrl_bridge_cycle(32'h00180000, 1'b1, 4'hf, 32'h01234567,dummy);
-  ctrl_bridge_cycle(32'h00180000, 1'b1, 4'hf, 32'hdeadbeef,dummy);
-//  repeat(10) @ (posedge soc_top.ctrl_top.clk);
-
-  // write to OSD SPI slave
-  // enable OSD (SPI chip select)
-  ctrl_regs_cycle(32'h00800020, 1'b1, 4'hf, 32'h00000044,dummy);
-  // send write command
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h0000001c,dummy);
-  // send address
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h00000000,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h00000000,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h00000000,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h00000000,dummy);
-  // send data
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h000000aa,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h000000bb,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h000000cc,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h000000dd,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h000000ee,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h000000ff,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h00000001,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h00000023,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h00000045,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h00000067,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h00000089,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h000000ab,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h000000cd,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h000000ef,dummy);
-//  repeat (10) @ (posedge soc_top.ctrl_top.clk);
-
-  // disable OSD (SPI chip select)
-  ctrl_regs_cycle(32'h00800020, 1'b1, 4'hf, 32'h00000040,dummy);
-//  repeat (10) @ (posedge soc_top.ctrl_top.clk);
-
-  // write to OSD SPI slave
-  // enable OSD (SPI chip select)
-  ctrl_regs_cycle(32'h00800020, 1'b1, 4'hf, 32'h00000044,dummy);
-  // send write command
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h0000001c,dummy);
-  // send address
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h00000080,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h000000f0,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h000000df,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h00000000,dummy);
-  // send data
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h000000aa,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h000000bb,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h000000cc,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h000000dd,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h000000ee,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h000000ff,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h00000001,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h00000023,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h00000045,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h00000067,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h00000089,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h000000ab,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h000000cd,dummy);
-  ctrl_regs_cycle(32'h00800024, 1'b1, 4'hf, 32'h000000ef,dummy);
-//  repeat (10) @ (posedge soc_top.ctrl_top.clk);
-
-
-  // readback
-  ctrl_bridge_cycle(32'h00180000, 1'b0, 4'hf, 32'h00000000, datr);
-//  repeat (100) @ (posedge soc_top.clk_7);
-
+//  force soc_top.tg68_rst = 1'b1;
+//  repeat(10) @ (posedge soc_top.clk_7);
+//  force soc_top.tg68_rst = 1'b0;
+//  repeat(10) @ (posedge soc_top.clk_7);
 
 /*
   // try a TG68 cycle
@@ -361,8 +293,25 @@ initial begin
   // wait for three frames
   //$display("BENCH : %t : waiting for frames ...", $time);
   //wait (`VGA_MON_F_CNT == 7'd3);
+  
   #100;
 
+    $display("******************************************* : %t : Ausgabe 1", $time);
+    //spi_bfm(4'b0010,{`SPI_VERSION,24'h000000});
+    //spi_bfm(4'b0010,32'h00000000);
+    spi_bfm(4'b0010,{`SPI_RESET_CONTR,24'h010000});     // usrrst
+    spi_bfm(4'b0010,{`SPI_RESET_CONTR,24'h000000});
+    spi_bfm(4'b0010,{`SPI_RESET_CONTR,24'h020000});     // cpurst
+    spi_bfm(4'b0010,{`SPI_RESET_CONTR,24'h000000});
+    spi_bfm(4'b0010,{`SPI_RESET_CONTR,24'h040000});     // cpuhlt
+    spi_bfm(4'b0010,{`SPI_RESET_CONTR,24'h000000});
+    //spi_bfm(4'b0010,32'h00000000);
+    //spi_bfm(4'b0010,32'h88000000);
+    //spi_bfm(4'b0010,32'h00000000);
+    //spi_bfm(4'b0010,32'h88000000);
+    
+  
+    repeat (10) @ (posedge CLOCK_50);
   // display result
   if (ERR) $display("BENCH : %t : vga_dma test FAILED - there were errors!", $time);
   else     $display("BENCH : %t : vga_dma test PASSED - no errors!", $time);
@@ -431,7 +380,36 @@ begin
 end
 endtask
 
+// ABER
 
+reg sim_spi_clk;
+
+initial begin
+  sim_spi_clk  = 1'b1;
+  #2;
+  forever #25 sim_spi_clk = ~sim_spi_clk;
+end
+
+reg [31:0] data_i;
+wire [31:0] data_o;
+reg send = 1'b0;
+reg [3:0] cs_i;
+wire ready;
+
+task spi_bfm;
+    input [3:0] channel;
+    input [31:0] data;
+    begin
+        data_i <= data;
+        cs_i <= channel;
+        @(posedge sim_spi_clk);
+        send <= 1'b1;
+        @(posedge sim_spi_clk);
+        send <= 1'b0;
+        @(posedge ready);
+        repeat (3) @(posedge sim_spi_clk);   
+    end
+endtask
 
 ////////////////////////////////////////
 // soc top module                     //
@@ -649,9 +627,19 @@ sd_card #(
   .miso         (SD_DAT     )
 );
 
+sim_spi_master sim_spi_master (
+    .clk        (sim_spi_clk),
+    .data_i     (data_i),
+    .data_o     (data_o),
+    .send       (send),
+    .cs_i       (cs_i),
+    ._cs_o      ({CONF_DATA0,SPI_SS4,SPI_SS3,SPI_SS2}),
+    .mosi_o     (SPI_DI),
+    .sclk_o     (SPI_SCK),
+    .miso_i     (SPI_DO),
+    .ready      (ready)
+);
 
-/* flash model */
-
-
+  
 endmodule
 
