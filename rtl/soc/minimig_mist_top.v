@@ -91,15 +91,15 @@ wire           ram_status;
 wire           reg_status;
 
 // tg68
-wire           tg68_rst;
+wire           _tg68_rst;
 wire [ 16-1:0] tg68_dat_in;
 wire [ 16-1:0] tg68_dat_out;
 wire [ 32-1:0] tg68_adr;
 wire [  3-1:0] tg68_IPL;
-wire           tg68_dtack;
+wire           _tg68_dtack;
 wire           tg68_as;
-wire           tg68_uds;
-wire           tg68_lds;
+wire           _tg68_uds;
+wire           _tg68_lds;
 wire           tg68_rw;
 wire           tg68_ena7RD;
 wire           tg68_ena7WR;
@@ -259,18 +259,18 @@ amiga_clk amiga_clk (
 
 TG68K tg68k (
   .clk          (clk_114          ),
-  .reset        (tg68_rst         ),
+  .nreset       (_tg68_rst        ),
   .clkena_in    (1'b1             ),
   .IPL          (tg68_IPL         ),
-  .dtack        (tg68_dtack       ),
+  .ndtack       (_tg68_dtack      ),
   .vpa          (1'b1             ),
   .ein          (1'b1             ),
   .addr         (tg68_adr         ),
   .data_read    (tg68_dat_in      ),
   .data_write   (tg68_dat_out     ),
   .as           (tg68_as          ),
-  .uds          (tg68_uds         ),
-  .lds          (tg68_lds         ),
+  .uds          (_tg68_uds        ),
+  .lds          (_tg68_lds        ),
   .rw           (tg68_rw          ),
   .e            (                 ),
   .vma          (                 ),
@@ -285,10 +285,10 @@ TG68K tg68k (
   .turbokick    (turbokick        ),
   .cache_inhibit(cache_inhibit    ),
   .fastramcfg   ({&memcfg[5:4],memcfg[5:4]}),
-  .eth_en       (1'b1), // TODO
-  .sel_eth      (),
-  .frometh      (16'd0),
-  .ethready     (1'b0),
+  .eth_en       (1'b1             ), // TODO
+  .sel_eth      (                 ),
+  .frometh      (16'd0            ),
+  .ethready     (1'b0             ),
   .ovr          (tg68_ovr         ),
   .ramaddr      (tg68_cad         ),
   .cpustate     (tg68_cpustate    ),
@@ -303,7 +303,7 @@ TG68K tg68k (
 
 //sdram sdram (
 sdram_ctrl sdram (
-  .cache_rst    (tg68_rst         ),
+  .cache_rst    (_tg68_rst         ),
   .cache_inhibit(cache_inhibit    ),
   .cpu_cache_ctrl (tg68_CACR_out    ),
   .sdata        (SDRAM_DQ         ),
@@ -384,11 +384,11 @@ minimig minimig (
     .cpudata_in   (tg68_dat_out     ), // M68K data in
     ._cpu_ipl     (tg68_IPL         ), // M68K interrupt request
     ._cpu_as      (tg68_as          ), // M68K address strobe
-    ._cpu_uds     (tg68_uds         ), // M68K upper data strobe
-    ._cpu_lds     (tg68_lds         ), // M68K lower data strobe
+    ._cpu_uds     (_tg68_uds         ), // M68K upper data strobe
+    ._cpu_lds     (_tg68_lds         ), // M68K lower data strobe
     .cpu_r_w      (tg68_rw          ), // M68K read / write
-    ._cpu_dtack   (tg68_dtack       ), // M68K data acknowledge
-    ._cpu_reset   (tg68_rst         ), // M68K reset
+    ._cpu_dtack   (_tg68_dtack       ), // M68K data acknowledge
+    ._cpu_reset   (_tg68_rst         ), // M68K reset
     ._cpu_reset_in(tg68_nrst_out    ), // M68K reset out
     .cpu_vbr      (tg68_VBR_out     ), // M68K VBR
     .ovr          (tg68_ovr         ), // NMI override address decoding

@@ -120,18 +120,15 @@ reg		l_uds,l_lds;
 
 reg		lvpa;					// latched valid peripheral address (CIAs)
 reg		vma;					// valid memory address (synchronised VPA with ECLK)
-reg		_ta;					// transfer acknowledge
 
 // halt is enabled when halt request comes in and cpu bus is idle
 reg halt=0;
 always @ (posedge clk) begin
   if (clk7_en) begin
-    //if (!_cpu_reset)
-    //  halt <= #1 1'b0;
-    /*else*/ if (_as && cpu_halt)
-      halt <= #1 1'b1;
+    if (_as && cpu_halt)
+      halt <= 1'b1;
     else if (_as && !cpu_halt)
-      halt <= #1 1'b0;
+      halt <= 1'b0;
   end
 end
 
@@ -192,7 +189,7 @@ wire _as_and_cs;
 assign _as_and_cs = !halt ? _as : !host_cs;
 
 // data transfer acknowledge in normal mode
-reg _ta_n;
+reg _ta_n;                  // transfer acknowledge
 //always @(posedge clk28m or posedge _as)
 always @(posedge clk or posedge _as_and_cs)
   if (_as_and_cs)

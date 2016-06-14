@@ -283,147 +283,147 @@ wire		cpu_hwr;				//cpu high byte write enable
 wire		cpu_lwr;				//cpu low byte write enable
 
 //register address bus
-wire		[8:1] reg_address; 		//main register address bus
+wire    [8:1] reg_address; 		//main register address bus
 
 //rest of local signals
-wire		kbdrst;					//keyboard reset
-wire		reset;					//global reset
+wire    kbdrst;					//keyboard reset
+wire    reset;					//global reset
 wire    aflock;
 wire    cpu_custom;
-wire		dbr;					//data bus request, Agnus tells CPU that she is using the bus
-wire		dbwe;					//data bus write enable, Agnus tells the RAM it's writing data
-wire		dbs;					//data bus slow down, used for slowing down CPU access to chip, slow and custor register address space
-wire		xbs;					//cross bridge access (memory and custom registers)
-wire		ovl;					//kickstart overlay enable
-wire		_led;					//power led
-wire		[3:0] sel_chip;			//chip ram select
-wire		[2:0] sel_slow;			//slow ram select
-wire		sel_kick;				//rom select
+wire    dbr;					//data bus request, Agnus tells CPU that she is using the bus
+wire    dbwe;					//data bus write enable, Agnus tells the RAM it's writing data
+wire    dbs;					//data bus slow down, used for slowing down CPU access to chip, slow and custor register address space
+wire    xbs;					//cross bridge access (memory and custom registers)
+wire    ovl;					//kickstart overlay enable
+wire    _led;					//power led
+wire    [3:0] sel_chip;			//chip ram select
+wire    [2:0] sel_slow;			//slow ram select
+wire    sel_kick;				//rom select
 wire    sel_kick1mb;     // 1MB upper rom select
-wire		sel_cia;				//CIA address space
-wire		sel_reg;				//chip register select
-wire		sel_cia_a;				//cia A select
-wire		sel_cia_b;				//cia B select
-wire		int2;					//intterrupt 2
-wire		int3;					//intterrupt 3 
-wire		int6;					//intterrupt 6
-wire		[7:0] osd_ctrl;			//OSD control
+wire    sel_cia;				//CIA address space
+wire    sel_reg;				//chip register select
+wire    sel_cia_a;				//cia A select
+wire    sel_cia_b;				//cia B select
+wire    int2;					//intterrupt 2
+wire    int3;					//intterrupt 3 
+wire    int6;					//intterrupt 6
+wire    [7:0] osd_ctrl;			//OSD control
 wire    kb_lmb;
 wire    kb_rmb;
 wire    [5:0] kb_joy2;
-wire		freeze;					//Action Replay freeze button
-wire		_fire0;					//joystick 1 fire signal to cia A
-wire		_fire1;					//joystick 2 fire signal to cia A
+wire    freeze;					//Action Replay freeze button
+wire    _fire0;					//joystick 1 fire signal to cia A
+wire    _fire1;					//joystick 2 fire signal to cia A
 wire    _fire0_dat;
 wire    _fire1_dat;
-wire		[3:0] audio_dmal;		//audio dma data transfer request from Paula to Agnus
-wire		[3:0] audio_dmas;		//audio dma location pointer restart from Paula to Agnus
-wire		disk_dmal;				//disk dma data transfer request from Paula to Agnus
-wire		disk_dmas;				//disk dma special request from Paula to Agnus
-wire		index;					//disk index interrupt
+wire    [3:0] audio_dmal;		//audio dma data transfer request from Paula to Agnus
+wire    [3:0] audio_dmas;		//audio dma location pointer restart from Paula to Agnus
+wire    disk_dmal;				//disk dma data transfer request from Paula to Agnus
+wire    disk_dmas;				//disk dma special request from Paula to Agnus
+wire    index;					//disk index interrupt
 
 //local video signals
-wire		blank;					//blanking signal
-wire		sol;					//start of video line
-wire		sof;					//start of video frame
+wire    blank;					//blanking signal
+wire    sol;					//start of video line
+wire    sof;					//start of video frame
 wire    vbl_int;        // vertical blanking interrupt
-wire		strhor_denise;			//horizontal strobe for Denise
-wire		strhor_paula;			//horizontal strobe for Paula
-wire		[7:0]red_i;				//denise red (internal)
-wire		[7:0]green_i;			//denise green (internal)
-wire		[7:0]blue_i;			//denise blue (internal)
-wire		osd_blank;				//osd blanking 
-wire		osd_pixel;				//osd pixel(video) data
-wire		_hsync_i;				//horizontal sync (internal)
-wire		_vsync_i;				//vertical sync (internal)
-wire		_csync_i;				//composite sync (internal)
-wire		[8:0] htotal;			//video line length (140ns units)
+wire    strhor_denise;			//horizontal strobe for Denise
+wire    strhor_paula;			//horizontal strobe for Paula
+wire    [7:0]red_i;				//denise red (internal)
+wire    [7:0]green_i;			//denise green (internal)
+wire    [7:0]blue_i;			//denise blue (internal)
+wire    osd_blank;				//osd blanking 
+wire    osd_pixel;				//osd pixel(video) data
+wire    _hsync_i;				//horizontal sync (internal)
+wire    _vsync_i;				//vertical sync (internal)
+wire    _csync_i;				//composite sync (internal)
+wire    [8:0] htotal;			//video line length (140ns units)
 wire    harddis;
 wire    varbeamen;
 
 //local floppy signals (CIA<-->Paula)
-wire		_step;					//step heads of disk
-wire		direc;					//step heads direction
-wire		_sel0;					//disk0 select 	
-wire		_sel1;					//disk1 select 	
-wire		_sel2;					//disk2 select 	
-wire		_sel3;					//disk3 select 	
-wire		side;					//upper/lower disk head
-wire		_motor;					//disk motor control
-wire		_track0;				//track zero detect
-wire		_change;				//disk has been removed from drive
-wire		_ready;					//disk is ready
-wire		_wprot;					//disk is write-protected
+wire    _step;					//step heads of disk
+wire    direc;					//step heads direction
+wire    _sel0;					//disk0 select 	
+wire    _sel1;					//disk1 select 	
+wire    _sel2;					//disk2 select 	
+wire    _sel3;					//disk3 select 	
+wire    side;					//upper/lower disk head
+wire    _motor;					//disk motor control
+wire    _track0;				//track zero detect
+wire    _change;				//disk has been removed from drive
+wire    _ready;					//disk is ready
+wire    _wprot;					//disk is write-protected
 
 //--------------------------------------------------------------------------------------
 
-wire	bls;					//blitter slowdown - required for sharing bus cycles between Blitter and CPU
+wire    bls;					//blitter slowdown - required for sharing bus cycles between Blitter and CPU
 
-wire cpurst;
-wire cpuhlt;
+wire    cpurst;
+wire    cpuhlt;
 
-wire	int7;					//int7 interrupt request from Action Replay
-wire	[2:0] _iplx;			//interrupt request lines from Paula
-wire	sel_cart;				//Action Replay RAM select
+wire    int7;					//int7 interrupt request from Action Replay
+wire    [2:0] _iplx;			//interrupt request lines from Paula
+wire    sel_cart;				//Action Replay RAM select
 //wire	ovr;					//overide chip memmory decoding
-wire  [16-1:0] cart_data_out;
+wire    [16-1:0] cart_data_out;
 
-wire	usrrst;					//user reset from osd interface
-wire	[1:0] lr_filter;		//lowres interpolation filter mode: bit 0 - horizontal, bit 1 - vertical
-wire	[1:0] hr_filter;		//hires interpolation filter mode: bit 0 - horizontal, bit 1 - vertical
-wire	[1:0] scanline;			//scanline effect configuration
-wire  [1:0] dither;   // video output dither
-wire	hires;					//hires signal from Denise for interpolation filter enable in Amber
-wire	aron;					//Action Replay is enabled
-wire	cpu_speed;				//requests CPU to switch speed mode
-wire	turbo;					//CPU is working in turbo mode
-wire	[6:0] memory_config;	//memory configuration
-wire	[3:0] floppy_config;	//floppy drives configuration (drive number and speed)
-wire	[4:0] chipset_config;	//chipset features selection
-wire	[2:0] ide_config;		//HDD & HDC config: bit #0 enables Gayle, bit #1 enables Master drive, bit #2 enables Slave drive
+wire    usrrst;					//user reset from osd interface
+wire    [1:0] lr_filter;		//lowres interpolation filter mode: bit 0 - horizontal, bit 1 - vertical
+wire    [1:0] hr_filter;		//hires interpolation filter mode: bit 0 - horizontal, bit 1 - vertical
+wire    [1:0] scanline;			//scanline effect configuration
+wire    [1:0] dither;   // video output dither
+wire    hires;					//hires signal from Denise for interpolation filter enable in Amber
+wire    aron;					//Action Replay is enabled
+wire    cpu_speed;				//requests CPU to switch speed mode
+wire    turbo;					//CPU is working in turbo mode
+wire    [6:0] memory_config;	//memory configuration
+wire    [3:0] floppy_config;	//floppy drives configuration (drive number and speed)
+wire    [4:0] chipset_config;	//chipset features selection
+wire    [2:0] ide_config;		//HDD & HDC config: bit #0 enables Gayle, bit #1 enables Master drive, bit #2 enables Slave drive
 
 //gayle stuff
-wire	sel_ide;				//select IDE drive registers
-wire	sel_gayle;				//select GAYLE control registers
-wire	gayle_irq;				//interrupt request
-wire  gayle_nrdy;       // HDD fifo is not ready for reading
+wire    sel_ide;				//select IDE drive registers
+wire    sel_gayle;				//select GAYLE control registers
+wire    gayle_irq;				//interrupt request
+wire    gayle_nrdy;       // HDD fifo is not ready for reading
 //emulated hard disk drive signals
-wire	hdd_cmd_req;			//hard disk controller has written command register and requests processing
-wire	hdd_dat_req;			//hard disk controller requests data from emulated hard disk drive
-wire	[2:0] hdd_addr;			//emulated hard disk drive register address bus
-wire	[15:0] hdd_data_out;	//data output port of emulated hard disk drive
-wire	[15:0] hdd_data_in;		//data input port of emulated hard disk drive
-wire	hdd_wr;					//register write strobe
-wire	hdd_status_wr;			//status register write strobe
-wire	hdd_data_wr;			//data port write strobe
-wire	hdd_data_rd;			//data port read strobe
+wire    hdd_cmd_req;			//hard disk controller has written command register and requests processing
+wire    hdd_dat_req;			//hard disk controller requests data from emulated hard disk drive
+wire    [2:0] hdd_addr;			//emulated hard disk drive register address bus
+wire    [15:0] hdd_data_out;	//data output port of emulated hard disk drive
+wire    [15:0] hdd_data_in;		//data input port of emulated hard disk drive
+wire    hdd_wr;					//register write strobe
+wire    hdd_status_wr;			//status register write strobe
+wire    hdd_data_wr;			//data port write strobe
+wire    hdd_data_rd;			//data port read strobe
 
-wire	[7:0] bank;				//memory bank select
+wire    [7:0] bank;				//memory bank select
 
-wire	keyboard_disabled;		//disables Amiga keyboard while OSD is active
-wire	disk_led;				//floppy disk activity LED
+wire    keyboard_disabled;		//disables Amiga keyboard while OSD is active
+wire    disk_led;				//floppy disk activity LED
 
-reg		ntsc = NTSC;			//PAL/NTSC video mode selection
+reg     ntsc = NTSC;			//PAL/NTSC video mode selection
 
-wire  [5:0] mou_emu;
+wire    [5:0] mou_emu;
 
-wire  dtr;
+wire    dtr;
 
 // host interface
-wire           host_cs;
-wire [ 24-1:0] host_adr;
-wire           host_we;
-wire [  2-1:0] host_bs;
-wire [ 16-1:0] host_wdat;
-wire [ 16-1:0] host_rdat;
-wire           host_ack;
+wire    host_cs;
+wire    [ 24-1:0] host_adr;
+wire    host_we;
+wire    [  2-1:0] host_bs;
+wire    [ 16-1:0] host_wdat;
+wire    [ 16-1:0] host_rdat;
+wire    host_ack;
 
 //--------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------
 
 // power led control
-reg [3:0] led_cnt;
-reg led_dim;
+reg     [3:0] led_cnt;
+reg     led_dim;
 
 always @ (posedge clk) begin
   if (_hsync) begin
@@ -858,7 +858,7 @@ cart CART1
   .clk            (clk            ),
   .clk7_en        (clk7_en        ),
   .clk7n_en       (clk7n_en       ),
-  .cpu_rst        (!_cpu_reset    ),
+  .cpu_rst        (!_cpu_reset    ),        // Input high active
   .cpu_address    (cpu_address    ),
   .cpu_address_in (cpu_address_out),
   ._cpu_as        (_cpu_as        ),
@@ -959,7 +959,7 @@ minimig_syscontrol CONTROL1
     .clk7_en        (clk7_en),
     .cnt            (sof),
     .mrst           (kbdrst | usrrst | rst_ext | ~_cpu_reset_in),
-    .reset          (reset)
+    .reset          (reset)                                             // output
 );
 
 

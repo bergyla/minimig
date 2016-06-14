@@ -297,18 +297,23 @@ initial begin
   #100;
 
     $display("******************************************* : %t : Ausgabe 1", $time);
-    //spi_bfm(4'b0010,{`SPI_VERSION,24'h000000});
-    //spi_bfm(4'b0010,32'h00000000);
-    spi_bfm(4'b0010,{`SPI_RESET_CONTR,24'h010000});     // usrrst
-    spi_bfm(4'b0010,{`SPI_RESET_CONTR,24'h000000});
-    spi_bfm(4'b0010,{`SPI_RESET_CONTR,24'h020000});     // cpurst
-    spi_bfm(4'b0010,{`SPI_RESET_CONTR,24'h000000});
-    spi_bfm(4'b0010,{`SPI_RESET_CONTR,24'h040000});     // cpuhlt
-    spi_bfm(4'b0010,{`SPI_RESET_CONTR,24'h000000});
-    //spi_bfm(4'b0010,32'h00000000);
-    //spi_bfm(4'b0010,32'h88000000);
-    //spi_bfm(4'b0010,32'h00000000);
-    //spi_bfm(4'b0010,32'h88000000);
+    //spi_bfm(4'b0010,4'd7,{`SPI_VERSION,24'h000000});
+    //spi_bfm(4'b0010,4'd7,32'h00000000);
+    spi_bfm(4'b0010,4'd7,{32'h88000000,48'h0});
+    spi_bfm(4'b0010,4'd7,{32'h00000000,48'h0});
+    //spi_bfm(4'b0010,4'd7,{`SPI_RESET_CONTR,32'h01_00_00_00,40'h0});     // usrrst
+    //spi_bfm(4'b0010,4'd7,{`SPI_RESET_CONTR,32'h00_00_00_00,40'h0});
+    //spi_bfm(4'b0010,4'd7,{`SPI_RESET_CONTR,32'h02_00_00_00,40'h0});     // cpurst
+    //spi_bfm(4'b0010,4'd7,{`SPI_RESET_CONTR,32'h00_00_00_00,40'h0});
+    //spi_bfm(4'b0010,4'd7,{`SPI_RESET_CONTR,32'h04_00_00_00,40'h0});     // cpuhlt
+    //spi_bfm(4'b0010,4'd7,{`SPI_RESET_CONTR,32'h00_00_00_00,40'h0});
+    
+    spi_bfm(4'b0010,4'd7,{`SPI_RESET_CONTR,32'h07000000,40'h0});     // cpuhlt
+    
+    spi_bfm(4'b0010,4'd9,{`SPI_WR_MEM,32'h00000000,40'h12_34_56_78_90});
+    //spi_bfm(4'b0010,4'd7,{32'h88000000,48'h0});
+    //spi_bfm(4'b0010,4'd7,{32'h00000000,48'h0});
+    //spi_bfm(4'b0010,4'd7,{32'h88000000,48'h0});
     
   
     repeat (10) @ (posedge CLOCK_50);
@@ -390,18 +395,25 @@ initial begin
   forever #25 sim_spi_clk = ~sim_spi_clk;
 end
 
-reg [31:0] data_i;
+reg [79:0] data_i;
 wire [31:0] data_o;
 reg send = 1'b0;
 reg [3:0] cs_i;
+reg spi_1st;
+reg spi_lst;
+reg [3:0] spi_numbytes;
 wire ready;
 
 task spi_bfm;
     input [3:0] channel;
-    input [31:0] data;
+    input [3:0] numbytes;
+    input [79:0] data;
     begin
         data_i <= data;
         cs_i <= channel;
+        spi_1st <= 1'b1;
+        spi_lst <= 1'b1;
+        spi_numbytes <= numbytes;
         @(posedge sim_spi_clk);
         send <= 1'b1;
         @(posedge sim_spi_clk);
@@ -632,6 +644,9 @@ sim_spi_master sim_spi_master (
     .data_i     (data_i),
     .data_o     (data_o),
     .send       (send),
+    .first_packet(spi_1st),
+    .last_packet(spi_lst),
+    .num_bytes  (spi_numbytes), // 3:0
     .cs_i       (cs_i),
     ._cs_o      ({CONF_DATA0,SPI_SS4,SPI_SS3,SPI_SS2}),
     .mosi_o     (SPI_DI),

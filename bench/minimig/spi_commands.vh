@@ -10,6 +10,7 @@
 `define SPI_HDD_CONF 8'h54
 `define SPI_JOY_CONF 8'h64
 `define SPI_WR_OSD 8'h0C
+`define SPI_WR_MEM 8'h1C
 `define SPI_VERSION 8'h88
 
 // OSD SPI commands

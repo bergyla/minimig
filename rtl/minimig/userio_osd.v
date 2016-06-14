@@ -33,15 +33,15 @@ module userio_osd
     output  reg [3:0] cpu_config = 0,
     output  reg [1:0] autofire_config = 0,
     output  reg       cd32pad = 0,
-    output  reg usrrst=1'b0,
-    output  reg cpurst=1'b1,
-    output  reg cpuhlt=1'b1,
+    output  reg usrrst =1'b0,
+    output  reg cpurst =1'b1,
+    output  reg cpuhlt =1'b1,
     output  fifo_full,
     // host
-    output  reg host_cs,
+    output  reg host_cs = 1'b0,
     output  [ 24-1:0] host_adr,
-    output  reg host_we,
-    output  reg [  2-1:0] host_bs,
+    output  reg host_we = 1'b0,
+    output  reg [  2-1:0] host_bs = 2'b00,
     output  [ 16-1:0] host_wdat,
     input   [ 16-1:0] host_rdat,
     input   host_ack
@@ -49,19 +49,19 @@ module userio_osd
 
 
 //local signals
-reg		[10:0] horbeam;			//horizontal beamcounter
-reg		[8:0] verbeam;			//vertical beamcounter
+reg		[10:0] horbeam = 0;			//horizontal beamcounter
+reg		[8:0] verbeam = 0;			//vertical beamcounter
 reg		[7:0] osdbuf [0:2048-1];	//osd video buffer
 wire	osdframe;				//true if beamcounters within osd frame
-reg		[7:0] bufout;			//osd buffer read data
-reg 	[10:0] wraddr;			//osd buffer write address
+reg		[7:0] bufout = 0;			//osd buffer read data
+reg 	[10:0] wraddr = 0;			//osd buffer write address
 wire	[7:0] wrdat;			//osd buffer write data
 wire	wren;					//osd buffer write enable
 
-reg		[3:0] highlight;		//highlighted line number
-reg		invert;					//invertion of highlighted line
-reg		[5:0] vpos;
-reg		vena;
+reg		[3:0] highlight = 0;		//highlighted line number
+reg		invert = 1'b0;					//invertion of highlighted line
+reg		[5:0] vpos = 0;
+reg		vena = 1'b0;
 
 reg 	[6:0] t_memory_config = 7'b0_00_01_01;
 reg		[2:0] t_ide_config = 0;
@@ -136,7 +136,7 @@ assign hframe_varbeam = ~horbeam[10] & ~horbeam[9];
 assign hframe = hframe_normal;
 
 //vertical part..
-reg vframe;
+reg vframe = 1'b0;
 
 always @(posedge clk)
   if (clk7_en) begin
@@ -154,7 +154,7 @@ always @(posedge clk)
 
 
 // combine..
-reg osd_enabled;
+reg osd_enabled = 1'b0;
 always @(posedge clk)
   if (clk7_en) begin
     if (sof)
@@ -202,9 +202,9 @@ always @(posedge clk)//output part
 //--------------------------------------------------------------------------------------
 wire	rx;
 wire	cmd;
-reg   wrcmd;    // spi write command
+reg   wrcmd = 1'b0;    // spi write command
 wire  vld;
-reg   vld_d;
+reg   vld_d = 1'b0;
 wire  spi_invalidate;
 wire [7:0] rddat;
 
@@ -459,7 +459,7 @@ end
 wire wr_fifo_empty;
 wire wr_fifo_full;
 assign fifo_full = wr_fifo_full;
-reg  wr_fifo_rd_en;
+reg  wr_fifo_rd_en = 1'b0;
 sync_fifo #(
   .FD (4),
   .DW (16)
@@ -537,7 +537,7 @@ assign host_adr  = mem_adr[23:0];
 
 // rtl version
 `include "minimig_version.vh"
-reg  [8-1:0] rtl_ver;
+reg  [8-1:0] rtl_ver = 0;
 always @ (*) begin
   case (dat_cnt[2:0])
     2'b00   : rtl_ver = `BETA_FLAG ;

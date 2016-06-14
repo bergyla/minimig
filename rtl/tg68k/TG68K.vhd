@@ -31,10 +31,10 @@ use ieee.std_logic_unsigned.all;
 entity TG68K is
   port(
     clk           : in      std_logic;
-    reset         : in      std_logic;
+    nreset         : in      std_logic;
     clkena_in     : in      std_logic:='1';
     IPL           : in      std_logic_vector(2 downto 0):="111";
-    dtack         : in      std_logic;
+    ndtack        : in      std_logic;
     vpa           : in      std_logic:='1';
     ein           : in      std_logic:='1';
     addr          : buffer  std_logic_vector(31 downto 0);
@@ -126,8 +126,8 @@ SIGNAL clkena_e         : std_logic;
 SIGNAL S_state          : std_logic_vector(1 downto 0);
 SIGNAL decode           : std_logic;
 SIGNAL wr               : std_logic;
-SIGNAL uds_in           : std_logic;
-SIGNAL lds_in           : std_logic;
+SIGNAL nuds_in           : std_logic;
+SIGNAL nlds_in           : std_logic;
 SIGNAL state            : std_logic_vector(1 downto 0);
 SIGNAL clkena           : std_logic;
 SIGNAL vmaena           : std_logic;
@@ -170,8 +170,8 @@ SIGNAL cpuaddr_w        : std_logic_vector(31 downto 0);
 SIGNAL data_write_w     : std_logic_vector(15 downto 0);
 SIGNAL state_w          : std_logic_vector(1 downto 0);
 SIGNAL wr_w             : std_logic;
-SIGNAL uds_in_w         : std_logic;
-SIGNAL lds_in_w         : std_logic;
+SIGNAL nuds_in_w         : std_logic;
+SIGNAL nlds_in_w         : std_logic;
 SIGNAL nResetOut_w      : std_logic;
 SIGNAL skipFetch_w      : std_logic;
 SIGNAL CACR_out_w       : std_logic_vector(3 downto 0);
@@ -183,7 +183,7 @@ BEGIN
   -- NMI
   PROCESS(clk) BEGIN
     IF rising_edge(clk) THEN
-      IF reset='0' THEN
+      IF nreset='0' THEN
         NMI_addr <= X"0000007c";
         NMI_active <= '0';
       ELSE
@@ -241,8 +241,8 @@ BEGIN
   ramcs <= (NOT sel_fast) or slower(0);-- OR (state(0) AND NOT state(1));
   cpuDMA <= sel_fast;
   cpustate <= clkena&slower(1 downto 0)&ramcs&state;
-  ramlds <= lds_in;
-  ramuds <= uds_in;
+  ramlds <= nlds_in;
+  ramuds <= nuds_in;
   ramaddr(31 downto 25) <= "0000000";
   ramaddr(24) <= sel_z3ram;  -- Remap the Zorro III RAM to 0x1000000
   ramaddr(23 downto 21)
@@ -278,7 +278,7 @@ pf68K_Kernel_inst: TG68KdotC_Kernel
   )
   PORT MAP (
     clk             => clk,           -- : in std_logic;
-    nReset          => reset,         -- : in std_logic:='1';      --low active
+    nReset          => nreset,         -- : in std_logic:='1';      --low active
     clkena_in       => clkena,        -- : in std_logic:='1';
     data_in         => datatg68,      -- : in std_logic_vector(15 downto 0);
     IPL             => cpuIPL,        -- : in std_logic_vector(2 downto 0):="111";
@@ -289,8 +289,8 @@ pf68K_Kernel_inst: TG68KdotC_Kernel
     data_write      => data_write,    -- : out std_logic_vector(15 downto 0);
     busstate        => state,         -- : buffer std_logic_vector(1 downto 0);
     nWr             => wr,            -- : out std_logic;
-    nUDS            => uds_in,
-    nLDS            => lds_in,        -- : out std_logic;
+    nUDS            => nuds_in,
+    nLDS            => nlds_in,        -- : out std_logic;
     nResetOut       => nResetOut,
     skipFetch       => skipFetch,     -- : out std_logic
     CACR_out        => CACR_out,
@@ -299,8 +299,8 @@ pf68K_Kernel_inst: TG68KdotC_Kernel
     --data_write      => data_write_w,  -- : out std_logic_vector(15 downto 0);
     --busstate        => state_w,       -- : buffer std_logic_vector(1 downto 0);
     --nWr             => wr_w,          -- : out std_logic;
-    --nUDS            => uds_in_w,
-    --nLDS            => lds_in_w,      -- : out std_logic;
+    --nUDS            => nuds_in_w,
+    --nLDS            => nlds_in_w,      -- : out std_logic;
     --nResetOut       => nResetOut_w,
     --skipFetch       => skipFetch_w,   -- : out std_logic
     --CACR_out        => CACR_out_w,
@@ -310,13 +310,13 @@ pf68K_Kernel_inst: TG68KdotC_Kernel
 
 --PROCESS (clk) BEGIN
 --  IF rising_edge(clk) THEN
---    IF reset='0' THEN
+--    IF nreset='0' THEN
 --      cpuaddr     <= X"00000000";
 --      data_write  <= X"0000";
 --      state       <= "01";
 --      wr          <= '1';
---      uds_in      <= '1';
---      lds_in      <= '1';
+--      nuds_in      <= '1';
+--      nlds_in      <= '1';
 --      nResetOut   <= '1';
 --      skipFetch   <= '0';
 --      CACR_out    <= "0000";
@@ -326,8 +326,8 @@ pf68K_Kernel_inst: TG68KdotC_Kernel
 --      data_write  <= data_write_w;
 --      state       <= state_w;
 --      wr          <= wr_w;
---      uds_in      <= uds_in_w;
---      lds_in      <= lds_in_w;
+--      nuds_in      <= nuds_in_w;
+--      nlds_in      <= nlds_in_w;
 --      nResetOut   <= nResetOut_w;
 --      skipFetch   <= skipFetch_w;
 --      CACR_out    <= CACR_out_w;
@@ -339,7 +339,7 @@ pf68K_Kernel_inst: TG68KdotC_Kernel
 
 PROCESS(clk,turbochipram, turbokick) BEGIN
   IF rising_edge(clk) THEN
-    IF reset='0' THEN
+    IF nreset='0' THEN
       turbochip_d <= '0';
       turbokick_d <= '0';
     ELSIF state="01" THEN -- No mem access, so safe to switch chipram access mode
@@ -407,7 +407,7 @@ PROCESS (clk) BEGIN
   END IF;
 
   IF rising_edge(clk) THEN
-    IF reset='0' THEN
+    IF nreset='0' THEN
       autoconfig_out <= "01";    --autoconfig on
       turbochip_ena <= '0';  -- disable turbo_chipram until we know kickstart's running...
       z2ram_ena <='0';
@@ -416,7 +416,7 @@ PROCESS (clk) BEGIN
       --eth_cfgd <='0';
       --eth_base<=X"02";
     ELSIF enaWRreg='1' THEN
-      IF sel_autoconfig='1' AND state="11"AND uds_in='0' AND clkena='1' THEN
+      IF sel_autoconfig='1' AND state="11"AND nuds_in='0' AND clkena='1' THEN
         CASE cpuaddr(6 downto 1) IS
           WHEN "100100" => -- Register 0x48 - config
             IF autoconfig_out="01" THEN
@@ -447,7 +447,7 @@ END PROCESS;
 
 PROCESS (clk) BEGIN
   IF rising_edge(clk) THEN
-    IF reset='0' THEN
+    IF nreset='0' THEN
       vmaena <= '0';
     ELSIF ena7RDreg='1' THEN
       vmaena <= '0';
@@ -509,7 +509,7 @@ PROCESS (clk, clkena_in, enaWRreg, state, ena7RDreg, clkena_e, ramready) BEGIN
 END PROCESS;
 
 
-PROCESS (clk, reset, state, as_s, as_e, rw_s, rw_e, uds_s, uds_e, lds_s, lds_e, sel_fast)
+PROCESS (clk, nreset, state, as_s, as_e, rw_s, rw_e, uds_s, uds_e, lds_s, lds_e, sel_fast)
   BEGIN
     IF state="01" THEN
       as <= '1';
@@ -522,7 +522,7 @@ PROCESS (clk, reset, state, as_s, as_e, rw_s, rw_e, uds_s, uds_e, lds_s, lds_e, 
       uds <= uds_s AND uds_e;
       lds <= lds_s AND lds_e;
     END IF;
-    IF reset='0' THEN
+    IF nreset='0' THEN
       S_state <= "00";
       as_s <= '1';
       rw_s <= '1';
@@ -536,14 +536,14 @@ PROCESS (clk, reset, state, as_s, as_e, rw_s, rw_e, uds_s, uds_e, lds_s, lds_e, 
         lds_s <= '1';
           CASE S_state IS
             WHEN "00" => IF state/="01" AND sel_fast='0' THEN
-                     uds_s <= uds_in;
-                     lds_s <= lds_in;
+                     uds_s <= nuds_in;
+                     lds_s <= nlds_in;
                     S_state <= "01";
                    END IF;
             WHEN "01" => as_s <= '0';
                    rw_s <= wr;
-                   uds_s <= uds_in;
-                   lds_s <= lds_in;
+                   uds_s <= nuds_in;
+                   lds_s <= nlds_in;
                    S_state <= "10";
             WHEN "10" =>
                    r_data <= data_read;
@@ -552,8 +552,8 @@ PROCESS (clk, reset, state, as_s, as_e, rw_s, rw_e, uds_s, uds_e, lds_s, lds_e, 
                    ELSE
                      as_s <= '0';
                      rw_s <= wr;
-                     uds_s <= uds_in;
-                     lds_s <= lds_in;
+                     uds_s <= nuds_in;
+                     lds_s <= nlds_in;
                    END IF;
             WHEN "11" =>
                    S_state <= "00";
@@ -561,7 +561,7 @@ PROCESS (clk, reset, state, as_s, as_e, rw_s, rw_e, uds_s, uds_e, lds_s, lds_e, 
           END CASE;
       END IF;
     END IF;
-    IF reset='0' THEN
+    IF nreset='0' THEN
       as_e <= '1';
       rw_e <= '1';
       uds_e <= '1';
@@ -583,18 +583,18 @@ PROCESS (clk, reset, state, as_s, as_e, rw_s, rw_e, uds_s, uds_e, lds_s, lds_e, 
                    END IF;
                    rw_e <= wr;
                    IF wr='1' THEN
-                     uds_e <= uds_in;
-                     lds_e <= lds_in;
+                     uds_e <= nuds_in;
+                     lds_e <= nlds_in;
                    END IF;
                  END IF;
           WHEN "01" =>
                   as_e <= '0';
                    rw_e <= wr;
-                   uds_e <= uds_in;
-                   lds_e <= lds_in;
+                   uds_e <= nuds_in;
+                   lds_e <= nlds_in;
           WHEN "10" => rw_e <= wr;
                  cpuIPL <= IPL;
-                 waitm <= dtack;
+                 waitm <= ndtack;
           WHEN OTHERS => --null;
                    clkena_e <= '1';
         END CASE;
