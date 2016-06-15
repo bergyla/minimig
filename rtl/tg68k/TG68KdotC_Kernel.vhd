@@ -73,16 +73,16 @@ entity TG68KdotC_Kernel is
 	berr           : in  std_logic :='0';                       -- only 68000 Stackpointer dummy
 	CPU            : in  std_logic_vector( 1 downto 0) := "00"; -- 00->68000 01->68010 11->68020(only some parts - yet)
 	addr_out       : out std_logic_vector(31 downto 0);
-	data_write     : out std_logic_vector(15 downto 0);
+	data_write     : out std_logic_vector(15 downto 0) := (others => '0');
 	nWr            : out std_logic;
 	nUDS           : out std_logic;
 	nLDS           : out std_logic;
 	busstate       : out std_logic_vector(1 downto 0); -- 00-> fetch code 10->read data 11->write data 01->no memaccess
 	nResetOut      : out std_logic;
-	FC             : out std_logic_vector(2 downto 0);
+	FC             : out std_logic_vector(2 downto 0) := "000";
 	clr_berr       : out std_logic;
 	--  for debug
-	skipFetch      : out std_logic;
+	skipFetch      : out std_logic := '0';
 	regin_out      : out std_logic_vector(31 downto 0);
 	CACR_out       : out std_logic_vector( 3 downto 0);
 	VBR_out        : out std_logic_vector(31 downto 0)
@@ -97,7 +97,7 @@ architecture logic of TG68KdotC_Kernel is
   signal Reset                  : std_logic;
   signal clkena_lw              : std_logic;
   signal TG68_PC                : std_logic_vector(31 downto 0);
-  signal tmp_TG68_PC            : std_logic_vector(31 downto 0);
+  signal tmp_TG68_PC            : std_logic_vector(31 downto 0) := (others => '0');
   signal TG68_PC_add            : std_logic_vector(31 downto 0);
   signal PC_dataa               : std_logic_vector(31 downto 0);
   signal PC_datab               : std_logic_vector(31 downto 0);
@@ -105,13 +105,13 @@ architecture logic of TG68KdotC_Kernel is
   signal state                  : std_logic_vector(1 downto 0);
   signal datatype               : std_logic_vector(1 downto 0);
   signal set_datatype           : std_logic_vector(1 downto 0);
-  signal exe_datatype           : std_logic_vector(1 downto 0);
+  signal exe_datatype           : std_logic_vector(1 downto 0) := (others => '0');
   signal setstate               : std_logic_vector(1 downto 0);
   signal opcode                 : std_logic_vector(15 downto 0);
-  signal exe_opcode             : std_logic_vector(15 downto 0);
-  signal exe_pc                 : std_logic_vector(31 downto 0);
-  signal last_opc_pc            : std_logic_vector(31 downto 0);
-  signal sndOPC                 : std_logic_vector(15 downto 0);
+  signal exe_opcode             : std_logic_vector(15 downto 0) := (others => '0');
+  signal exe_pc                 : std_logic_vector(31 downto 0) := (others => '0');
+  signal last_opc_pc            : std_logic_vector(31 downto 0) := (others => '0');
+  signal sndOPC                 : std_logic_vector(15 downto 0) := (others => '0');
 
   signal last_opc_read          : std_logic_vector(15 downto 0);
   signal reg_QA                 : std_logic_vector(31 downto 0);
@@ -134,15 +134,15 @@ architecture logic of TG68KdotC_Kernel is
   signal memaddr_reg            : std_logic_vector(31 downto 0);
   signal memaddr_delta          : std_logic_vector(31 downto 0);
   signal use_base               : bit;
-  signal ea_data                : std_logic_vector(31 downto 0);
+  signal ea_data                : std_logic_vector(31 downto 0) := (others => '0');
   signal OP1out                 : std_logic_vector(31 downto 0);
   signal OP2out                 : std_logic_vector(31 downto 0);
   signal OP1outbrief            : std_logic_vector(15 downto 0);
-  signal OP1in                  : std_logic_vector(31 downto 0);
+  signal OP1in                  : std_logic_vector(31 downto 0) := (others => '0');
   signal ALUout                 : std_logic_vector(31 downto 0);
-  signal data_write_tmp         : std_logic_vector(31 downto 0);
-  signal data_write_muxin       : std_logic_vector(31 downto 0);
-  signal data_write_mux         : std_logic_vector(47 downto 0);
+  signal data_write_tmp         : std_logic_vector(31 downto 0) := (others => '0');
+  signal data_write_muxin       : std_logic_vector(31 downto 0) := (others => '0');
+  signal data_write_mux         : std_logic_vector(47 downto 0) := (others => '0');
   signal nextpass               : bit;
   signal setnextpass            : bit;
   signal setdispbyte            : bit;
@@ -152,12 +152,12 @@ architecture logic of TG68KdotC_Kernel is
   signal briefdata              : std_logic_vector(31 downto 0);
 
   signal c_out                  : std_logic_vector(2 downto 0);
-  signal mem_address            : std_logic_vector(31 downto 0);
+  signal mem_address            : std_logic_vector(31 downto 0) := (others => '0');
   signal memaddr_a              : std_logic_vector(31 downto 0);
   signal TG68_PC_brw            : bit;
   signal TG68_PC_word           : bit;
   signal getbrief               : bit;
-  signal brief                  : std_logic_vector(15 downto 0);
+  signal brief                  : std_logic_vector(15 downto 0) := (others => '0');
   signal dest_areg              : std_logic;
   signal source_areg            : std_logic;
   signal data_is_source         : bit;
@@ -174,7 +174,7 @@ architecture logic of TG68KdotC_Kernel is
   signal setexecOPC             : bit;
   signal endOPC                 : bit;
   signal setendOPC              : bit;
-  signal Flags                  : std_logic_vector(7 downto 0); -- ...XNZVC
+  signal Flags                  : std_logic_vector(7 downto 0) := (others => '0'); -- ...XNZVC
   signal FlagsSR                : std_logic_vector(7 downto 0) := (others => '0'); -- T.S..III
   signal SRin                   : std_logic_vector(7 downto 0);
   signal exec_DIRECT            : bit;
@@ -187,16 +187,16 @@ architecture logic of TG68KdotC_Kernel is
   signal source_2ndLbits        : bit;
   signal dest_2ndHbits          : bit;
   signal dest_hbits             : bit;
-  signal rot_bits               : std_logic_vector(1 downto 0);
-  signal set_rot_bits           : std_logic_vector(1 downto 0);
+  signal rot_bits               : std_logic_vector(1 downto 0) := "00";
+  signal set_rot_bits           : std_logic_vector(1 downto 0) := (others => '0');
   signal rot_cnt                : std_logic_vector(5 downto 0);
   signal set_rot_cnt            : std_logic_vector(5 downto 0);
   signal movem_actiond          : bit;
   signal movem_regaddr          : std_logic_vector(3 downto 0);
-  signal movem_mux              : std_logic_vector(3 downto 0);
+  signal movem_mux              : std_logic_vector(3 downto 0) := (others => '0');
   signal movem_presub           : bit;
   signal movem_run              : bit;
-  signal ea_calc_b              : std_logic_vector(31 downto 0);
+  signal ea_calc_b              : std_logic_vector(31 downto 0) := (others => '0');
   signal set_direct_data        : bit;
   signal use_direct_data        : bit;
   signal direct_data            : bit;
@@ -216,22 +216,22 @@ architecture logic of TG68KdotC_Kernel is
   signal trap_interrupt         : bit;
   signal trapmake               : bit;
   signal trapd                  : bit;
-  signal trap_SR                : std_logic_vector(7 downto 0);
+  signal trap_SR                : std_logic_vector(7 downto 0) := (others => '0');
   signal make_trace             : std_logic;
-  signal make_berr              : std_logic;
+  signal make_berr              : std_logic := '0';
 
   signal set_stop               : bit;
   signal stop                   : bit;
-  signal trap_vector            : std_logic_vector(31 downto 0);
-  signal trap_vector_vbr        : std_logic_vector(31 downto 0);
-  signal USP                    : std_logic_vector(31 downto 0);
+  signal trap_vector            : std_logic_vector(31 downto 0) := (others => '0');
+  signal trap_vector_vbr        : std_logic_vector(31 downto 0) := (others => '0');
+  signal USP                    : std_logic_vector(31 downto 0) := (others => '0');
   signal illegal_write_mode     : bit;
   signal illegal_read_mode      : bit;
   signal illegal_byteaddr       : bit;
 
-  signal IPL_nr                 : std_logic_vector(2 downto 0);
-  signal rIPL_nr                : std_logic_vector(2 downto 0);
-  signal IPL_vec                : std_logic_vector(7 downto 0);
+  signal IPL_nr                 : std_logic_vector(2 downto 0) := (others => '0');
+  signal rIPL_nr                : std_logic_vector(2 downto 0) := (others => '0');
+  signal IPL_vec                : std_logic_vector(7 downto 0) := (others => '0');
   signal interrupt              : bit;
   signal setinterrupt           : bit;
   signal SVmode                 : std_logic;
@@ -244,9 +244,9 @@ architecture logic of TG68KdotC_Kernel is
   signal build_logical          : bit;
   signal build_bcd              : bit;
 
-  signal data_read              : std_logic_vector(31 downto 0);
-  signal bf_ext_in              : std_logic_vector(7 downto 0);
-  signal bf_ext_out             : std_logic_vector(7 downto 0);
+  signal data_read              : std_logic_vector(31 downto 0) := (others => '0');
+  signal bf_ext_in              : std_logic_vector(7 downto 0) := (others => '0');
+  signal bf_ext_out             : std_logic_vector(7 downto 0) := (others => '0');
   signal byte                   : bit;
   signal long_start             : bit;
   signal long_start_alu         : bit;
@@ -254,31 +254,31 @@ architecture logic of TG68KdotC_Kernel is
   signal long_done              : bit;
   signal memmask                : std_logic_vector(5 downto 0);
   signal set_memmask            : std_logic_vector(5 downto 0);
-  signal memread                : std_logic_vector(3 downto 0);
-  signal wbmemmask              : std_logic_vector(5 downto 0);
+  signal memread                : std_logic_vector(3 downto 0) := (others => '0');
+  signal wbmemmask              : std_logic_vector(5 downto 0) := (others => '0');
   signal memmaskmux             : std_logic_vector(5 downto 0);
-  signal oddout                 : std_logic;
+  signal oddout                 : std_logic := '0';
   signal set_oddout             : std_logic;
   signal PCbase                 : std_logic;
   signal set_PCbase             : std_logic;
 
-  signal last_data_read         : std_logic_vector(31 downto 0);
-  signal last_data_in           : std_logic_vector(31 downto 0);
+  signal last_data_read         : std_logic_vector(31 downto 0) := (others => '0');
+  signal last_data_in           : std_logic_vector(31 downto 0) := (others => '0');
 
-  signal bf_offset              : std_logic_vector(31 downto 0);
-  signal bf_offset_l            : std_logic_vector(4 downto 0);
-  signal bf_loffset             : std_logic_vector(4 downto 0);
-  signal bf_width               : std_logic_vector(4 downto 0);
-  signal bf_bhits               : std_logic_vector(5 downto 0);
-  signal alu_bf_width           : std_logic_vector(4 downto 0);
-  signal alu_bf_offset          : std_logic_vector(31 downto 0);
-  signal alu_bf_loffset         : std_logic_vector(4 downto 0);
+  signal bf_offset              : std_logic_vector(31 downto 0) := (others => '0');
+  signal bf_offset_l            : std_logic_vector(4 downto 0) := (others => '0');
+  signal bf_loffset             : std_logic_vector(4 downto 0) := (others => '0');
+  signal bf_width               : std_logic_vector(4 downto 0) := (others => '0');
+  signal bf_bhits               : std_logic_vector(5 downto 0) := (others => '0');
+  signal alu_bf_width           : std_logic_vector(4 downto 0) := (others => '0');
+  signal alu_bf_offset          : std_logic_vector(31 downto 0) := (others => '0');
+  signal alu_bf_loffset         : std_logic_vector(4 downto 0) := (others => '0');
 
   signal movec_data             : std_logic_vector(31 downto 0);
   signal VBR                    : std_logic_vector(31 downto 0);
   signal CACR                   : std_logic_vector(3 downto 0);
-  signal DFC                    : std_logic_vector(2 downto 0);
-  signal SFC                    : std_logic_vector(2 downto 0);
+  signal DFC                    : std_logic_vector(2 downto 0) := (others => '0');
+  signal SFC                    : std_logic_vector(2 downto 0) := (others => '0');
   signal set                    : bit_vector(lastOpcBit downto 0);
   signal set_exec               : bit_vector(lastOpcBit downto 0);
   signal exec                   : bit_vector(lastOpcBit downto 0);
@@ -423,15 +423,19 @@ begin
 
 	if BitField = 0 then
 	  if oddout = addr(0) then
-		data_write_mux <= "XXXXXXXX" & "XXXXXXXX" & data_write_muxin;
+		--data_write_mux <= "XXXXXXXX" & "XXXXXXXX" & data_write_muxin;
+        data_write_mux(31 downto 0) <= data_write_muxin;
 	  else
-		data_write_mux <= "XXXXXXXX" & data_write_muxin & "XXXXXXXX";
+		--data_write_mux <= "XXXXXXXX" & data_write_muxin & "XXXXXXXX";
+        data_write_mux(39 downto 8) <= data_write_muxin;
 	  end if;
 	else
 	  if oddout = addr(0) then
-		data_write_mux <= "XXXXXXXX" & bf_ext_out & data_write_muxin;
+		--data_write_mux <= "XXXXXXXX" & bf_ext_out & data_write_muxin;
+        data_write_mux(39 downto 0) <= bf_ext_out & data_write_muxin;
 	  else
-		data_write_mux <= bf_ext_out & data_write_muxin & "XXXXXXXX";
+		--data_write_mux <= bf_ext_out & data_write_muxin & "XXXXXXXX";
+        data_write_mux(47 downto 8) <= bf_ext_out & data_write_muxin;
 	  end if;
 	end if;
 
@@ -1307,7 +1311,7 @@ PROCESS (clk, IPL, setstate, state, exec_write_back, set_direct_data, next_micro
 	setstackaddr       <= '0';
 	writePC            <= '0';
 	ea_build_now       <= '0';
-	set_rot_bits       <= "XX";
+	--set_rot_bits       <= "XX";  -- ABER 20160615 non synthesable !
 	set_rot_cnt        <= "000001";
 	dest_hbits         <= '0';
 	source_lowbits     <= '0';

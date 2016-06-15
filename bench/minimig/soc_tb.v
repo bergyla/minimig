@@ -308,9 +308,11 @@ initial begin
     //spi_bfm(4'b0010,4'd7,{`SPI_RESET_CONTR,32'h04_00_00_00,40'h0});     // cpuhlt
     //spi_bfm(4'b0010,4'd7,{`SPI_RESET_CONTR,32'h00_00_00_00,40'h0});
     
-    spi_bfm(4'b0010,4'd7,{`SPI_RESET_CONTR,32'h07000000,40'h0});     // cpuhlt
+    spi_bfm(4'b0010,4'd7,{`SPI_RESET_CONTR,32'h07000000,40'h0});     // reset +halt
     
     spi_bfm(4'b0010,4'd9,{`SPI_WR_MEM,32'h00000000,40'h12_34_56_78_90});
+    
+    spi_bfm(4'b0010,4'd7,{`SPI_RESET_CONTR,32'h00000000,40'h0});     // deactivate halt & reset
     //spi_bfm(4'b0010,4'd7,{32'h88000000,48'h0});
     //spi_bfm(4'b0010,4'd7,{32'h00000000,48'h0});
     //spi_bfm(4'b0010,4'd7,{32'h88000000,48'h0});

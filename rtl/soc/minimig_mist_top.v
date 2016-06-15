@@ -83,7 +83,6 @@ wire [ 10-1:0] eclk;
 wire           pll_rst;
 wire           sdctl_rst;
 wire           rst_50;
-wire           rst_minimig;
 
 // ctrl
 wire           rom_status;
@@ -402,7 +401,7 @@ minimig minimig (
     ._ram_oe      (_ram_oe          ), // SRAM output enable
     .chip48       (chip48           ), // big chipram read
     //system  pins
-    .rst_ext      (rst_minimig      ), // reset from ctrl block
+    .rst_ext      (1'b0             ), // reset from ctrl block
     .rst_out      (                 ), // minimig reset status
     .clk          (clk_28           ), // output clock c1 ( 28.687500MHz)
     .clk7_en      (clk7_en          ), // 7MHz clock enable

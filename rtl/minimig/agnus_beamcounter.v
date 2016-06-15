@@ -27,31 +27,31 @@
 
 module agnus_beamcounter
 (
-	input	clk,					// bus clock
-  input clk7_en,
-	input	reset,					// reset
-	input	cck,					// CCK clock
-	input	ntsc,					// NTSC mode switch
-  input aga,
-	input	ecs,					// ECS enable switch
-	input	a1k,					// enable A1000 VBL interrupt timing
-	input	[15:0] data_in,			// bus data in
-	output	reg [15:0] data_out,	// bus data out
-	input 	[8:1] reg_address_in,	// register address inputs
-	output	reg [8:0] hpos,			// horizontal beam counter (140ns)
-	output	reg [10:0] vpos,		// vertical beam counter
-	output	reg _hsync,				// horizontal sync
-	output	reg _vsync,				// vertical sync
-	output	_csync,					// composite sync
-	output	reg blank,				// video blanking
-	output	vbl,					// vertical blanking
-	output	vblend,					// last line of vertival blanking
-	output	eol,					// end of video line
-	output	eof,					// end of video frame
-	output	reg vbl_int,			// vertical interrupt request (for Paula)
-	output	[8:0] htotal_out,			// video line length
-  output harddis_out,
-  output varbeamen_out
+    input   clk,					// bus clock
+    input   clk7_en,
+    input   reset,					// reset
+    input   cck,					// CCK clock
+    input   ntsc,					// NTSC mode switch
+    input   aga,
+    input	ecs,					// ECS enable switch
+    input	a1k,					// enable A1000 VBL interrupt timing
+    input	[15:0] data_in,			// bus data in
+    output  reg [15:0] data_out = 0,	// bus data out
+    input   [8:1] reg_address_in,	// register address inputs
+    output  reg [8:0] hpos = 0,			// horizontal beam counter (140ns)
+    output  reg [10:0] vpos = 0,		// vertical beam counter
+    output  reg _hsync = 1'b0,				// horizontal sync
+    output  reg _vsync = 1'b0,				// vertical sync
+    output  _csync,					// composite sync
+    output  reg blank = 1'b0,				// video blanking
+    output  vbl,					// vertical blanking
+    output  vblend,					// last line of vertival blanking
+    output  eol,					// end of video line
+    output  eof,					// end of video frame
+    output  reg vbl_int = 1'b0,			// vertical interrupt request (for Paula)
+    output  [8:0] htotal_out,			// video line length
+    output  harddis_out,
+    output  varbeamen_out
 );
 
 // local beam position counters
@@ -104,7 +104,7 @@ wire	end_of_frame;
 
 reg 	vpos_inc;			// increase vertical position counter
 wire 	vpos_equ_vtotal;	// vertical beam counter is equal to its maximum count (in interlaced mode it counts one line more)
-reg		extra_line;			// extra line (used in interlaced mode)
+reg		extra_line = 1'b0;			// extra line (used in interlaced mode)
 wire	last_line;			// indicates the last line is displayed (in non-interlaced mode vpos equals to vtotal, in interlaced mode vpos equals to vtotal+1)
 
 

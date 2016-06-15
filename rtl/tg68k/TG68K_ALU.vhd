@@ -89,23 +89,23 @@ architecture logic of TG68K_ALU IS
   signal set_Flags   : std_logic_vector(3 downto 0); --NZVC
   signal CCRin       : std_logic_vector(7 downto 0);
 
-  signal niba_l      : std_logic_vector(5 downto 0);
-  signal niba_h      : std_logic_vector(5 downto 0);
-  signal niba_lc     : std_logic;
-  signal niba_hc     : std_logic;
-  signal bcda_lc     : std_logic;
-  signal bcda_hc     : std_logic;
-  signal nibs_l      : std_logic_vector(5 downto 0);
-  signal nibs_h      : std_logic_vector(5 downto 0);
-  signal nibs_lc     : std_logic;
-  signal nibs_hc     : std_logic;
+  signal niba_l      : std_logic_vector(5 downto 0) := (others => '0');
+  signal niba_h      : std_logic_vector(5 downto 0) := (others => '0');
+  signal niba_lc     : std_logic := '0';
+  signal niba_hc     : std_logic := '0';
+  signal bcda_lc     : std_logic := '0';
+  signal bcda_hc     : std_logic := '0';
+  signal nibs_l      : std_logic_vector(5 downto 0) := (others => '0');
+  signal nibs_h      : std_logic_vector(5 downto 0) := (others => '0');
+  signal nibs_lc     : std_logic := '0';
+  signal nibs_hc     : std_logic := '0';
 
-  signal bcd_a       : std_logic_vector(8 downto 0);
-  signal bcd_s       : std_logic_vector(8 downto 0);
+  signal bcd_a       : std_logic_vector(8 downto 0) := (others => '0');
+  signal bcd_s       : std_logic_vector(8 downto 0) := (others => '0');
   signal pack_out    : std_logic_vector(15 downto 0);
   signal pack_a      : std_logic_vector(15 downto 0);
   signal result_mulu : std_logic_vector(63 downto 0);
-  signal result_div  : std_logic_vector(63 downto 0);
+  signal result_div  : std_logic_vector(63 downto 0) := (others => '0');
   signal set_mV_Flag : std_logic;
   signal V_Flag      : BIT;
 
@@ -116,7 +116,7 @@ architecture logic of TG68K_ALU IS
   signal rot_C       : std_logic;
   signal rot_out     : std_logic_vector(31 downto 0);
   signal asl_VFlag   : std_logic;
-  signal bit_bits    : std_logic_vector(1 downto 0);
+  signal bit_bits    : std_logic_vector(1 downto 0) := (others => '0');
   signal bit_number  : std_logic_vector(4 downto 0);
   signal bits_out    : std_logic_vector(31 downto 0);
   signal one_bit_in  : std_logic;
@@ -124,32 +124,32 @@ architecture logic of TG68K_ALU IS
   signal bset        : std_logic;
 
   signal mulu_sign    : std_logic;
-  signal mulu_signext : std_logic_vector(16 downto 0);
+  signal mulu_signext : std_logic_vector(16 downto 0) := (others => '0');
   signal muls_msb     : std_logic;
-  signal mulu_reg     : std_logic_vector(63 downto 0);
-  signal FAsign       : std_logic;
-  signal faktorA      : std_logic_vector(31 downto 0);
+  signal mulu_reg     : std_logic_vector(63 downto 0) := (others => '0');
+  signal FAsign       : std_logic := '0';
+  signal faktorA      : std_logic_vector(31 downto 0) := (others => '0');
   signal faktorB      : std_logic_vector(31 downto 0);
 
-  signal div_reg      : std_logic_vector(63 downto 0);
-  signal div_quot     : std_logic_vector(63 downto 0);
-  signal div_ovl      : std_logic;
-  signal div_neg      : std_logic;
-  signal div_bit      : std_logic;
-  signal div_sub      : std_logic_vector(32 downto 0);
-  signal div_over     : std_logic_vector(32 downto 0);
-  signal nozero       : std_logic;
-  signal div_qsign    : std_logic;
+  signal div_reg      : std_logic_vector(63 downto 0) := (others => '0');
+  signal div_quot     : std_logic_vector(63 downto 0) := (others => '0');
+  signal div_ovl      : std_logic := '0';
+  signal div_neg      : std_logic := '0';
+  signal div_bit      : std_logic := '0';
+  signal div_sub      : std_logic_vector(32 downto 0) := (others => '0');
+  signal div_over     : std_logic_vector(32 downto 0) := (others => '0');
+  signal nozero       : std_logic := '0';
+  signal div_qsign    : std_logic := '0';
   signal divisor      : std_logic_vector(63 downto 0);
   signal divs         : std_logic;
   signal signedOP     : std_logic;
-  signal OP1_sign     : std_logic;
-  signal OP2_sign     : std_logic;
+  signal OP1_sign     : std_logic := '0';
+  signal OP2_sign     : std_logic := '0';
   signal OP2outext    : std_logic_vector(15 downto 0);
 
-  signal in_offset    : std_logic_vector(5 downto 0);
+  signal in_offset    : std_logic_vector(5 downto 0) := (others => '0');
   signal datareg      : std_logic_vector(31 downto 0);
-  signal insert       : std_logic_vector(31 downto 0);
+  signal insert       : std_logic_vector(31 downto 0) := (others => '0');
   signal bf_datareg   : std_logic_vector(31 downto 0);
   signal result       : std_logic_vector(39 downto 0);
   signal result_tmp   : std_logic_vector(39 downto 0);
@@ -167,12 +167,12 @@ architecture logic of TG68K_ALU IS
   signal bf_extu      : std_logic;
   signal bf_fffo      : std_logic;
   signal bf_d32       : std_logic;
-  signal index        : std_logic_vector(4 downto 0);
+  signal index        : std_logic_vector(4 downto 0) := (others => '0');
   signal bf_flag_z    : std_logic;
   signal bf_flag_n    : std_logic;
 
   signal set_V_Flag   : BIT;
-  signal Flags        : std_logic_vector(7 downto 0);
+  signal Flags        : std_logic_vector(7 downto 0) := (others => '0');
   signal c_out        : std_logic_vector(2 downto 0);
   signal addsub_q     : std_logic_vector(31 downto 0);
 
@@ -356,7 +356,7 @@ begin
   -----------------------------------------------------------------------------
   -- Bits
   -----------------------------------------------------------------------------
-  process (clk, exe_opcode, OP1out, OP2out, one_bit_in, bchg, bset, bit_Number, sndOPC, reg_QB)
+  process (clk)
   begin
 	if rising_edge(clk) then
 	  if clkena_lw = '1' then
@@ -371,6 +371,10 @@ begin
 		end case;
 	  end if;
 	end if;
+  end process;
+  
+  process (exe_opcode, OP1out, one_bit_in, bchg, bset, bit_Number, sndOPC, reg_QB)
+  begin
 
 	if exe_opcode(8) = '0' then
 	  if exe_opcode(5 downto 4) = "00" then
@@ -451,9 +455,8 @@ begin
   --------
   -- bfffo uses the same data path as bfext. But instead of directly returning
   -- the extracted data it determines the highest bit setin the result
-  
-  process (clk, bf_ins, bf_bchg, bf_bset, bf_exts, bf_extu, bf_set2, OP1out, OP2out, result_tmp, bf_ext_in,
-           datareg, bf_NFlag, result, reg_QB, sign, bf_d32, copy, bf_loffset, bf_width)
+
+  process (clk)
   begin
 	if rising_edge(clk) then
 	  if clkena_lw = '1' then
@@ -483,6 +486,12 @@ begin
 		bf_ext_out <= result(39 downto 32);
 	  end if;
 	end if;
+  end process;
+
+  
+  process (bf_ins, bf_bchg, bf_bset, bf_exts, bf_set2, OP1out, OP2out, result_tmp, bf_ext_in,
+           datareg, bf_NFlag, reg_QB, sign, bf_d32, copy, bf_loffset, bf_width)
+  begin
 
         ------------- BF_SET2 --------------
         if bf_ins = '1' then
@@ -675,7 +684,7 @@ begin
   ------------------------------------------------------------------------------
   --CCR op
   ------------------------------------------------------------------------------
-process (clk, Reset, exe_opcode, exe_datatype, Flags, last_data_read, OP2out, flag_z, OP1in, c_out, addsub_ofl,
+process (exe_datatype, Flags, last_data_read, OP2out, flag_z, OP1in, c_out, addsub_ofl,
   bcd_s, bcd_a, exec)
   begin
 	if exec(andiSR) = '1' then
@@ -718,6 +727,10 @@ process (clk, Reset, exe_opcode, exe_datatype, Flags, last_data_read, OP2out, fl
 	  set_flags <= OP1in(15) & flag_z(1) & addsub_ofl(1) & c_out(1);
 	end if;
 
+  end process;
+
+process (clk)
+  begin
 	if rising_edge(clk) then
 	  if clkena_lw = '1' then
 		if exec(directSR) = '1' OR set_stop = '1' then
@@ -807,8 +820,9 @@ process (clk, Reset, exe_opcode, exe_datatype, Flags, last_data_read, OP2out, fl
 	  end if;
 	  Flags(7 downto 5) <= "000";
 	end if;
-  end process;
-
+    
+  end process;   
+    
   -------------------------------------------------------------------------------
   ---- MULU/MULS
   -------------------------------------------------------------------------------

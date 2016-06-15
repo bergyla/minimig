@@ -44,7 +44,7 @@ entity TG68K is
     uds           : out     std_logic;
     lds           : out     std_logic;
     rw            : out     std_logic;
-    e             : out     std_logic;
+    e             : out     std_logic := '0';
     vma           : buffer  std_logic:='1';
     wrd           : out     std_logic;
     ena7RDreg     : in      std_logic:='1';
@@ -110,8 +110,8 @@ END COMPONENT;
 
 
 SIGNAL cpuaddr          : std_logic_vector(31 downto 0);
-SIGNAL r_data           : std_logic_vector(15 downto 0);
-SIGNAL cpuIPL           : std_logic_vector(2 downto 0);
+SIGNAL r_data           : std_logic_vector(15 downto 0) := (others => '0');
+SIGNAL cpuIPL           : std_logic_vector(2 downto 0) := (others => '0');
 SIGNAL as_s             : std_logic;
 SIGNAL as_e             : std_logic;
 SIGNAL uds_s            : std_logic;
@@ -120,11 +120,9 @@ SIGNAL lds_s            : std_logic;
 SIGNAL lds_e            : std_logic;
 SIGNAL rw_s             : std_logic;
 SIGNAL rw_e             : std_logic;
-SIGNAL vpad             : std_logic;
-SIGNAL waitm            : std_logic;
+SIGNAL waitm            : std_logic := '0';
 SIGNAL clkena_e         : std_logic;
 SIGNAL S_state          : std_logic_vector(1 downto 0);
-SIGNAL decode           : std_logic;
 SIGNAL wr               : std_logic;
 SIGNAL nuds_in           : std_logic;
 SIGNAL nlds_in           : std_logic;
@@ -148,14 +146,14 @@ SIGNAL slower           : std_logic_vector(3 downto 0);
 
 TYPE   sync_states      IS (sync0, sync1, sync2, sync3, sync4, sync5, sync6, sync7, sync8, sync9);
 SIGNAL sync_state       : sync_states;
-SIGNAL datatg68         : std_logic_vector(15 downto 0);
+SIGNAL datatg68         : std_logic_vector(15 downto 0) := (others => '0');
 SIGNAL ramcs            : std_logic;
 
 SIGNAL z2ram_ena        : std_logic;
 SIGNAL z3ram_base       : std_logic_vector(7 downto 0);
 SIGNAL z3ram_ena        : std_logic;
-SIGNAL eth_base         : std_logic_vector(7 downto 0);
-SIGNAL eth_cfgd         : std_logic;
+SIGNAL eth_base         : std_logic_vector(7 downto 0) := (others => '0');
+SIGNAL eth_cfgd         : std_logic := '0';
 SIGNAL sel_z2ram        : std_logic;
 SIGNAL sel_z3ram        : std_logic;
 SIGNAL sel_kickram      : std_logic;
@@ -165,17 +163,6 @@ SIGNAL NMI_vector       : std_logic_vector(15 downto 0);
 SIGNAL NMI_addr         : std_logic_vector(31 downto 0);
 SIGNAL NMI_active       : std_logic;
 SIGNAL sel_interrupt    : std_logic;
-
-SIGNAL cpuaddr_w        : std_logic_vector(31 downto 0);
-SIGNAL data_write_w     : std_logic_vector(15 downto 0);
-SIGNAL state_w          : std_logic_vector(1 downto 0);
-SIGNAL wr_w             : std_logic;
-SIGNAL nuds_in_w         : std_logic;
-SIGNAL nlds_in_w         : std_logic;
-SIGNAL nResetOut_w      : std_logic;
-SIGNAL skipFetch_w      : std_logic;
-SIGNAL CACR_out_w       : std_logic_vector(3 downto 0);
-SIGNAL VBR_out_w        : std_logic_vector(31 downto 0);
 
 
 BEGIN
