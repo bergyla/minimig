@@ -36,24 +36,24 @@ reg [24-1:0] seed_sum=0, seed_prev=0, seed_out=0;
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (&seed1)
-      seed1 <= #1 24'h654321;
+      seed1 <= 24'h654321;
     else
-      seed1 <= #1 {seed1[22:0], ~(seed1[23] ^ seed1[22] ^ seed1[21] ^ seed1[16])};
+      seed1 <= {seed1[22:0], ~(seed1[23] ^ seed1[22] ^ seed1[21] ^ seed1[16])};
   end
 end
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (&seed2)
-      seed2 <= #1 19'h12345;
+      seed2 <= 19'h12345;
     else
-      seed2 <= #1 {seed2[17:0], ~(seed2[18] ^ seed2[17] ^ seed2[16] ^ seed2[13] ^ seed2[0])};
+      seed2 <= {seed2[17:0], ~(seed2[18] ^ seed2[17] ^ seed2[16] ^ seed2[13] ^ seed2[0])};
   end
 end
 always @ (posedge clk) begin
   if (clk7_en) begin
-    seed_sum  <= #1 seed1 + {5'b0, seed2};
-    seed_prev <= #1 seed_sum;
-    seed_out  <= #1 seed_sum - seed_prev;
+    seed_sum  <= seed1 + {5'b0, seed2};
+    seed_prev <= seed_sum;
+    seed_out  <= seed_sum - seed_prev;
   end
 end
 
@@ -62,7 +62,7 @@ localparam ID=4; // counter size, also 2^ID = interpolation rate
 reg  [ID+0-1:0] int_cnt = 0;
 always @ (posedge clk) begin
   if (clk7_en) begin
-    int_cnt <= #1 int_cnt + 'd1;
+    int_cnt <= int_cnt + 'd1;
   end
 end
 
@@ -76,15 +76,15 @@ assign rdata_step = {rdata_cur[DW-1], rdata_cur} - {rdata_prev[DW-1], rdata_prev
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (~|int_cnt) begin
-      ldata_prev <= #1 ldata_cur;
-      ldata_cur  <= #1 ldatasum; //{~ldatasum[DW-1], ldatasum[DW-2:0]}; // convert to offset binary, samples no longer signed!
-      rdata_prev <= #1 rdata_cur;
-      rdata_cur  <= #1 rdatasum; //{~rdatasum[DW-1], rdatasum[DW-2:0]}; // convert to offset binary, samples no longer signed!
-      ldata_int  <= #1 {ldata_cur[DW-1], ldata_cur, {ID{1'b0}}};
-      rdata_int  <= #1 {rdata_cur[DW-1], rdata_cur, {ID{1'b0}}};
+      ldata_prev <= ldata_cur;
+      ldata_cur  <= ldatasum; //{~ldatasum[DW-1], ldatasum[DW-2:0]}; // convert to offset binary, samples no longer signed!
+      rdata_prev <= rdata_cur;
+      rdata_cur  <= rdatasum; //{~rdatasum[DW-1], rdatasum[DW-2:0]}; // convert to offset binary, samples no longer signed!
+      ldata_int  <= {ldata_cur[DW-1], ldata_cur, {ID{1'b0}}};
+      rdata_int  <= {rdata_cur[DW-1], rdata_cur, {ID{1'b0}}};
     end else begin
-      ldata_int  <= #1 ldata_int + {{ID{ldata_step[DW+1-1]}}, ldata_step};
-      rdata_int  <= #1 rdata_int + {{ID{rdata_step[DW+1-1]}}, rdata_step};
+      ldata_int  <= ldata_int + {{ID{ldata_step[DW+1-1]}}, ldata_step};
+      rdata_int  <= rdata_int + {{ID{rdata_step[DW+1-1]}}, rdata_step};
     end
   end
 end
@@ -101,8 +101,8 @@ assign rdata_gain = {rdata_int_out[DW-1], rdata_int_out, 1'b0} + {{(2){rdata_int
 reg [DW-1:0] ldata=0, rdata=0;
 always @ (posedge clk) begin
   if (clk7_en) begin
-    ldata <= #1 ldata_gain[DW+2-1:2] + ( (~(&ldata_gain[DW+2-1-1:2]) && (ldata_gain[1:0] > seed_out[1:0])) ? 15'd1 : 15'd0 );
-    rdata <= #1 rdata_gain[DW+2-1:2] + ( (~(&ldata_gain[DW+2-1-1:2]) && (ldata_gain[1:0] > seed_out[1:0])) ? 15'd1 : 15'd0 );
+    ldata <= ldata_gain[DW+2-1:2] + ( (~(&ldata_gain[DW+2-1-1:2]) && (ldata_gain[1:0] > seed_out[1:0])) ? 15'd1 : 15'd0 );
+    rdata <= rdata_gain[DW+2-1:2] + ( (~(&ldata_gain[DW+2-1-1:2]) && (ldata_gain[1:0] > seed_out[1:0])) ? 15'd1 : 15'd0 );
   end
 end
 */
@@ -117,10 +117,10 @@ assign sd_r_aca2 = {{(A2W-A1W){sd_r_aca1[DW+A1W+2-1]}}, sd_r_aca1} - {{(A2W){sd_
 // accumulators
 always @ (posedge clk) begin
   if (clk7_en) begin
-    sd_l_ac1 <= #1 sd_l_aca1;
-    sd_r_ac1 <= #1 sd_r_aca1;
-    sd_l_ac2 <= #1 sd_l_aca2;
-    sd_r_ac2 <= #1 sd_r_aca2;
+    sd_l_ac1 <= sd_l_aca1;
+    sd_r_ac1 <= sd_r_aca1;
+    sd_l_ac2 <= sd_l_aca2;
+    sd_r_ac2 <= sd_r_aca2;
   end
 end
 
@@ -133,16 +133,16 @@ assign sd_l_er0 = sd_l_quant[DW+A2W+3-1] ? {1'b1, {(DW+2-1){1'b0}}} : {1'b0, {(D
 assign sd_r_er0 = sd_r_quant[DW+A2W+3-1] ? {1'b1, {(DW+2-1){1'b0}}} : {1'b0, {(DW+2-1){1'b1}}};
 always @ (posedge clk) begin
   if (clk7_en) begin
-    sd_l_er0_prev <= #1 (&sd_l_er0) ? sd_l_er0 : sd_l_er0+1;
-    sd_r_er0_prev <= #1 (&sd_r_er0) ? sd_r_er0 : sd_r_er0+1;
+    sd_l_er0_prev <= (&sd_l_er0) ? sd_l_er0 : sd_l_er0+1;
+    sd_r_er0_prev <= (&sd_r_er0) ? sd_r_er0 : sd_r_er0+1;
   end
 end
 
 // output
 always @ (posedge clk) begin
   if (clk7_en) begin
-    left  <= #1 (~|ldata_gain) ? ~left  : ~sd_l_er0[DW+2-1];
-    right <= #1 (~|rdata_gain) ? ~right : ~sd_r_er0[DW+2-1];
+    left  <= (~|ldata_gain) ? ~left  : ~sd_l_er0[DW+2-1];
+    right <= (~|rdata_gain) ? ~right : ~sd_r_er0[DW+2-1];
   end
 end
 

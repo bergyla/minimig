@@ -81,39 +81,39 @@
 /*cia a*/
 module ciaa
 (
-  input   clk,          // clock
-  input clk7_en,
-  input clk7n_en,
-  input   aen,          // adress enable
-  input  rd,          // read enable
-  input  wr,          // write enable
-  input   reset,         // reset
-  input   [3:0] rs,         // register select (address)
-  input   [7:0] data_in,    // bus data in
-  output   [7:0] data_out,    // bus data out
-  input   tick,        // tick (counter input for TOD timer)
-  input   eclk,          // eclk (counter input for timer A/B)
-  output   irq,           // interrupt request out
-  input  [7:2] porta_in,   // porta in
-  output   [3:0] porta_out,  // porta out
-  output  kbdrst,        // keyboard reset out
-  inout  kbddat,        // ps2 keyboard data
-  inout  kbdclk,        // ps2 keyboard clock
-  input  keyboard_disabled,  // disable keystrokes
-  input kbd_mouse_strobe,
-  input kms_level,
-  input [1:0] kbd_mouse_type,
-  input [7:0] kbd_mouse_data,
-  output  [7:0] osd_ctrl,    // osd control
-  output  _lmb,
-  output  _rmb,
-  output  [5:0] _joy2,
-  output  aflock,       // auto fire lock
-  output  freeze,        // Action Replay freeze key
-  input  disk_led,      // floppy disk activity LED
-  output [5:0] mou_emu,
-  output [5:0] joy_emu,
-  input hrtmon_en
+    input   clk,          // clock
+    input   clk7_en,
+    input   clk7n_en,
+    input   aen,          // adress enable
+    input   rd,          // read enable
+    input   wr,          // write enable
+    input   reset,         // reset
+    input   [3:0] rs,         // register select (address)
+    input   [7:0] data_in,    // bus data in
+    output  [7:0] data_out,    // bus data out
+    input   tick,        // tick (counter input for TOD timer)
+    input   eclk,          // eclk (counter input for timer A/B)
+    output  irq,           // interrupt request out
+    input   [7:2] porta_in,   // porta in
+    output  [3:0] porta_out,  // porta out
+    output  kbdrst,        // keyboard reset out
+    inout   kbddat,        // ps2 keyboard data
+    inout   kbdclk,        // ps2 keyboard clock
+    input   keyboard_disabled,  // disable keystrokes
+    input   kbd_mouse_strobe,
+    input   kms_level,
+    input   [1:0] kbd_mouse_type,
+    input   [7:0] kbd_mouse_data,
+    output  [7:0] osd_ctrl,    // osd control
+    output  _lmb,
+    output  _rmb,
+    output  [5:0] _joy2,
+    output  aflock,       // auto fire lock
+    output  freeze,        // Action Replay freeze key
+    input   disk_led,      // floppy disk activity LED
+    output  [5:0] mou_emu,
+    output  [5:0] joy_emu,
+    input   hrtmon_en
 );
 
 // local signals

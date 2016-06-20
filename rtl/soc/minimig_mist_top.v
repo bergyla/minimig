@@ -57,7 +57,8 @@ module minimig_mist_top (
     input   SPI_SS2,                // fpga
     input   SPI_SS3,                // OSD
     input   SPI_SS4,                // "sniff" mode
-    input   CONF_DATA0              // SPI_SS for user_io
+    input   CONF_DATA0,             // SPI_SS for user_io
+    output  rst_out
 );
 
 
@@ -71,6 +72,7 @@ wire           clk_114;
 wire           clk_28;
 wire           clk_sdram;
 wire           pll_locked;
+wire           _rst_clk_114;
 wire           clk_7;
 wire           clk7_en;
 wire           clk7n_en;
@@ -81,7 +83,7 @@ wire [ 10-1:0] eclk;
 
 // reset
 wire           pll_rst;
-wire           sdctl_rst;
+wire           _sdctl_rst;
 wire           rst_50;
 
 // ctrl
@@ -126,6 +128,7 @@ wire [ 16-1:0] ram_data;      // sram data bus
 wire [ 16-1:0] ramdata_in;    // sram data bus in
 wire [ 48-1:0] chip48;        // big chip read
 wire [ 22-1:1] ram_address;   // sram address bus
+reg [ 22-1:1] ram_address_int;   // sram address bus - ABER
 wire           _ram_bhe;      // sram upper byte select
 wire           _ram_ble;      // sram lower byte select
 wire           _ram_we;       // sram write enable
@@ -178,6 +181,16 @@ reg  [  4-1:0] CORE_CONFIG_0;
 reg  [  4-1:0] CORE_CONFIG_1;
 wire [  4-1:0] core_config;
 
+//
+integer i;
+always @(*)
+    begin
+        for (i = 1; i < 22; i=i+1)
+        if (ram_address[i] == 1'b1) ram_address_int[i] <= 1'b1;
+        else ram_address_int[i] <= 1'b0;
+    end
+
+
 
 
 ////////////////////////////////////////
@@ -197,7 +210,7 @@ assign pll_in_clk       = CLOCK_27[0];
 
 // reset
 assign pll_rst          = 1'b0;
-assign sdctl_rst        = pll_locked;
+assign _sdctl_rst       = _rst_clk_114; //pll_locked;
 
 // mist
 always @ (posedge clk_28) begin
@@ -252,7 +265,8 @@ amiga_clk amiga_clk (
   .c3           (c3               ), // clk28m clock domain signal synchronous with clk signal delayed by 90 degrees
   .cck          (cck              ), // colour clock output (3.54 MHz)
   .eclk         (eclk             ), // 0.709379 MHz clock enable output (clk domain pulse)
-  .locked       (pll_locked       )  // pll locked output
+  .locked       (pll_locked       ), // pll locked output
+  ._rst_clk_114 (_rst_clk_114     )
 );
 
 
@@ -314,7 +328,7 @@ sdram_ctrl sdram (
   .sd_ras       (SDRAM_nRAS       ),
   .sd_cas       (SDRAM_nCAS       ),
   .sysclk       (clk_114          ),
-  .reset_in     (sdctl_rst        ),
+  ._reset_in    (_sdctl_rst       ),
   .hostWR       (16'h0            ),
   .hostAddr     (24'h0            ),
   .hostState    ({1'b0, 2'b01}    ),
@@ -327,7 +341,7 @@ sdram_ctrl sdram (
   .cpustate     (tg68_cpustate    ),
   .cpu_dma      (tg68_cdma        ),
   .chipWR       (ram_data         ),
-  .chipAddr     ({2'b00, ram_address[21:1]}),
+  .chipAddr     ({2'b00, ram_address_int[21:1]}),
   .chipU        (_ram_bhe         ),
   .chipL        (_ram_ble         ),
   .chipRW       (_ram_we          ),
@@ -402,7 +416,7 @@ minimig minimig (
     .chip48       (chip48           ), // big chipram read
     //system  pins
     .rst_ext      (1'b0             ), // reset from ctrl block
-    .rst_out      (                 ), // minimig reset status
+    .rst_out      (rst_out          ), // minimig reset status
     .clk          (clk_28           ), // output clock c1 ( 28.687500MHz)
     .clk7_en      (clk7_en          ), // 7MHz clock enable
     .clk7n_en     (clk7n_en         ), // 7MHz negedge clock enable

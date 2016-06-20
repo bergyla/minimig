@@ -23,7 +23,7 @@ module cpu_cache_new (
   input  wire           cpu_ir,         // cpu instruction read
   input  wire           cpu_dr,         // cpu data read
   input  wire [ 16-1:0] cpu_dat_w,      // cpu write data
-  output reg  [ 16-1:0] cpu_dat_r,      // cpu read data
+  output reg  [ 16-1:0] cpu_dat_r = 0,      // cpu read data
   output reg            cpu_ack,        // cpu acknowledge
   // writebuffer
   output reg            wb_en,          // writebuffer enable
@@ -47,8 +47,8 @@ reg  [ 4-1:0] cpu_sm_state;
 reg  [ 4-1:0] sdr_sm_state;
 // state signals
 reg           fill;
-reg  [14-1:0] cpu_sm_tag_adr;
-reg  [10-1:0] cpu_sm_adr;
+reg  [14-1:0] cpu_sm_tag_adr = 0;
+reg  [10-1:0] cpu_sm_adr = 0;
 reg           cpu_sm_itag_we;
 reg           cpu_sm_dtag_we;
 reg           cpu_sm_iram0_we;
@@ -56,11 +56,11 @@ reg           cpu_sm_iram1_we;
 reg           cpu_sm_dram0_we;
 reg           cpu_sm_dram1_we;
 reg  [ 2-1:0] cpu_sm_bs;
-reg  [16-1:0] cpu_sm_mem_dat_w;
-reg  [32-1:0] cpu_sm_tag_dat_w;
-reg           cpu_sm_id;
-reg           cpu_sm_ilru;
-reg           cpu_sm_dlru;
+reg  [16-1:0] cpu_sm_mem_dat_w = 0;
+reg  [32-1:0] cpu_sm_tag_dat_w = 0;
+reg           cpu_sm_id = 1'b0;
+reg           cpu_sm_ilru = 1'b0;
+reg           cpu_sm_dlru = 1'b0;
 reg  [14-1:0] sdr_sm_tag_adr;
 reg  [10-1:0] sdr_sm_adr;
 reg           sdr_sm_itag_we;
@@ -69,11 +69,11 @@ reg           sdr_sm_iram0_we;
 reg           sdr_sm_iram1_we;
 reg           sdr_sm_dram0_we;
 reg           sdr_sm_dram1_we;
-reg  [16-1:0] sdr_sm_mem_dat_w;
+reg  [16-1:0] sdr_sm_mem_dat_w = 0;
 reg  [32-1:0] sdr_sm_tag_dat_w;
-reg           sdr_sm_id;
-reg           sdr_sm_ilru;
-reg           sdr_sm_dlru;
+reg           sdr_sm_id = 1'b0;
+reg           sdr_sm_ilru = 1'b0;
+reg           sdr_sm_dlru = 1'b0;
 
 // cpu cache control
 reg  [ 2-1:0] cc_clr_r;

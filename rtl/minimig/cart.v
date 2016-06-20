@@ -46,7 +46,6 @@ module cart
   input  wire           clk7_en,
   input  wire           clk7n_en,
   input  wire           cpu_rst,
-  input  wire [ 24-1:1] cpu_address,
   input  wire [ 24-1:1] cpu_address_in,
   input  wire           _cpu_as,
   input  wire           cpu_rd,
@@ -83,15 +82,31 @@ reg  [16-1:0] custom_mirror_q;
 wire [16-1:0] custom_mirror_out;
 reg  [16-1:0] custom_mirror [0:256-1];
 
+reg [ 24-1:1] cpu_address_int;
 
 //// code ////
+integer i;
+always @(*)
+    begin
+        for (i = 1; i < 24; i=i+1)
+        if (cpu_address_in[i] == 1'b1) cpu_address_int[i] <= 1'b1;  // prevent from undefined moduleoutput by undefined adressinput
+        else cpu_address_int[i] <= 1'b0;
+    end
 
+
+integer n;
+begin
+initial
+    for (n=0; n<256;n=n+1)
+        custom_mirror[n] = 0;
+end
+    
 // cart is activated by writing to its area during bootloading
 `define ARON_HACK
 `ifndef ARON_HACK
 always @ (posedge clk) begin
   if (clk7_en) begin
-    if (cpu_rst && (cpu_address_in[23:19]==5'b1010_0) && cpu_lwr && !aron)
+    if (cpu_rst && (cpu_address_int[23:19]==5'b1010_0) && cpu_lwr && !aron)
       aron <= 1'b1;
   end
 end
@@ -101,7 +116,7 @@ assign aron = 1'b1;
 `endif
 
 // cart selected
-assign sel_cart = ~dbr && (cpu_address_in[23:19]==5'b1010_0); // $A00000
+assign sel_cart = ~dbr && (cpu_address_int[23:19]==5'b1010_0); // $A00000
 
 // latch VBR + NMI vector offset
 always @ (posedge clk) begin
@@ -111,11 +126,11 @@ always @ (posedge clk) begin
 end
 
 // override decoding of NMI
-//assign ovr = active && ~dbr && ~ovl && cpu_rd && (cpu_address_in[23:2]==22'b0000_0000_0000_0000_0111_11);
-assign ovr = active && ~dbr && ~ovl && cpu_rd && (cpu_address_in[23:2] == nmi_vec_adr[23:2]);
+//assign ovr = active && ~dbr && ~ovl && cpu_rd && (cpu_address_int[23:2]==22'b0000_0000_0000_0000_0111_11);
+assign ovr = active && ~dbr && ~ovl && cpu_rd && (cpu_address_int[23:2] == nmi_vec_adr[23:2]);
 
 // custom NMI vector address output
-assign nmi_adr_out = ovr ? (!cpu_address_in[1] ? 16'h00a1 : 16'h000c) : 16'h0000;
+assign nmi_adr_out = ovr ? (!cpu_address_int[1] ? 16'h00a1 : 16'h000c) : 16'h0000;
 
 // freeze button
 always @ (posedge clk) begin
@@ -131,7 +146,7 @@ assign int7_req = /*aron &&*/ freeze_req;
 
 // level7 interrupt ack cycle, on Amiga interrupt vector number is read from kickstart rom
 // A[23:4] all high, A[3:1] vector number
-assign int7_ack = &cpu_address_in && ~_cpu_as;
+assign int7_ack = &cpu_address_int && ~_cpu_as;
 
 // level 7 interrupt request logic
 // interrupt request lines are sampled during S4->S5 transition (falling cpu clock edge)
@@ -178,12 +193,12 @@ always @ (posedge clk) begin
 end
 
 // custom registers mirror memory
-assign sel_custom_mirror = ~dbr && cpu_rd && (cpu_address_in[23:12]==12'b1010_1001_1111); // $A9F000
+assign sel_custom_mirror = ~dbr && cpu_rd && (cpu_address_int[23:12]==12'b1010_1001_1111); // $A9F000
 always @ (posedge clk) begin
   if (clk7_en) begin
     custom_mirror[reg_address_in] <= #1 reg_data_in;
   end
-  custom_mirror_q <= #1 custom_mirror[cpu_address_in[8:1]];
+  custom_mirror_q <= #1 custom_mirror[cpu_address_int[8:1]];
 end
 
 assign custom_mirror_out = sel_custom_mirror ? custom_mirror_q : 16'h0000;

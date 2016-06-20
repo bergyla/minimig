@@ -93,8 +93,23 @@ module gary
 wire	[2:0] t_sel_slow;
 wire	sel_xram;
 wire	sel_bank_1; 				// $200000-$3FFFFF
+reg    [23:1] cpu_address_int;     // ABER
 
 //--------------------------------------------------------------------------------------
+
+integer i;
+generate
+    always @(*)
+    begin
+        for (i=1; i < 24; i=i+1)
+            if (cpu_address_in[i] == 1'b1)
+              cpu_address_int[i] = 1'b1;
+            else
+              cpu_address_int[i] = 1'b0;
+        //for (i=1; i < 24; i=i+1)
+        //    assign cpu_address_int[i] = (cpu_address_in[i] == 1'b1) ? 1'b1 : 1'b0;  // ABER prevent unknown simulation on unwritten RAM-Adresses
+    end
+endgenerate
 
 assign ram_data_in = dbr ? custom_data_out : cpu_data_out;
 
@@ -110,7 +125,7 @@ assign ram_lwr = dbr ?  dbwe : cpu_lwr;
 //--------------------------------------------------------------------------------------
 
 // ram address multiplexer (512KB bank)		
-assign ram_address_out = dbr ? dma_address_in[18:1] : cpu_address_in[18:1];
+assign ram_address_out = dbr ? cpu_address_in[18:1] : cpu_address_in[18:1];
 
 //--------------------------------------------------------------------------------------
 
@@ -119,11 +134,11 @@ always @(*)
 begin
 	if (dbr)//agnus only accesses chipram
 	begin
-		sel_chip[0] = ~dma_address_in[20] & ~dma_address_in[19];
-		sel_chip[1] = ~dma_address_in[20] &  dma_address_in[19];
-		sel_chip[2] =  dma_address_in[20] & ~dma_address_in[19];
-		sel_chip[3] =  dma_address_in[20] &  dma_address_in[19];
-		sel_slow[0] = ( ecs && memory_config==4'b0100 && dma_address_in[20:19]==2'b01) ? 1'b1 : 1'b0;
+		sel_chip[0] = ~cpu_address_int[20] & ~cpu_address_int[19];
+		sel_chip[1] = ~cpu_address_int[20] &  cpu_address_int[19];
+		sel_chip[2] =  cpu_address_int[20] & ~cpu_address_int[19];
+		sel_chip[3] =  cpu_address_int[20] &  cpu_address_int[19];
+		sel_slow[0] = ( ecs && memory_config==4'b0100 && cpu_address_int[20:19]==2'b01) ? 1'b1 : 1'b0;
 		sel_slow[1] = 1'b0;
 		sel_slow[2] = 1'b0;
 		sel_kick    = 1'b0;
@@ -131,52 +146,52 @@ begin
 	end
 	else
 	begin
-		sel_chip[0] = cpu_address_in[23:19]==5'b0000_0 && !ovl ? 1'b1 : 1'b0;
-		sel_chip[1] = cpu_address_in[23:19]==5'b0000_1 ? 1'b1 : 1'b0;
-		sel_chip[2] = cpu_address_in[23:19]==5'b0001_0 ? 1'b1 : 1'b0;
-		sel_chip[3] = cpu_address_in[23:19]==5'b0001_1 ? 1'b1 : 1'b0;
+		sel_chip[0] = cpu_address_int[23:19]==5'b0000_0 && !ovl ? 1'b1 : 1'b0;
+		sel_chip[1] = cpu_address_int[23:19]==5'b0000_1 ? 1'b1 : 1'b0;
+		sel_chip[2] = cpu_address_int[23:19]==5'b0001_0 ? 1'b1 : 1'b0;
+		sel_chip[3] = cpu_address_int[23:19]==5'b0001_1 ? 1'b1 : 1'b0;
 		sel_slow[0] = t_sel_slow[0];
 		sel_slow[1] = t_sel_slow[1];
 		sel_slow[2] = t_sel_slow[2];
-		sel_kick    = (cpu_address_in[23:19]==5'b1111_1 && (cpu_rd || cpu_hlt)) || (cpu_rd && ovl && cpu_address_in[23:19]==5'b0000_0) ? 1'b1 : 1'b0; //$F80000 - $FFFFF
-    sel_kick1mb = (cpu_address_in[23:19]==5'b1110_0 && (cpu_rd || cpu_hlt)) ? 1'b1 : 1'b0; // $E00000 - $E7FFFF
+		sel_kick    = (cpu_address_int[23:19]==5'b1111_1 && (cpu_rd || cpu_hlt)) || (cpu_rd && ovl && cpu_address_int[23:19]==5'b0000_0) ? 1'b1 : 1'b0; //$F80000 - $FFFFF
+    sel_kick1mb = (cpu_address_int[23:19]==5'b1110_0 && (cpu_rd || cpu_hlt)) ? 1'b1 : 1'b0; // $E00000 - $E7FFFF
 	end
 end
 
-assign t_sel_slow[0] = cpu_address_in[23:19]==5'b1100_0 ? 1'b1 : 1'b0; //$C00000 - $C7FFFF
-assign t_sel_slow[1] = cpu_address_in[23:19]==5'b1100_1 ? 1'b1 : 1'b0; //$C80000 - $CFFFFF
-assign t_sel_slow[2] = cpu_address_in[23:19]==5'b1101_0 ? 1'b1 : 1'b0; //$D00000 - $D7FFFF
+assign t_sel_slow[0] = cpu_address_int[23:19]==5'b1100_0 ? 1'b1 : 1'b0; //$C00000 - $C7FFFF
+assign t_sel_slow[1] = cpu_address_int[23:19]==5'b1100_1 ? 1'b1 : 1'b0; //$C80000 - $CFFFFF
+assign t_sel_slow[2] = cpu_address_int[23:19]==5'b1101_0 ? 1'b1 : 1'b0; //$D00000 - $D7FFFF
 
 // 512kb extra rom area at $e0 and $f0 write able only at a1k chipset mode
-//assign t_sel_slow[2] = (cpu_address_in[23:19]==5'b1110_0 || cpu_address_in[23:19]==5'b1111_0) && (a1k | cpu_rd) ? 1'b1 : 1'b0; //$E00000 - $E7FFFF & $F00000 - $F7FFFF
+//assign t_sel_slow[2] = (cpu_address_int[23:19]==5'b1110_0 || cpu_address_int[23:19]==5'b1111_0) && (a1k | cpu_rd) ? 1'b1 : 1'b0; //$E00000 - $E7FFFF & $F00000 - $F7FFFF
 
 assign sel_xram = ((t_sel_slow[0] & (memory_config[2] | memory_config[3]))
         | (t_sel_slow[1] & memory_config[3])
         | (t_sel_slow[2] & memory_config[2] & memory_config[3]));
 
 
-assign sel_ide = hdc_ena && cpu_address_in[23:16]==8'b1101_1010 ? 1'b1 : 1'b0;		//IDE registers at $DA0000 - $DAFFFF	
+assign sel_ide = hdc_ena && cpu_address_int[23:16]==8'b1101_1010 ? 1'b1 : 1'b0;		//IDE registers at $DA0000 - $DAFFFF	
 
-assign sel_gayle = hdc_ena && cpu_address_in[23:12]==12'b1101_1110_0001 ? 1'b1 : 1'b0;		//GAYLE registers at $DE1000 - $DE1FFF
+assign sel_gayle = hdc_ena && cpu_address_int[23:12]==12'b1101_1110_0001 ? 1'b1 : 1'b0;		//GAYLE registers at $DE1000 - $DE1FFF
 
-assign sel_rtc = (cpu_address_in[23:16]==8'b1101_1100) ? 1'b1 : 1'b0;   //RTC registers at $DC0000 - $DCFFFF
+assign sel_rtc = (cpu_address_int[23:16]==8'b1101_1100) ? 1'b1 : 1'b0;   //RTC registers at $DC0000 - $DCFFFF
 
-assign sel_reg = cpu_address_in[23:21]==3'b110 ? ~(sel_xram | sel_rtc | sel_ide | sel_gayle) : 1'b0;		//chip registers at $DF0000 - $DFFFFF
+assign sel_reg = cpu_address_int[23:21]==3'b110 ? ~(sel_xram | sel_rtc | sel_ide | sel_gayle) : 1'b0;		//chip registers at $DF0000 - $DFFFFF
 
-assign sel_cia = cpu_address_in[23:20]==4'b1011 ? 1'b1 : 1'b0;
+assign sel_cia = cpu_address_int[23:20]==4'b1011 ? 1'b1 : 1'b0;
 
 //cia a address decode
-assign sel_cia_a = sel_cia & ~cpu_address_in[12];
+assign sel_cia_a = sel_cia & ~cpu_address_int[12];
 
 //cia b address decode
-assign sel_cia_b = sel_cia & ~cpu_address_in[13];
+assign sel_cia_b = sel_cia & ~cpu_address_int[13];
 
 
-assign sel_bank_1 = cpu_address_in[23:21]==3'b001 ? 1'b1 : 1'b0;
+assign sel_bank_1 = cpu_address_int[23:21]==3'b001 ? 1'b1 : 1'b0;
 
 //data bus slow down
 
-assign dbs = cpu_address_in[23:21]==3'b000 || cpu_address_in[23:20]==4'b1100 || cpu_address_in[23:19]==5'b1101_0 || cpu_address_in[23:16]==8'b1101_1111 ? 1'b1 : 1'b0;
+assign dbs = cpu_address_int[23:21]==3'b000 || cpu_address_int[23:20]==4'b1100 || cpu_address_int[23:19]==5'b1101_0 || cpu_address_int[23:16]==8'b1101_1111 ? 1'b1 : 1'b0;
 
 assign xbs = ~(sel_cia | sel_gayle | sel_ide);
 

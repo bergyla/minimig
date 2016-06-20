@@ -25,7 +25,7 @@ module sdram_ctrl(
   // system
   input  wire           sysclk,
   input  wire           c_7m,
-  input  wire           reset_in,
+  input  wire           _reset_in,
   input  wire           cache_rst,
   input  wire           cache_inhibit,
   input  wire [  4-1:0] cpu_cache_ctrl,
@@ -61,7 +61,7 @@ module sdram_ctrl(
   input  wire           chipRW,
   input  wire           chip_dma,
   input  wire [ 16-1:0] chipWR,
-  output reg  [ 16-1:0] chipRD,
+  output reg  [ 16-1:0] chipRD = 0,
   output wire [ 48-1:0] chip48,
   // cpu
   input  wire    [24:1] cpuAddr,
@@ -127,65 +127,64 @@ reg           cas_sd_cas;
 reg           cas_sd_we;
 reg  [ 2-1:0] cas_dqm;
 reg           init_done;
-wire [16-1:0] datain;
+//wire [16-1:0] datain;
 reg  [16-1:0] datawr;
 reg  [25-1:0] casaddr;
 reg           sdwrite;
 reg  [16-1:0] sdata_reg;
 wire [25-1:0] zmAddr;
 reg           zena;
-reg  [64-1:0] zcache;
-reg  [24-1:0] zcache_addr;
+reg  [64-1:0] zcache = 0;
+reg  [24-1:0] zcache_addr = 0;
 reg           zcache_fill;
 reg           zcachehit;
 reg  [ 4-1:0] zvalid;
-reg           zequal;
+reg           zequal = 1'b0;
 reg  [ 2-1:0] hostStated;
-reg  [16-1:0] hostRDd;
+reg  [16-1:0] hostRDd = 0;
 reg           cena;
-wire [64-1:0] ccache;
-wire [25-1:0] ccache_addr;
-wire          ccache_fill;
+//wire [64-1:0] ccache;
+//wire [25-1:0] ccache_addr;
+//wire          ccache_fill;
 wire          ccachehit;
-wire [ 4-1:0] cvalid;
-wire          cequal;
-wire [ 2-1:0] cpuStated;
-wire [16-1:0] cpuRDd;
-wire [64-1:0] dcache;
-wire [25-1:0] dcache_addr;
-wire          dcache_fill;
-wire          dcachehit;
-wire [ 4-1:0] dvalid;
-wire          dequal;
-reg  [ 8-1:0] hostslot_cnt;
-reg  [ 8-1:0] reset_cnt;
+//wire [ 4-1:0] cvalid;
+//wire          cequal;
+//wire [ 2-1:0] cpuStated;
+//wire [16-1:0] cpuRDd;
+//wire [64-1:0] dcache;
+//wire [25-1:0] dcache_addr;
+//wire          dcache_fill;
+//wire          dcachehit;
+//wire [ 4-1:0] dvalid;
+//wire          dequal;
+reg  [ 8-1:0] hostslot_cnt = 0;
+reg  [ 8-1:0] reset_cnt = 0;
 reg           reset;
 reg           reset_sdstate;
 reg           c_7md;
 reg           c_7mdd;
 reg           c_7mdr;
-reg  [ 9-1:0] refreshcnt;
+reg  [ 9-1:0] refreshcnt = 0;
 reg           refresh_pending;
 reg  [ 4-1:0] sdram_state;
-wire [ 2-1:0] pass;
 // writebuffer
 reg  [ 3-1:0] slot1_type = IDLE;
 reg  [ 3-1:0] slot2_type = IDLE;
 reg  [ 2-1:0] slot1_bank;
-reg  [ 2-1:0] slot2_bank;
+reg  [ 2-1:0] slot2_bank = 0;
 wire          cache_req;
 wire          readcache_fill;
 reg           cache_fill_1;
 reg           cache_fill_2;
-reg  [16-1:0] chip48_1;
-reg  [16-1:0] chip48_2;
-reg  [16-1:0] chip48_3;
+reg  [16-1:0] chip48_1 = 0;
+reg  [16-1:0] chip48_2 = 0;
+reg  [16-1:0] chip48_3 = 0;
 reg           writebuffer_req;
 reg           writebuffer_ena;
-reg  [ 2-1:0] writebuffer_dqm;
-reg  [25-1:1] writebufferAddr;
-reg  [16-1:0] writebufferWR;
-reg  [16-1:0] writebufferWR_reg;
+reg  [ 2-1:0] writebuffer_dqm = 0;
+reg  [25-1:1] writebufferAddr = 0;
+reg  [16-1:0] writebufferWR = 0;
+reg  [16-1:0] writebufferWR_reg = 0;
 wire          writebuffer_cache_ack;
 reg           writebuffer_hold;
 reg  [ 2-1:0] writebuffer_state;
@@ -213,7 +212,7 @@ assign cpuAddr_mangled = cpuAddr;
 ////////////////////////////////////////
 
 always @(posedge sysclk) begin
-  if(!reset_in) begin
+  if(!_reset_in) begin
     reset_cnt       <= 8'b00000000;
     reset           <= 1'b0;
     reset_sdstate   <= 1'b0;
@@ -650,7 +649,7 @@ always @ (posedge sysclk) begin
   sd_ras                      <= 1'b1;
   sd_cas                      <= 1'b1;
   sd_we                       <= 1'b1;
-  sdaddr                      <= 13'bxxxxxxxxxxxxx;
+  sdaddr                      <= 13'b0000000000000;      // 13'bxxxxxxxxxxxxx;
   ba                          <= 2'b00;
   dqm                         <= 2'b00;
   cache_fill_1                <= 1'b0;
@@ -793,6 +792,7 @@ always @ (posedge sysclk) begin
           slot1_type          <= IDLE;
         end
       end
+      
       ph2 : begin
         // slot 2
         cache_fill_2          <= 1'b1;

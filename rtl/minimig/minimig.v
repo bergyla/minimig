@@ -656,6 +656,19 @@ debug DEBUG1 (
 );
 */
 
+reg [47:0] chip48_int;
+
+integer n;
+ generate
+    always @(*)
+        begin
+            for (n = 0; n < 48; n=n+1)
+            if (chip48[n] == 1'b1) chip48_int[n] = 1'b1;
+            else chip48_int[n] = 1'b0;
+        end
+endgenerate
+
+
 //instantiate Denise
 denise DENISE1
 (		
@@ -668,7 +681,7 @@ denise DENISE1
     .strhor         (strhor_denise),
     .reg_address_in (reg_address),
     .data_in        (custom_data_in),
-    .chip48         (chip48),
+    .chip48         (chip48_int),
     .data_out       (denise_data_out),
     .blank          (blank),
     .red            (red_i),
@@ -831,6 +844,18 @@ minimig_bankmapper BMAP1
     .bank           (bank)
 );
 
+reg [15:0] ramdata_int;
+
+integer i;
+ generate
+    always @(*)
+        begin
+            for (i = 0; i < 16; i=i+1)
+            if (ramdata_in[i] == 1'b1) ramdata_int[i] = 1'b1;
+            else ramdata_int[i] = 1'b0;
+        end
+endgenerate
+
 //instantiate sram bridge
 minimig_sram_bridge RAM1 
 (
@@ -850,7 +875,7 @@ minimig_sram_bridge RAM1
     ._oe            (_ram_oe),
     .address        (ram_address),
     .data           (ram_data),	
-    .ramdata_in     (ramdata_in)	
+    .ramdata_in     (ramdata_int)	
 );
 
 cart CART1
@@ -859,7 +884,7 @@ cart CART1
   .clk7_en        (clk7_en        ),
   .clk7n_en       (clk7n_en       ),
   .cpu_rst        (!_cpu_reset    ),        // Input high active
-  .cpu_address    (cpu_address    ),
+  //.cpu_address    (cpu_address    ),      // ABER unused in cart module
   .cpu_address_in (cpu_address_out),
   ._cpu_as        (_cpu_as        ),
   .cpu_rd         (cpu_rd         ),

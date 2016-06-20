@@ -74,10 +74,6 @@ module minimig_m68k_bridge
 );
 
 
-
-localparam VCC = 1'b1;
-localparam GND = 1'b0;
-
 /*
 68000 bus timing diagram
 
@@ -191,13 +187,13 @@ assign _as_and_cs = !halt ? _as : !host_cs;
 // data transfer acknowledge in normal mode
 reg _ta_n;                  // transfer acknowledge
 //always @(posedge clk28m or posedge _as)
-always @(posedge clk or posedge _as_and_cs)
+always @(posedge clk or posedge _as_and_cs)                 // ABER ugly -> asynchr. Reset ???
   if (_as_and_cs)
-    _ta_n <= VCC;
+    _ta_n <= 1'b1;
   else if (clk7n_en) begin
     if (!l_as && cck && ((!vpa && !(dbr && dbs)) || (vpa && vma && eclk[8])) && !nrdy)
   //  else if (!_as && cck && ((!vpa && !(dbr && dbs)) || (vpa && vma && eclk[8])) && !nrdy)
-      _ta_n <= GND; 
+      _ta_n <= 1'b0; 
   end
 
 assign host_ack = !_ta_n;

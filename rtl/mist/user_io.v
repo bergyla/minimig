@@ -22,18 +22,18 @@ module user_io(
     output  [3:0] CONF
 );
 
-    reg [6:0]         sbuf;
-    reg [7:0]         cmd;
-    reg [5:0] 	      cnt;
-    reg [7:0]         joystick0;
-    reg [7:0]         joystick1;
-    reg [7:0] 	      but_sw;
+    reg [6:0]         sbuf = 1'b0;
+    reg [7:0]         cmd = 1'b0;
+    reg [5:0] 	      cnt = 1'b0;
+    reg [7:0]         joystick0 = 0;
+    reg [7:0]         joystick1 = 0;
+    reg [7:0] 	      but_sw = 0;
 
-    reg               kbd_mouse_strobe;
-    reg               kbd_mouse_strobe_level;
-    reg [1:0]         kbd_mouse_type;
-    reg [7:0]         kbd_mouse_data;
-    reg [2:0]         mouse_buttons;
+    reg               kbd_mouse_strobe = 1'b0;
+    reg               kbd_mouse_strobe_level = 1'b0;
+    reg [1:0]         kbd_mouse_type = 1'b0;
+    reg [7:0]         kbd_mouse_data = 1'b0;
+    reg [2:0]         mouse_buttons = 1'b0;
 
     assign JOY0 = joystick0;
     assign JOY1 = joystick1;

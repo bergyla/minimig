@@ -31,3 +31,23 @@
 // 8'b0_001_1100 | A_A_A_A B,B,... || write system memory, A - 32 bit memory address, B - variable number of bytes
 // 8'b1_000_1000 read RTL version
 
+`define SELCIA          // cpu_address_int[23:20]==4'b1011 ? 1'b1 : 1'b0;
+`define CIAA            // sel_cia_a = sel_cia & ~cpu_address_int[12];
+`define CIAB            // sel_cia_b = sel_cia & ~cpu_address_int[13];
+
+// sel_reg = cpu_address_int[23:21]==3'b110 ? ~(sel_xram | sel_rtc | sel_ide | sel_gayle) : 1'b0;		//chip registers at $DF0000 - $DFFFFF
+// sel_rtc = (cpu_address_int[23:16]==8'b1101_1100) ? 1'b1 : 1'b0;   //RTC registers at $DC0000 - $DCFFFF
+// sel_gayle = hdc_ena && cpu_address_int[23:12]==12'b1101_1110_0001 ? 1'b1 : 1'b0;		//GAYLE registers at $DE1000 - $DE1FFF
+// sel_ide = hdc_ena && cpu_address_int[23:16]==8'b1101_1010 ? 1'b1 : 1'b0;		//IDE registers at $DA0000 - $DAFFFF
+
+// 512kb extra rom area at $e0 and $f0 write able only at a1k chipset mode
+//assign t_sel_slow[2] = (cpu_address_int[23:19]==5'b1110_0 || cpu_address_int[23:19]==5'b1111_0) && (a1k | cpu_rd) ? 1'b1 : 1'b0; //$E00000 - $E7FFFF & $F00000 - $F7FFFF
+
+// assign dbs = cpu_address_int[23:21]==3'b000 || cpu_address_int[23:20]==4'b1100 || cpu_address_int[23:19]==5'b1101_0 || cpu_address_int[23:16]==8'b1101_1111 ? 1'b1 : 1'b0;
+
+// assign t_sel_slow[0] = cpu_address_int[23:19]==5'b1100_0 ? 1'b1 : 1'b0; //$C00000 - $C7FFFF
+// assign t_sel_slow[1] = cpu_address_int[23:19]==5'b1100_1 ? 1'b1 : 1'b0; //$C80000 - $CFFFFF
+// assign t_sel_slow[2] = cpu_address_int[23:19]==5'b1101_0 ? 1'b1 : 1'b0; //$D00000 - $D7FFFF
+
+// 		sel_kick    = (cpu_address_int[23:19]==5'b1111_1 && (cpu_rd || cpu_hlt)) || (cpu_rd && ovl && cpu_address_int[23:19]==5'b0000_0) ? 1'b1 : 1'b0; //$F80000 - $FFFFF
+//    sel_kick1mb = (cpu_address_int[23:19]==5'b1110_0 && (cpu_rd || cpu_hlt)) ? 1'b1 : 1'b0; // $E00000 - $E7FFFF

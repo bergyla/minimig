@@ -3,20 +3,20 @@
 
 module minimig_bankmapper
 (
-	input	chip0,				// chip ram select: 1st 512 KB block
-	input	chip1,				// chip ram select: 2nd 512 KB block
-	input	chip2,				// chip ram select: 3rd 512 KB block
-	input	chip3,				// chip ram select: 4th 512 KB block
-	input	slow0,				// slow ram select: 1st 512 KB block 
-	input	slow1,				// slow ram select: 2nd 512 KB block 
-	input	slow2,				// slow ram select: 3rd 512 KB block 
-	input	kick,				// Kickstart ROM address range select
-  input kick1mb,    // 1MB Kickstart 'upper' half
-	input	cart,				// Action Reply memory range select
-	input	aron,				// Action Reply enable
-  input ecs,        // ECS chipset enable
-	input	[3:0] memory_config,// memory configuration
-	output	reg [7:0] bank		// bank select
+    input   chip0,				// chip ram select: 1st 512 KB block
+    input   chip1,				// chip ram select: 2nd 512 KB block
+    input   chip2,				// chip ram select: 3rd 512 KB block
+    input   chip3,				// chip ram select: 4th 512 KB block
+    input   slow0,				// slow ram select: 1st 512 KB block 
+    input   slow1,				// slow ram select: 2nd 512 KB block 
+    input   slow2,				// slow ram select: 3rd 512 KB block 
+    input   kick,				// Kickstart ROM address range select
+    input   kick1mb,    // 1MB Kickstart 'upper' half
+    input   cart,				// Action Reply memory range select
+    input   aron,				// Action Reply enable
+    input   ecs,        // ECS chipset enable
+    input   [3:0] memory_config,// memory configuration
+    output  reg [7:0] bank		// bank select
 );
 
 

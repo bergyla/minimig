@@ -152,6 +152,8 @@ wire            SPI_SS3;    // OSD
 wire            SPI_SS4;    // "sniff" mode
 wire            CONF_DATA0;  // SPI_SS for user_io  
 
+wire            rst_out;
+
 
 ////////////////////////////////////////
 // bench                              //
@@ -301,24 +303,51 @@ initial begin
     //spi_bfm(4'b0010,4'd7,32'h00000000);
     spi_bfm(4'b0010,4'd7,{32'h88000000,48'h0});
     spi_bfm(4'b0010,4'd7,{32'h00000000,48'h0});
-    //spi_bfm(4'b0010,4'd7,{`SPI_RESET_CONTR,32'h01_00_00_00,40'h0});     // usrrst
-    //spi_bfm(4'b0010,4'd7,{`SPI_RESET_CONTR,32'h00_00_00_00,40'h0});
-    //spi_bfm(4'b0010,4'd7,{`SPI_RESET_CONTR,32'h02_00_00_00,40'h0});     // cpurst
-    //spi_bfm(4'b0010,4'd7,{`SPI_RESET_CONTR,32'h00_00_00_00,40'h0});
-    //spi_bfm(4'b0010,4'd7,{`SPI_RESET_CONTR,32'h04_00_00_00,40'h0});     // cpuhlt
-    //spi_bfm(4'b0010,4'd7,{`SPI_RESET_CONTR,32'h00_00_00_00,40'h0});
+    spi_bfm(4'b0010,4'd7,{`SPI_RESET_CONTR,32'h00000007,40'h0});     // reset +halt
+    spi_bfm(4'b0010,4'd7,{`SPI_RESET_CONTR,32'h00000004,40'h0});     // keep in Hold   
+    //spi_bfm(4'b0010,4'd7,{`SPI_RESET_CONTR,32'h02000000,40'h0}); 
+    repeat (100) @ (posedge CLOCK_50);
+    $display("BENCH : %t : Force Minimig Reset deassert 80ms earlier ...", $time);
+    force soc_top.minimig.CONTROL1.rst_cnt[2]  = 1'b1;
+    force soc_top.minimig.GARY1.ovl = 1'b0;  // test write in chipram Area !!!
+    while (rst_out == 1'b1) @ (posedge CLOCK_50);
     
-    spi_bfm(4'b0010,4'd7,{`SPI_RESET_CONTR,32'h07000000,40'h0});     // reset +halt
+//    spi_bfm(4'b0010,4'd9,{`SPI_WR_MEM,32'h00_00_00_00,40'h00_00_00_00_XX});
+    //spi_bfm(4'b0010,4'd9,{`SPI_WR_MEM,32'h04_00_10_00,40'h08_00_00_00_XX});
+    spi_bfm(4'b0010,4'd7,{`SPI_WR_MEM,32'h00_00_00_00,40'h00_02_XXXX_XX});
+    spi_bfm(4'b0010,4'd7,{`SPI_WR_MEM,32'h00_00_00_02,40'h1234_XXXX_XX});
+    spi_bfm(4'b0010,4'd7,{`SPI_WR_MEM,32'h00_00_00_04,40'h00_01_XXXX_XX});
+    spi_bfm(4'b0010,4'd7,{`SPI_WR_MEM,32'h00_00_00_06,40'hBEAF_XXXX_XX});
     
-    spi_bfm(4'b0010,4'd9,{`SPI_WR_MEM,32'h00000000,40'h12_34_56_78_90});
+    //spi_bfm(4'b0010,4'd7,{`SPI_WR_MEM,32'h04_00_00_00,40'h08_00_XX_XX_XX});
+    //spi_bfm(4'b0010,4'd7,{`SPI_WR_MEM,32'h06_00_00_00,40'h00_03_XX_XX_XX});
+    //spi_bfm(4'b0010,4'd9,{`SPI_WR_MEM,32'h08_00_00_00,40'h40_52_C0_33_XX});
+    //spi_bfm(4'b0010,4'd9,{`SPI_WR_MEM,32'h0c_00_00_00,40'hDF_00_80_F1_XX});
+    //spi_bfm(4'b0010,4'd9,{`SPI_WR_MEM,32'h10_00_00_00,40'h80_F1_F6_60_XX});
     
-    spi_bfm(4'b0010,4'd7,{`SPI_RESET_CONTR,32'h00000000,40'h0});     // deactivate halt & reset
+    //spi_bfm(4'b0010,4'd9,{`SPI_WR_MEM,32'h14000000,40'hFE_DC_BA_98_XX});
+    //spi_bfm(4'b0010,4'd9,{`SPI_WR_MEM,32'h18000000,40'hFE_DC_BA_98_XX}); // 8000
+    spi_bfm(4'b0010,4'd9,{`SPI_WR_MEM,32'h0000001c,40'hFE_DC_BA_98_XX}); // 10000
+    spi_bfm(4'b0010,4'd7,{`SPI_WR_MEM,32'h00000020,40'hDEAD_BA_98_XX}); // 20000
+    //spi_bfm(4'b0010,4'd9,{`SPI_WR_MEM,32'h24000000,40'h00_0_08_00_XX}); // 20000
+//    spi_bfm(4'b0010,4'd9,{`SPI_WR_MEM,32'h28000000,40'h00_0_20_00_XX}); // 20000
+    //spi_bfm(4'b0010,4'd9,{`SPI_WR_MEM,32'h2C000000,40'h00_0_40_00_XX}); // 2000
+    //spi_bfm(4'b0010,4'd9,{`SPI_WR_MEM,32'h30000000,40'h00_0_80_00_XX}); // 040000
+    //spi_bfm(4'b0010,4'd9,{`SPI_WR_MEM,32'h34000000,40'h00_1_00_00_XX}); // 
+    //spi_bfm(4'b0010,4'd9,{`SPI_WR_MEM,32'h38000000,40'h00_2_00_00_XX}); // 
+
+     repeat (50) @ (posedge CLOCK_50);
+     
+    spi_bfm(4'b0010,4'd7,{`SPI_RESET_CONTR,32'h00_00_00_00,40'h0});     // clear HALT
+
+     repeat (500) @ (posedge CLOCK_50);    
+    
     //spi_bfm(4'b0010,4'd7,{32'h88000000,48'h0});
     //spi_bfm(4'b0010,4'd7,{32'h00000000,48'h0});
     //spi_bfm(4'b0010,4'd7,{32'h88000000,48'h0});
     
   
-    repeat (10) @ (posedge CLOCK_50);
+
   // display result
   if (ERR) $display("BENCH : %t : vga_dma test FAILED - there were errors!", $time);
   else     $display("BENCH : %t : vga_dma test PASSED - no errors!", $time);
@@ -394,7 +423,8 @@ reg sim_spi_clk;
 initial begin
   sim_spi_clk  = 1'b1;
   #2;
-  forever #25 sim_spi_clk = ~sim_spi_clk;
+  //forever #25 sim_spi_clk = ~sim_spi_clk;
+  forever #50 sim_spi_clk = ~sim_spi_clk;
 end
 
 reg [79:0] data_i;
@@ -411,7 +441,7 @@ task spi_bfm;
     input [3:0] numbytes;
     input [79:0] data;
     begin
-        data_i <= data;
+        data_i <= {data[79:72],data[47:40],data[55:48],data[63:56],data[71:64],data[39:0]};
         cs_i <= channel;
         spi_1st <= 1'b1;
         spi_lst <= 1'b1;
@@ -421,7 +451,7 @@ task spi_bfm;
         @(posedge sim_spi_clk);
         send <= 1'b0;
         @(posedge ready);
-        repeat (3) @(posedge sim_spi_clk);   
+        repeat (10) @(posedge sim_spi_clk);   
     end
 endtask
 
@@ -466,8 +496,8 @@ minimig_mist_top soc_top (
   .SPI_SS2      (SPI_SS2    ),    // fpga
   .SPI_SS3      (SPI_SS3    ),    // OSD
   .SPI_SS4      (SPI_SS4    ),    // "sniff" mode
-  .CONF_DATA0   (CONF_DATA0 )  // SPI_SS for user_io  
-  
+  .CONF_DATA0   (CONF_DATA0 ),  // SPI_SS for user_io  
+  .rst_out      (rst_out)         // to provide a cycle accurate simulation
   //.EXT_CLOCK    (CLOCK_EXT  ),  // External Clock
   //.TDI          (TDI        ),  // CPLD -> FPGA (data in)
   //.TCK          (TCK        ),  // CPLD -> FPGA (clk)
