@@ -422,7 +422,7 @@ wire    host_ack;
 //--------------------------------------------------------------------------------------
 
 // power led control
-reg     [3:0] led_cnt;
+reg     [3:0] led_cnt = 0;
 reg     led_dim;
 
 always @ (posedge clk) begin

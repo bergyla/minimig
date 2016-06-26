@@ -66,59 +66,59 @@
 
 module paula_floppy
 (
-	// system bus interface
-	input 	clk,		    		//bus clock
-  input clk7_en,
-  input clk7n_en,
-	input 	reset,			   		//reset 
-  input ntsc,         // ntsc mode
-  input sof,          // start of frame
-	input	enable,					//dma enable
-	input 	[8:1] reg_address_in,	//register address inputs
-	input	[15:0] data_in,			//bus data in
-	output	[15:0] data_out,		//bus data out
-	output	dmal,					//dma request output
-	output	dmas,					//dma special output 
-	//disk control signals from cia and user
-	input	_step,					//step heads of disk
-	input	direc,					//step heads direction
-	input	[3:0] _sel,				//disk select 	
-	input	side,					//upper/lower disk head
-	input	_motor,					//disk motor control
-	output	_track0,				//track zero detect
-	output	_change,				//disk has been removed from drive
-	output	_ready,					//disk is ready
-	output	_wprot,					//disk is write-protected
-  output  index,          // disk index pulse
-	//interrupt request and misc. control
-	output	reg blckint,			//disk dma has finished interrupt
-	output	syncint,				//disk syncword found
-	input	wordsync,				//wordsync enable
-	//flash drive host controller interface	(SPI)
-	input	_scs,					//async. serial data enable
-	input	sdi,					//async. serial data input
-	output	sdo,					//async. serial data output
-	input	sck,					//async. serial data clock
-	
-	output	disk_led,				//disk activity LED, active when DMA is on
-	input	[1:0] floppy_drives,	//floppy drive number
-	
-	input	direct_scs,				//enables direct data transfer from SD card
-	input	direct_sdi,				//data line from SD card
-	input	hdd_cmd_req,			//HDD requests service (command register has been written)
-	input	hdd_dat_req,			//HDD requests data tansfer
-	output	[2:0] hdd_addr,			//task file register address
-	output	[15:0] hdd_data_out,	//data from HDD to HDC
-	input	[15:0] hdd_data_in,		//data from HDC to HDD
-	output	hdd_wr,					//task file register write strobe
-	output	hdd_status_wr,			//status register write strobe (MCU->HDD)
-	output	hdd_data_wr,			//data write strobe
-	output	hdd_data_rd,			//data read strobe
-  // fifo / track display
-	output  [7:0]trackdisp,
-	output  [13:0]secdisp,
-  output  floppy_fwr,
-  output  floppy_frd
+    // system bus interface
+    input   clk,		    		//bus clock
+    input   clk7_en,
+    input   clk7n_en,
+    input   reset,			   		//reset 
+    input   ntsc,         // ntsc mode
+    input   sof,          // start of frame
+    input   enable,					//dma enable
+    input   [8:1] reg_address_in,	//register address inputs
+    input   [15:0] data_in,			//bus data in
+    output  [15:0] data_out,		//bus data out
+    output  dmal,					//dma request output
+    output  dmas,					//dma special output 
+    //disk control signals from cia and user
+    input   _step,					//step heads of disk
+    input   direc,					//step heads direction
+    input   [3:0] _sel,				//disk select 	
+    input   side,					//upper/lower disk head
+    input   _motor,					//disk motor control
+    output  _track0,				//track zero detect
+    output  _change,				//disk has been removed from drive
+    output  _ready,					//disk is ready
+    output  _wprot,					//disk is write-protected
+    output  index,          // disk index pulse
+    //interrupt request and misc. control
+    output  reg blckint,			//disk dma has finished interrupt
+    output  syncint,				//disk syncword found
+    input   wordsync,				//wordsync enable
+    //flash drive host controller interface	(SPI)
+    input   _scs,					//async. serial data enable
+    input   sdi,					//async. serial data input
+    output  sdo,					//async. serial data output
+    input   sck,					//async. serial data clock
+
+    output  disk_led,				//disk activity LED, active when DMA is on
+    input   [1:0] floppy_drives,	//floppy drive number
+
+    input   direct_scs,				//enables direct data transfer from SD card
+    input   direct_sdi,				//data line from SD card
+    input   hdd_cmd_req,			//HDD requests service (command register has been written)
+    input   hdd_dat_req,			//HDD requests data tansfer
+    output  [2:0] hdd_addr,			//task file register address
+    output  [15:0] hdd_data_out,	//data from HDD to HDC
+    input   [15:0] hdd_data_in,		//data from HDC to HDD
+    output  hdd_wr,					//task file register write strobe
+    output  hdd_status_wr,			//status register write strobe (MCU->HDD)
+    output  hdd_data_wr,			//data write strobe
+    output  hdd_data_rd,			//data read strobe
+    // fifo / track display
+    output  [7:0]trackdisp,
+    output  [13:0]secdisp,
+    output  floppy_fwr,
+    output  floppy_frd
 );
 
 //register names and addresses
@@ -196,7 +196,7 @@ module paula_floppy
 	wire spi_bit_15;
 	wire spi_bit_0;
 	reg [15:1] spi_sdi_reg;		//spi receive register
-	reg [15:0] rx_data;			//spi received data
+	reg [15:0] rx_data = 0;			//spi received data
 	reg [15:0] spi_sdo_reg;		//spi transmit register (shifted on SCK falling edge)
 
 	reg spi_rx_flag;

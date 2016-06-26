@@ -31,9 +31,9 @@
 // 8'b0_001_1100 | A_A_A_A B,B,... || write system memory, A - 32 bit memory address, B - variable number of bytes
 // 8'b1_000_1000 read RTL version
 
-`define SELCIA          // cpu_address_int[23:20]==4'b1011 ? 1'b1 : 1'b0;
-`define CIAA            // sel_cia_a = sel_cia & ~cpu_address_int[12];
-`define CIAB            // sel_cia_b = sel_cia & ~cpu_address_int[13];
+`define SELCIA 24'hB0_00_00         // cpu_address_int[23:20]==4'b1011 ? 1'b1 : 1'b0;
+`define CIAA 24'hB0_00_00           // sel_cia_a = sel_cia & ~cpu_address_int[12];
+`define CIAB 24'hB0_00_00           // sel_cia_b = sel_cia & ~cpu_address_int[13];
 
 // sel_reg = cpu_address_int[23:21]==3'b110 ? ~(sel_xram | sel_rtc | sel_ide | sel_gayle) : 1'b0;		//chip registers at $DF0000 - $DFFFFF
 // sel_rtc = (cpu_address_int[23:16]==8'b1101_1100) ? 1'b1 : 1'b0;   //RTC registers at $DC0000 - $DCFFFF

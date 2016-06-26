@@ -305,7 +305,6 @@ initial begin
     spi_bfm(4'b0010,4'd7,{32'h00000000,48'h0});
     spi_bfm(4'b0010,4'd7,{`SPI_RESET_CONTR,32'h00000007,40'h0});     // reset +halt
     spi_bfm(4'b0010,4'd7,{`SPI_RESET_CONTR,32'h00000004,40'h0});     // keep in Hold   
-    //spi_bfm(4'b0010,4'd7,{`SPI_RESET_CONTR,32'h02000000,40'h0}); 
     repeat (100) @ (posedge CLOCK_50);
     $display("BENCH : %t : Force Minimig Reset deassert 80ms earlier ...", $time);
     force soc_top.minimig.CONTROL1.rst_cnt[2]  = 1'b1;
@@ -352,6 +351,8 @@ initial begin
   if (ERR) $display("BENCH : %t : vga_dma test FAILED - there were errors!", $time);
   else     $display("BENCH : %t : vga_dma test PASSED - no errors!", $time);
 
+  $display("BENCH : %x : vga_dma test FAILED - there were errors!", VGA_R);
+  
   $display("BENCH : done.");
   $finish;
 end

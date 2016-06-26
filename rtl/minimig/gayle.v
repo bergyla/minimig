@@ -37,32 +37,32 @@
 
 module gayle
 (
-	input	clk,
-  input clk7_en,
-	input	reset,
-	input	[23:1] address_in,
-	input	[15:0] data_in,
-	output	[15:0] data_out,
-	input	rd,
-	input	hwr,
-	input	lwr,
-	input	sel_ide,			// $DAxxxx
-	input	sel_gayle,			// $DExxxx
-	output	irq,
-	output	nrdy,				// fifo is not ready for reading 
-	input	[1:0] hdd_ena,		// enables Master & Slave drives
+    input   clk,
+    input   clk7_en,
+    input   reset,
+    input   [23:1] address_in,
+    input   [15:0] data_in,
+    output  [15:0] data_out,
+    input   rd,
+    input   hwr,
+    input   lwr,
+    input   sel_ide,			// $DAxxxx
+    input   sel_gayle,			// $DExxxx
+    output  irq,
+    output  nrdy,				// fifo is not ready for reading 
+    input   [1:0] hdd_ena,		// enables Master & Slave drives
 
-	output	hdd_cmd_req,
-	output	hdd_dat_req,
-	input	[2:0] hdd_addr,
-	input	[15:0] hdd_data_out,
-	output	[15:0] hdd_data_in,
-	input	hdd_wr,
-	input	hdd_status_wr,
-	input	hdd_data_wr,
-	input	hdd_data_rd,
-  output hd_fwr,
-  output hd_frd
+    output  hdd_cmd_req,
+    output  hdd_dat_req,
+    input   [2:0] hdd_addr,
+    input   [15:0] hdd_data_out,
+    output  [15:0] hdd_data_in,
+    input   hdd_wr,
+    input   hdd_status_wr,
+    input   hdd_data_wr,
+    input   hdd_data_rd,
+    output  hd_fwr,
+    output  hd_frd
 );
 
 localparam VCC = 1'b1;
@@ -209,7 +209,7 @@ wire	[7:0] tfr_in;
 wire	[7:0] tfr_out;
 wire	tfr_we;
 
-reg		[7:0] sector_count;	// sector counter
+reg		[7:0] sector_count = 0;	// sector counter
 wire	sector_count_dec;	// decrease sector counter
 
 always @(posedge clk)
