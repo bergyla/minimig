@@ -148,16 +148,16 @@ wire         ddfseq_match;
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (reg_address_in[8:1]==DIWSTRT_REG[8:1])
-      vdiwstrt[7:0] <= #1 data_in[15:8];
+      vdiwstrt[7:0] <= data_in[15:8];
   end
 end
 
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (reg_address_in[8:1]==DIWSTRT_REG[8:1])
-      vdiwstrt[10:8] <= #1 3'b000; // reset V10-V9 when writing DIWSTRT_REG
+      vdiwstrt[10:8] <= 3'b000; // reset V10-V9 when writing DIWSTRT_REG
     else if (reg_address_in[8:1]==DIWHIGH_REG[8:1] && ecs) // ECS
-      vdiwstrt[10:8] <= #1 data_in[2:0];
+      vdiwstrt[10:8] <= data_in[2:0];
   end
 end
 
@@ -165,16 +165,16 @@ end
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (reg_address_in[8:1]==DIWSTOP_REG[8:1])
-      vdiwstop[7:0] <= #1 data_in[15:8];
+      vdiwstop[7:0] <= data_in[15:8];
   end
 end
 
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (reg_address_in[8:1]==DIWSTOP_REG[8:1])
-      vdiwstop[10:8] <= #1 {2'b00,~data_in[15]}; // V8 = ~V7
+      vdiwstop[10:8] <= {2'b00,~data_in[15]}; // V8 = ~V7
     else if (reg_address_in[8:1]==DIWHIGH_REG[8:1] && ecs) // ECS
-      vdiwstop[10:8] <= #1 data_in[10:8];
+      vdiwstop[10:8] <= data_in[10:8];
   end
 end
 
@@ -182,9 +182,9 @@ end
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (sof && ~a1k || vpos[10:0]==0 && a1k || vpos[10:0]==vdiwstop[10:0]) // DIP Agnus can't start display DMA at scanline 0
-      vdiwena <= #1 1'b0;
+      vdiwena <= 1'b0;
     else if (vpos[10:0]==vdiwstrt[10:0])
-      vdiwena <= #1 1'b1;
+      vdiwena <= 1'b1;
   end
 end
 
@@ -197,7 +197,7 @@ assign bplpth_in = dma ? newpt[20:16] : data_in[4:0];
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (dma || ((reg_address_in[8:5]==BPLPTBASE_REG[8:5]) && !reg_address_in[1])) // if bitplane dma cycle or bus write
-      bplpth[bplptr_sel] <= #1 bplpth_in;
+      bplpth[bplptr_sel] <= bplpth_in;
   end
 end
 
@@ -209,7 +209,7 @@ assign bplptl_in = dma ? newpt[15:1] : data_in[15:1];
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (dma || ((reg_address_in[8:5]==BPLPTBASE_REG[8:5]) && reg_address_in[1])) // if bitplane dma cycle or bus write
-      bplptl[bplptr_sel] <= #1 bplptl_in;
+      bplptl[bplptr_sel] <= bplptl_in;
   end
 end
 
@@ -221,14 +221,14 @@ assign ddfstrt_sel = reg_address_in[8:1]==DDFSTRT_REG[8:1] ? 1'b1 : 1'b0;
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (ddfstrt_sel)
-      ddfstrt[8:2] <= #1 data_in[7:1];
+      ddfstrt[8:2] <= data_in[7:1];
   end
 end
 
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (reg_address_in[8:1]==DDFSTOP_REG[8:1])
-      ddfstop[8:2] <= #1 data_in[7:1];
+      ddfstop[8:2] <= data_in[7:1];
   end
 end
 
@@ -236,14 +236,14 @@ end
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (reg_address_in[8:1]==BPL1MOD_REG[8:1])
-      bpl1mod[15:1] <= #1 data_in[15:1];
+      bpl1mod[15:1] <= data_in[15:1];
   end
 end
 
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (reg_address_in[8:1]==BPL2MOD_REG[8:1])
-      bpl2mod[15:1] <= #1 data_in[15:1];
+      bpl2mod[15:1] <= data_in[15:1];
   end
 end
 
@@ -251,9 +251,9 @@ end
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (reset)
-      bplcon0 <= #1 6'b00_0000;
+      bplcon0 <= 6'b00_0000;
     else if (reg_address_in[8:1]==BPLCON0_REG[8:1])
-      bplcon0 <= #1 {data_in[6], data_in[15], aga & data_in[4], data_in[14:12]}; //SHRES,HIRES,BPU3,BPU2,BPU1,BPU0
+      bplcon0 <= {data_in[6], data_in[15], aga & data_in[4], data_in[14:12]}; //SHRES,HIRES,BPU3,BPU2,BPU1,BPU0
   end
 end
 
@@ -262,9 +262,9 @@ end
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (hpos[0]) begin
-      bplcon0_delay[0] <= #1 bplcon0;
-      bplcon0_delay[1] <= #1 bplcon0_delay[0];
-      bplcon0_delayed  <= #1 bplcon0_delay[1];
+      bplcon0_delay[0] <= bplcon0;
+      bplcon0_delay[1] <= bplcon0_delay[0];
+      bplcon0_delayed  <= bplcon0_delay[1];
     end
   end
 end
@@ -277,9 +277,9 @@ assign bpu = aga ? bplcon0_delayed[3:0] : {1'b0, &bplcon0_delayed[2:0] ? 3'd4 : 
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (reset)
-      fmode <= #1 16'h0000;
+      fmode <= 16'h0000;
     else if (aga && (reg_address_in[8:1] == FMODE_REG[8:1]))
-      fmode <= #1 data_in;
+      fmode <= data_in;
   end
 end
 
@@ -291,7 +291,7 @@ assign bp_fmode3  = (fmode[1:0] == 2'b11);
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (hpos[1:0]==2'b11)
-      dmaena_delayed[1:0] <= #1 {dmaena_delayed[0], dmaena};
+      dmaena_delayed[1:0] <= {dmaena_delayed[0], dmaena};
   end
 end
 
@@ -311,9 +311,9 @@ always @ (posedge clk) begin
   if (clk7_en) begin
     if (hpos[0])
       if (hpos[8:1]=={ddfstrt[8:3], ddfstrt[2] & ecs, 1'b0})
-        soft_start <= #1 1'b1;
+        soft_start <= 1'b1;
       else
-        soft_start <= #1 1'b0;
+        soft_start <= 1'b0;
   end
 end
 
@@ -321,9 +321,9 @@ always @ (posedge clk) begin
   if (clk7_en) begin
     if (hpos[0])
       if (hpos[8:1] == {ddfstop[8:3], ddfstop[2] & ecs, 1'b0})
-        soft_stop <= #1 1'b1;
+        soft_stop <= 1'b1;
       else
-        soft_stop <= #1 1'b0;
+        soft_stop <= 1'b0;
   end
 end
 
@@ -331,9 +331,9 @@ always @ (posedge clk) begin
   if (clk7_en) begin
     if (hpos[0])
       if (hpos[8:1]==8'h18)
-        hard_start <= #1 1'b1;
+        hard_start <= 1'b1;
       else
-        hard_start <= #1 1'b0;
+        hard_start <= 1'b0;
   end
 end
 
@@ -341,9 +341,9 @@ always @ (posedge clk) begin
   if (clk7_en) begin
     if (hpos[0])
       if (hpos[8:1]==8'hD8)
-        hard_stop <= #1 1'b1;
+        hard_stop <= 1'b1;
       else
-        hard_stop <= #1 1'b0;
+        hard_stop <= 1'b0;
   end
 end
 
@@ -352,9 +352,9 @@ always @ (posedge clk) begin
   if (clk7_en) begin
     if (hpos[0])
       if (soft_start && (ecs || vdiwena && dmaena) && !ddfstrt_sel) // OCS: display can start only when vdiwena condition is true
-        softena <= #1 1'b1;
+        softena <= 1'b1;
       else if (soft_stop || !ecs && hard_stop)
-        softena <= #1 1'b0;
+        softena <= 1'b0;
   end
 end
 
@@ -363,9 +363,9 @@ always @ (posedge clk) begin
   if (clk7_en) begin
     if (hpos[0])
       if (hard_start)
-        hardena <= #1 1'b1;
+        hardena <= 1'b1;
       else if (hard_stop)
-        hardena <= #1 1'b0;
+        hardena <= 1'b0;
   end
 end
 
@@ -374,8 +374,8 @@ end
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (hpos[0]) begin
-      ddfena_0 <= #1 (hardena || harddis) && softena;
-      ddfena <= #1 ddfena_0;
+      ddfena_0 <= (hardena || harddis) && softena;
+      ddfena <= ddfena_0;
     end
   end
 end
@@ -390,9 +390,9 @@ always @ (posedge clk) begin
   if (clk7_en) begin
     if (hpos[0]) //cycle alligment
       if (ddfena && vdiwena && !hpos[1] && dmaena_delayed[0]) // bitplane DMA starts at odd timeslot
-        ddfrun <= #1 1'b1;
+        ddfrun <= 1'b1;
       else if ((ddfend || !vdiwena) && ddfseq_match) // cleared at the end of last bitplane DMA cycle
-        ddfrun <= #1 1'b0;
+        ddfrun <= 1'b0;
   end
 end
 
@@ -401,9 +401,9 @@ always @ (posedge clk) begin
   if (clk7_en) begin
     if (hpos[0]) // cycle alligment
       if (ddfrun) // if enabled go to the next state
-        ddfseq <= #1 ddfseq + 5'd1;
+        ddfseq <= ddfseq + 5'd1;
       else
-        ddfseq <= #1 5'd0;
+        ddfseq <= 5'd0;
   end
 end
 
@@ -411,9 +411,9 @@ end
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (hpos[0] && ddfseq_match && ddfend)
-      ddfend <= #1 1'b0;
+      ddfend <= 1'b0;
     else if (hpos[0] && (ddfseq[2:0]==7) && !ddfena)
-      ddfend <= #1 1'b1;
+      ddfend <= 1'b1;
   end
 end
 

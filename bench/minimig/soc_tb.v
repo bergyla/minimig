@@ -304,7 +304,7 @@ initial begin
     spi_bfm(4'b0010,4'd7,{32'h88000000,48'h0});
     spi_bfm(4'b0010,4'd7,{32'h00000000,48'h0});
     spi_bfm(4'b0010,4'd7,{`SPI_RESET_CONTR,32'h00000007,40'h0});     // reset +halt
-    spi_bfm(4'b0010,4'd7,{`SPI_RESET_CONTR,32'h00000004,40'h0});     // keep in Hold   
+    //spi_bfm(4'b0010,4'd7,{`SPI_RESET_CONTR,32'h00000004,40'h0});     // keep in Hold   
     repeat (100) @ (posedge CLOCK_50);
     $display("BENCH : %t : Force Minimig Reset deassert 80ms earlier ...", $time);
     force soc_top.minimig.CONTROL1.rst_cnt[2]  = 1'b1;
@@ -313,14 +313,14 @@ initial begin
     
 //    spi_bfm(4'b0010,4'd9,{`SPI_WR_MEM,32'h00_00_00_00,40'h00_00_00_00_XX});
     //spi_bfm(4'b0010,4'd9,{`SPI_WR_MEM,32'h04_00_10_00,40'h08_00_00_00_XX});
-    spi_bfm(4'b0010,4'd7,{`SPI_WR_MEM,32'h00_00_00_00,40'h00_02_XXXX_XX});
-    spi_bfm(4'b0010,4'd7,{`SPI_WR_MEM,32'h00_00_00_02,40'h1234_XXXX_XX});
-    spi_bfm(4'b0010,4'd7,{`SPI_WR_MEM,32'h00_00_00_04,40'h00_01_XXXX_XX});
-    spi_bfm(4'b0010,4'd7,{`SPI_WR_MEM,32'h00_00_00_06,40'hBEAF_XXXX_XX});
+    spi_bfm(4'b0010,4'd9,{`SPI_WR_MEM,32'h00_00_00_00,40'h_0000_0000_XX});
+    spi_bfm(4'b0010,4'd9,{`SPI_WR_MEM,32'h00_00_00_04,40'h_0000_0008_XX});
+    spi_bfm(4'b0010,4'd7,{`SPI_WR_MEM,32'h00_00_00_08,40'h_5240_XXXX_XX});
+    spi_bfm(4'b0010,4'd7,{`SPI_WR_MEM,32'h00_00_00_0A,40'h_33C0_XXXX_XX});
     
-    //spi_bfm(4'b0010,4'd7,{`SPI_WR_MEM,32'h04_00_00_00,40'h08_00_XX_XX_XX});
-    //spi_bfm(4'b0010,4'd7,{`SPI_WR_MEM,32'h06_00_00_00,40'h00_03_XX_XX_XX});
-    //spi_bfm(4'b0010,4'd9,{`SPI_WR_MEM,32'h08_00_00_00,40'h40_52_C0_33_XX});
+    spi_bfm(4'b0010,4'd7,{`SPI_WR_MEM,32'h04_00_00_0C,40'h_00DF_XXXX_XX});
+    spi_bfm(4'b0010,4'd7,{`SPI_WR_MEM,32'h06_00_00_0E,40'h_F180_XXXX_XX});
+    spi_bfm(4'b0010,4'd7,{`SPI_WR_MEM,32'h08_00_00_10,40'h_60F6_XXXX_XX});
     //spi_bfm(4'b0010,4'd9,{`SPI_WR_MEM,32'h0c_00_00_00,40'hDF_00_80_F1_XX});
     //spi_bfm(4'b0010,4'd9,{`SPI_WR_MEM,32'h10_00_00_00,40'h80_F1_F6_60_XX});
     
@@ -425,7 +425,7 @@ initial begin
   sim_spi_clk  = 1'b1;
   #2;
   //forever #25 sim_spi_clk = ~sim_spi_clk;
-  forever #50 sim_spi_clk = ~sim_spi_clk;
+  forever #60 sim_spi_clk = ~sim_spi_clk;
 end
 
 reg [79:0] data_i;

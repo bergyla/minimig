@@ -234,7 +234,7 @@ reg         freeze_reg=0;
 // sync kms_level to clk28
 always @ (posedge clk) begin
   if (clk7_en) begin
-    kms_level_sync <= #1 {kms_level_sync[1:0], kms_level};
+    kms_level_sync <= {kms_level_sync[1:0], kms_level};
   end
 end
 
@@ -248,10 +248,10 @@ assign kmd = kmd_sync[1];
 // sync kbd_mouse_data to clk28
 always @ (posedge clk) begin
   if (clk7_en) begin
-    kmd_sync[0] <= #1 kbd_mouse_data;
-    kmd_sync[1] <= #1 kmd_sync[0];
-    kmt_sync[0] <= #1 kbd_mouse_type;
-    kmt_sync[1] <= #1 kmt_sync[0];
+    kmd_sync[0] <= kbd_mouse_data;
+    kmd_sync[1] <= kmd_sync[0];
+    kmt_sync[0] <= kbd_mouse_type;
+    kmt_sync[1] <= kmt_sync[0];
   end
 end
 
@@ -261,11 +261,11 @@ always @ (posedge clk) begin
   if (clk7_en) begin
     if (reset) begin
       sdr_latch[7:0] <= 8'h00;
-      freeze_reg <= #1 1'b0;
+      freeze_reg <= 1'b0;
     end else if (kms && (kmt == 2) && ~keyboard_disabled) begin
       sdr_latch[7:0] <= ~{kmd[6:0],kmd[7]};
-      if (hrtmon_en && (kmd == 8'h5f)) freeze_reg <= #1 1'b1;
-      else freeze_reg <= #1 1'b0;
+      if (hrtmon_en && (kmd == 8'h5f)) freeze_reg <= 1'b1;
+      else freeze_reg <= 1'b0;
     end else if (wr & sdr) begin
         sdr_latch[7:0] <= data_in[7:0];
     end
@@ -331,12 +331,12 @@ always @(posedge clk) begin
     if (reset) begin
       sdr_latch[7:0] <= 8'h00;
       osd_ctrl_reg[7:0] <= 8'd0;
-      freeze_reg <= #1 1'b0;
+      freeze_reg <= 1'b0;
      end else begin
       if (keystrobe && (kbd_mouse_type == 2) && ~keyboard_disabled) begin
         sdr_latch[7:0] <= ~{kbd_mouse_data[6:0],kbd_mouse_data[7]};
-        if (hrtmon_en && (kbd_mouse_data == 8'h5f)) freeze_reg <= #1 1'b1;
-        else freeze_reg <= #1 1'b0;
+        if (hrtmon_en && (kbd_mouse_data == 8'h5f)) freeze_reg <= 1'b1;
+        else freeze_reg <= 1'b0;
       end else if (wr & sdr)
         sdr_latch[7:0] <= data_in[7:0];
 

@@ -132,9 +132,9 @@ reg [15:0] beamcon0_reg;
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (reset)
-      beamcon0_reg <= #1 {10'b0, ~ntsc, 5'b0};
+      beamcon0_reg <= {10'b0, ~ntsc, 5'b0};
     else if ((reg_address_in[8:1] == BEAMCON0[8:1]) && ecs)
-      beamcon0_reg <= #1 data_in[15:0];
+      beamcon0_reg <= data_in[15:0];
   end
 end
 
@@ -199,30 +199,30 @@ reg [10:0] vbstop_reg;
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (reset) begin
-      htotal_reg  <= #1 HTOTAL_VAL << 1;
-      hsstrt_reg  <= #1 HSSTRT_VAL;
-      hsstop_reg  <= #1 HSSTOP_VAL;
-      hcenter_reg <= #1 HCENTER_VAL;
-      hbstrt_reg  <= #1 HBSTRT_VAL;
-      hbstop_reg  <= #1 HBSTOP_VAL;
-      vtotal_reg  <= #1 pal ? VTOTAL_PAL_VAL : VTOTAL_NTSC_VAL;
-      vsstrt_reg  <= #1 VSSTRT_VAL;
-      vsstop_reg  <= #1 VSSTOP_VAL;
-      vbstrt_reg  <= #1 VBSTRT_VAL;
-      vbstop_reg  <= #1 pal ? VBSTOP_PAL_VAL : VBSTOP_NTSC_VAL;
+      htotal_reg  <= HTOTAL_VAL << 1;
+      hsstrt_reg  <= HSSTRT_VAL;
+      hsstop_reg  <= HSSTOP_VAL;
+      hcenter_reg <= HCENTER_VAL;
+      hbstrt_reg  <= HBSTRT_VAL;
+      hbstop_reg  <= HBSTOP_VAL;
+      vtotal_reg  <= pal ? VTOTAL_PAL_VAL : VTOTAL_NTSC_VAL;
+      vsstrt_reg  <= VSSTRT_VAL;
+      vsstop_reg  <= VSSTOP_VAL;
+      vbstrt_reg  <= VBSTRT_VAL;
+      vbstop_reg  <= pal ? VBSTOP_PAL_VAL : VBSTOP_NTSC_VAL;
     end else begin
       case (reg_address_in[8:1])
-        HTOTAL [8:1] : htotal_reg  <= #1 {data_in[ 7:0], 1'b0};
-        HSSTRT [8:1] : hsstrt_reg  <= #1 {data_in[ 7:0], 1'b0};
-        HSSTOP [8:1] : hsstop_reg  <= #1 {data_in[ 7:0], 1'b0};
-        HCENTER[8:1] : hcenter_reg <= #1 {data_in[ 7:0], 1'b0};
-        HBSTRT [8:1] : hbstrt_reg  <= #1 {data_in[ 7:0], 1'b0}; // TODO fix this
-        HBSTOP [8:1] : hbstop_reg  <= #1 {data_in[ 7:0], 1'b0};
-        VTOTAL [8:1] : vtotal_reg  <= #1 {data_in[10:0]};
-        VSSTRT [8:1] : vsstrt_reg  <= #1 {data_in[10:0]};
-        VSSTOP [8:1] : vsstop_reg  <= #1 {data_in[10:0]};
-        VBSTRT [8:1] : vbstrt_reg  <= #1 {data_in[10:0]};
-        VBSTOP [8:1] : vbstop_reg  <= #1 {data_in[10:0]};
+        HTOTAL [8:1] : htotal_reg  <= {data_in[ 7:0], 1'b0};
+        HSSTRT [8:1] : hsstrt_reg  <= {data_in[ 7:0], 1'b0};
+        HSSTOP [8:1] : hsstop_reg  <= {data_in[ 7:0], 1'b0};
+        HCENTER[8:1] : hcenter_reg <= {data_in[ 7:0], 1'b0};
+        HBSTRT [8:1] : hbstrt_reg  <= {data_in[ 7:0], 1'b0}; // TODO fix this
+        HBSTOP [8:1] : hbstop_reg  <= {data_in[ 7:0], 1'b0};
+        VTOTAL [8:1] : vtotal_reg  <= {data_in[10:0]};
+        VSSTRT [8:1] : vsstrt_reg  <= {data_in[10:0]};
+        VSSTOP [8:1] : vsstop_reg  <= {data_in[10:0]};
+        VBSTRT [8:1] : vbstrt_reg  <= {data_in[10:0]};
+        VBSTOP [8:1] : vbstop_reg  <= {data_in[10:0]};
       endcase
     end
   end
@@ -417,11 +417,11 @@ assign _csync = _hsync & _vsync | vser; //composite sync with serration pulses
 reg vbl_reg;
 always @ (posedge clk) begin
   if (reset)
-    vbl_reg <= #1 1'b0;
+    vbl_reg <= 1'b0;
   else if (vpos == vbstrt)
-    vbl_reg <= #1 1'b1;
+    vbl_reg <= 1'b1;
   else if (vpos == vbstop)
-    vbl_reg <= #1 1'b0;
+    vbl_reg <= 1'b0;
 end
 
 assign vbl = (vpos <= vbstop) ? 1'b1 : 1'b0;

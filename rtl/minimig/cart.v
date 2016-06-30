@@ -121,7 +121,7 @@ assign sel_cart = ~dbr && (cpu_address_int[23:19]==5'b1010_0); // $A00000
 // latch VBR + NMI vector offset
 always @ (posedge clk) begin
   if (clk7_en) begin
-    nmi_vec_adr <= #1 cpu_vbr + 32'h0000007c; // $7C = NMI vector offset
+    nmi_vec_adr <= cpu_vbr + 32'h0000007c; // $7C = NMI vector offset
   end
 end
 
@@ -184,11 +184,11 @@ end
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (cpu_rst)
-      active <= #1 1'b0;
+      active <= 1'b0;
     else if (/*aron &&*/ l_int7 && l_int7_ack && cpu_rd)
-      active <= #1 1'b1;
+      active <= 1'b1;
     else if (sel_cart && cpu_rd)
-      active <= #1 1'b0;
+      active <= 1'b0;
   end
 end
 
@@ -196,9 +196,9 @@ end
 assign sel_custom_mirror = ~dbr && cpu_rd && (cpu_address_int[23:12]==12'b1010_1001_1111); // $A9F000
 always @ (posedge clk) begin
   if (clk7_en) begin
-    custom_mirror[reg_address_in] <= #1 reg_data_in;
+    custom_mirror[reg_address_in] <= reg_data_in;
   end
-  custom_mirror_q <= #1 custom_mirror[cpu_address_int[8:1]];
+  custom_mirror_q <= custom_mirror[cpu_address_int[8:1]];
 end
 
 assign custom_mirror_out = sel_custom_mirror ? custom_mirror_q : 16'h0000;

@@ -99,10 +99,10 @@ reg            vss=0;                   // vertical sync start
 
 // horizontal sync start  (falling edge detection)
 always @ (posedge clk) begin
-  _hsync_in_del <= #1 _hsync_in;
-  hss           <= #1 ~_hsync_in & _hsync_in_del;
-  _vsync_in_del <= #1 _vsync_in;
-  vss           <= #1 ~_vsync_in & _vsync_in_del;
+  _hsync_in_del <= _hsync_in;
+  hss           <= ~_hsync_in & _hsync_in_del;
+  _vsync_in_del <= _vsync_in;
+  vss           <= ~_vsync_in & _vsync_in_del;
 end
 
 
@@ -119,9 +119,9 @@ reg  [ 11-1:0] sd_lbuf_wr=0;            // line buffer write pointer
 // horizontal interpolation enable
 always @ (posedge clk) begin
 `ifdef MINIMIG_VIDEO_FILTER
-  if (hss) hi_en <= #1 hires ? hr_filter[0] : lr_filter[0];
+  if (hss) hi_en <= hires ? hr_filter[0] : lr_filter[0];
 `else
-  hi_en <= #1 1'b0;
+  hi_en <= 1'b0;
 `endif
 end
 
@@ -149,28 +149,28 @@ reg  [ 11-1:0] sd_lbuf_rd=0;            // line buffer read pointer
 // scandoubler line buffer write pointer
 always @ (posedge clk) begin
   if (hss || !dblscan)
-    sd_lbuf_wr <= #1 11'd0;
+    sd_lbuf_wr <= 11'd0;
   else
-    sd_lbuf_wr <= #1 sd_lbuf_wr + 11'd1;
+    sd_lbuf_wr <= sd_lbuf_wr + 11'd1;
 end
 
 // scandoubler line buffer read pointer
 always @ (posedge clk) begin
   if (hss || !dblscan || (sd_lbuf_rd == {htotal[8:1],2'b11})) // reset at horizontal sync start and end of scandoubled line
-    sd_lbuf_rd <= #1 11'd0;
+    sd_lbuf_rd <= 11'd0;
   else
-    sd_lbuf_rd <= #1 sd_lbuf_rd + 11'd1;
+    sd_lbuf_rd <= sd_lbuf_rd + 11'd1;
 end
 
 // scandoubler line buffer write/read
 always @ (posedge clk) begin
   if (dblscan) begin
     // write
-    sd_lbuf[sd_lbuf_wr[10:1]] <= #1 {_hsync_in, osd_blank, osd_pixel, hi_r, hi_g, hi_b};
+    sd_lbuf[sd_lbuf_wr[10:1]] <= {_hsync_in, osd_blank, osd_pixel, hi_r, hi_g, hi_b};
     // read
-    sd_lbuf_o <= #1 sd_lbuf[sd_lbuf_rd[9:0]];
+    sd_lbuf_o <= sd_lbuf[sd_lbuf_rd[9:0]];
     // delayed data
-    sd_lbuf_o_d <= #1 sd_lbuf_o;
+    sd_lbuf_o_d <= sd_lbuf_o;
   end
 end
 
@@ -189,18 +189,18 @@ wire [  8-1:0] vi_b;                    // vertical interpolation outputs
 //vertical interpolation enable
 always @ (posedge clk) begin
 `ifdef MINIMIG_VIDEO_FILTER
-  if (hss) vi_en <= #1 hires ? hr_filter[1] : lr_filter[1];
+  if (hss) vi_en <= hires ? hr_filter[1] : lr_filter[1];
 `else
-  vi_en <= #1 1'b0;
+  vi_en <= 1'b0;
 `endif
 end
 
 // vertical interpolation line buffer write/read
 always @ (posedge clk) begin
   // write
-  vi_lbuf[sd_lbuf_rd[9:0]] <= #1 sd_lbuf_o;
+  vi_lbuf[sd_lbuf_rd[9:0]] <= sd_lbuf_o;
   // read
-  vi_lbuf_o <= #1 vi_lbuf[sd_lbuf_rd[9:0]];
+  vi_lbuf_o <= vi_lbuf[sd_lbuf_rd[9:0]];
 end
 
 // interpolate & mux
@@ -241,13 +241,13 @@ wire [ 8-1:0] dither_b;
 // pseudo random number generator
 always @ (posedge clk) begin
   if (vss) begin
-    seed <= #1 24'h654321;
-    seed_old <= #1 24'd0;
-    randval <= #1 24'd0;
+    seed <= 24'h654321;
+    seed_old <= 24'd0;
+    randval <= 24'd0;
   end else if (|dither) begin
-    seed <= #1 {seed[22:0], ~(seed[23] ^ seed[22] ^ seed[21] ^ seed[16])};
-    seed_old <= #1 seed;
-    randval <= #1 hpf_sum[25:2];
+    seed <= {seed[22:0], ~(seed[23] ^ seed[22] ^ seed[21] ^ seed[16])};
+    seed_old <= seed;
+    randval <= hpf_sum[25:2];
   end
 end
 
@@ -256,12 +256,12 @@ assign hpf_sum = {2'b00,randval} + {2'b00, seed} - {2'b00, seed_old};
 // horizontal / vertical / frame marker
 always @ (posedge clk) begin
   if (vss) begin
-    f_cnt <= #1 ~f_cnt;
-    v_cnt <= #1 1'b0;
-    h_cnt <= #1 1'b0;
+    f_cnt <= ~f_cnt;
+    v_cnt <= 1'b0;
+    h_cnt <= 1'b0;
   end else if (|dither) begin
-    if (sd_lbuf_rd == {htotal[8:1],2'b11}) v_cnt <= #1 ~v_cnt;
-    h_cnt <= #1 ~h_cnt;
+    if (sd_lbuf_rd == {htotal[8:1],2'b11}) v_cnt <= ~v_cnt;
+    h_cnt <= ~h_cnt;
   end
 end
 
@@ -283,13 +283,13 @@ assign b_dither_rnd = &b_dither_tsp[7:2] ? b_dither_tsp[7:0] : b_dither_tsp[7:0]
 // dither error
 always @ (posedge clk) begin
   if (vss) begin
-    r_err <= #1 8'd0;
-    g_err <= #1 8'd0;
-    b_err <= #1 8'd0;
+    r_err <= 8'd0;
+    g_err <= 8'd0;
+    b_err <= 8'd0;
   end else if (|dither) begin
-    r_err <= #1 {6'b000000, r_dither_rnd[1:0]};
-    g_err <= #1 {6'b000000, g_dither_rnd[1:0]};
-    b_err <= #1 {6'b000000, b_dither_rnd[1:0]};
+    r_err <= {6'b000000, r_dither_rnd[1:0]};
+    g_err <= {6'b000000, g_dither_rnd[1:0]};
+    b_err <= {6'b000000, b_dither_rnd[1:0]};
   end
 end
 
@@ -313,26 +313,26 @@ reg            ns_osd_pixel;
 // scanline enable
 always @ (posedge clk) begin
   if (hss) // reset at horizontal sync start
-    sl_en <= #1 1'b0;
+    sl_en <= 1'b0;
   else if (sd_lbuf_rd == {htotal[8:1],2'b11}) // set at end of scandoubled line
-    sl_en <= #1 1'b1;
+    sl_en <= 1'b1;
 end
 
 // scanlines for scandoubled lines
 always @ (posedge clk) begin
-  sl_r <= #1 ((sl_en && scanline[1]) ? 8'h00 : ((sl_en && scanline[0]) ? {1'b0, dither_r[7:1]} : dither_r));
-  sl_g <= #1 ((sl_en && scanline[1]) ? 8'h00 : ((sl_en && scanline[0]) ? {1'b0, dither_g[7:1]} : dither_g));
-  sl_b <= #1 ((sl_en && scanline[1]) ? 8'h00 : ((sl_en && scanline[0]) ? {1'b0, dither_b[7:1]} : dither_b));
+  sl_r <= ((sl_en && scanline[1]) ? 8'h00 : ((sl_en && scanline[0]) ? {1'b0, dither_r[7:1]} : dither_r));
+  sl_g <= ((sl_en && scanline[1]) ? 8'h00 : ((sl_en && scanline[0]) ? {1'b0, dither_g[7:1]} : dither_g));
+  sl_b <= ((sl_en && scanline[1]) ? 8'h00 : ((sl_en && scanline[0]) ? {1'b0, dither_b[7:1]} : dither_b));
 end
 
 // scanlines for non-scandoubled lines
 always @ (posedge clk) begin
-  ns_r          <= #1 ((!dblscan && f_cnt && scanline[1]) ? 8'h00 : ((!dblscan && f_cnt && scanline[0]) ? {1'b0, red_in[7:1]}   : red_in));
-  ns_g          <= #1 ((!dblscan && f_cnt && scanline[1]) ? 8'h00 : ((!dblscan && f_cnt && scanline[0]) ? {1'b0, green_in[7:1]} : green_in));
-  ns_b          <= #1 ((!dblscan && f_cnt && scanline[1]) ? 8'h00 : ((!dblscan && f_cnt && scanline[0]) ? {1'b0, blue_in[7:1]}  : blue_in));
-  ns_csync      <= #1 _csync_in;
-  ns_osd_blank  <= #1 osd_blank;
-  ns_osd_pixel  <= #1 osd_pixel;
+  ns_r          <= ((!dblscan && f_cnt && scanline[1]) ? 8'h00 : ((!dblscan && f_cnt && scanline[0]) ? {1'b0, red_in[7:1]}   : red_in));
+  ns_g          <= ((!dblscan && f_cnt && scanline[1]) ? 8'h00 : ((!dblscan && f_cnt && scanline[0]) ? {1'b0, green_in[7:1]} : green_in));
+  ns_b          <= ((!dblscan && f_cnt && scanline[1]) ? 8'h00 : ((!dblscan && f_cnt && scanline[0]) ? {1'b0, blue_in[7:1]}  : blue_in));
+  ns_csync      <= _csync_in;
+  ns_osd_blank  <= osd_blank;
+  ns_osd_pixel  <= osd_pixel;
 end
 
 
@@ -366,11 +366,11 @@ assign osd_b = (bm_osd_blank ? (bm_osd_pixel ? OSD_B : {2'b10, bm_b[7:2]}) : bm_
 
 //// output registers ////
 always @ (posedge clk) begin
-  _hsync_out <= #1 bm_hsync;
-  _vsync_out <= #1 bm_vsync;
-  red_out    <= #1 osd_r;
-  green_out  <= #1 osd_g;
-  blue_out   <= #1 osd_b;
+  _hsync_out <= bm_hsync;
+  _vsync_out <= bm_vsync;
+  red_out    <= osd_r;
+  green_out  <= osd_g;
+  blue_out   <= osd_b;
 end
 
 
