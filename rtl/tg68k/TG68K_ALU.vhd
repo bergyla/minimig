@@ -33,7 +33,7 @@ entity TG68K_ALU is
   );
   port (
 	clk            : in  std_logic;
-	Reset          : in  std_logic;
+	--Reset          : in  std_logic;
 	clkena_lw      : in  std_logic := '1';
 	execOPC        : in  bit;
 	exe_condition  : in  std_logic;
@@ -325,7 +325,7 @@ begin
   ------------------------------------------------------------------------------
   --ALU
   ------------------------------------------------------------------------------
-  process (OP1out, OP2out, pack_a, niba_hc, niba_h, niba_l, niba_lc, nibs_hc, nibs_h, nibs_l, nibs_lc, Flags)
+  process (OP1out, OP2out, pack_a, niba_hc, niba_h, niba_l, niba_lc, nibs_hc, nibs_h, nibs_l, nibs_lc, Flags, exe_opcode)   -- ABER 20160701 add missing signal exe_opcode in sensitivity list
   begin
 	if exe_opcode(7 downto 6) = "01" then
 	  -- PACK
@@ -490,7 +490,7 @@ begin
 
   
   process (bf_ins, bf_bchg, bf_bset, bf_exts, bf_set2, OP1out, OP2out, result_tmp, bf_ext_in,
-           datareg, bf_NFlag, reg_QB, sign, bf_d32, copy, bf_loffset, bf_width)
+           datareg, bf_NFlag, reg_QB, sign, bf_d32, copy, bf_loffset, bf_width, bf_loff_dir) -- ABER 20160701 add missing signal bf_loff_dir in sensitivity list
   begin
 
         ------------- BF_SET2 --------------

@@ -64,8 +64,8 @@ entity TG68K is
     ovr           : in      std_logic;
     ramaddr       : out     std_logic_vector(31 downto 0);
     cpustate      : out     std_logic_vector(5 downto 0);
-    nResetOut     : buffer  std_logic;
-    skipFetch     : buffer  std_logic;
+    nResetOut     : out     std_logic;
+    skipFetch     : out     std_logic;
     cpuDMA        : buffer  std_logic;
     ramlds        : out     std_logic;
     ramuds        : out     std_logic;
@@ -93,6 +93,7 @@ COMPONENT TG68KdotC_Kernel
     data_in         : in      std_logic_vector(15 downto 0);
     IPL             : in      std_logic_vector(2 downto 0):="111";
     IPL_autovector  : in      std_logic:='0';
+	berr            : in      std_logic :='0';     
     CPU             : in      std_logic_vector(1 downto 0):="00";  -- 00->68000  01->68010  11->68020(only same parts - yet)
     addr_out        : buffer  std_logic_vector(31 downto 0);
     data_write      : buffer  std_logic_vector(15 downto 0);
@@ -100,6 +101,7 @@ COMPONENT TG68KdotC_Kernel
     nUDS, nLDS      : out     std_logic;
     nResetOut       : out     std_logic;
     FC              : out     std_logic_vector(2 downto 0);
+    clr_berr        : out     std_logic;
     busstate        : out     std_logic_vector(1 downto 0);  -- 00-> fetch code 10->read data 11->write data 01->no memaccess
     skipFetch       : out     std_logic;
     regin_out       : buffer  std_logic_vector(31 downto 0);
@@ -281,50 +283,12 @@ pf68K_Kernel_inst: TG68KdotC_Kernel
     nResetOut       => nResetOut,
     skipFetch       => skipFetch,     -- : out std_logic
     CACR_out        => CACR_out,
-    VBR_out         => VBR_out
-    --addr_out        => cpuaddr_w,     -- : buffer std_logic_vector(31 downto 0);
-    --data_write      => data_write_w,  -- : out std_logic_vector(15 downto 0);
-    --busstate        => state_w,       -- : buffer std_logic_vector(1 downto 0);
-    --nWr             => wr_w,          -- : out std_logic;
-    --nUDS            => nuds_in_w,
-    --nLDS            => nlds_in_w,      -- : out std_logic;
-    --nResetOut       => nResetOut_w,
-    --skipFetch       => skipFetch_w,   -- : out std_logic
-    --CACR_out        => CACR_out_w,
-    --VBR_out         => VBR_out_w
+    VBR_out         => VBR_out,
+    clr_berr        => open,
+    FC              => open
   );
 
-
---PROCESS (clk) BEGIN
---  IF rising_edge(clk) THEN
---    IF nreset='0' THEN
---      cpuaddr     <= X"00000000";
---      data_write  <= X"0000";
---      state       <= "01";
---      wr          <= '1';
---      nuds_in      <= '1';
---      nlds_in      <= '1';
---      nResetOut   <= '1';
---      skipFetch   <= '0';
---      CACR_out    <= "0000";
---      VBR_out     <= X"00000000";
---    ELSE
---      cpuaddr     <= cpuaddr_w;
---      data_write  <= data_write_w;
---      state       <= state_w;
---      wr          <= wr_w;
---      nuds_in      <= nuds_in_w;
---      nlds_in      <= nlds_in_w;
---      nResetOut   <= nResetOut_w;
---      skipFetch   <= skipFetch_w;
---      CACR_out    <= CACR_out_w;
---      VBR_out     <= VBR_out_w;
---    END IF;
---  END IF;
---END PROCESS;
-
-
-PROCESS(clk,turbochipram, turbokick) BEGIN
+PROCESS(clk) BEGIN
   IF rising_edge(clk) THEN
     IF nreset='0' THEN
       turbochip_d <= '0';
@@ -336,7 +300,7 @@ PROCESS(clk,turbochipram, turbokick) BEGIN
   END IF;
 END PROCESS;
 
-PROCESS (clk) BEGIN
+PROCESS (fastramcfg, cpuaddr, eth_en) BEGIN -- ABER 20160701 asynchronous process
   -- Zorro II RAM (Up to 8 meg at 0x200000)
   autoconfig_data <= "1111";
   IF fastramcfg/="000" THEN
@@ -393,6 +357,10 @@ PROCESS (clk) BEGIN
     END CASE;
   END IF;
 
+END PROCESS;
+
+
+PROCESS (clk) BEGIN
   IF rising_edge(clk) THEN
     IF nreset='0' THEN
       autoconfig_out <= "01";    --autoconfig on
@@ -447,6 +415,9 @@ PROCESS (clk) BEGIN
       END IF;
     END IF;
   END IF;
+END PROCESS;
+
+PROCESS (clk) BEGIN  
   IF rising_edge(clk) THEN
     IF ena7WRreg='1' THEN
       eind <= ein;
@@ -472,8 +443,7 @@ PROCESS (clk) BEGIN
   END IF;
 END PROCESS;
 
-
-PROCESS (clk, clkena_in, enaWRreg, state, ena7RDreg, clkena_e, ramready) BEGIN
+PROCESS (clkena_in, enaWRreg, state, ena7RDreg, clkena_e, ramready) BEGIN
   state_ena <= '0';
 --  IF clkena_in='1' AND enaWRreg='1' AND (state="01" OR (ena7RDreg='1' AND clkena_e='1') OR ramready='1' OR ethready='1') THEN
   IF clkena_in='1' AND enaWRreg='1' AND (state="01" OR (ena7RDreg='1' AND clkena_e='1') OR ramready='1') THEN
@@ -484,6 +454,10 @@ PROCESS (clk, clkena_in, enaWRreg, state, ena7RDreg, clkena_e, ramready) BEGIN
   IF state="01" THEN
     state_ena <= '1';
   END IF;
+END PROCESS;
+
+PROCESS (clk)
+BEGIN
   IF rising_edge(clk) THEN
     IF clkena='1' THEN
       slower <= "0111"; -- rokk
@@ -495,8 +469,7 @@ PROCESS (clk, clkena_in, enaWRreg, state, ena7RDreg, clkena_e, ramready) BEGIN
   END IF;
 END PROCESS;
 
-
-PROCESS (clk, nreset, state, as_s, as_e, rw_s, rw_e, uds_s, uds_e, lds_s, lds_e, sel_fast)
+PROCESS (state, as_s, as_e, rw_s, rw_e, uds_s, uds_e, lds_s, lds_e, sel_fast)
   BEGIN
     IF state="01" THEN
       as <= '1';
@@ -509,6 +482,10 @@ PROCESS (clk, nreset, state, as_s, as_e, rw_s, rw_e, uds_s, uds_e, lds_s, lds_e,
       uds <= uds_s AND uds_e;
       lds <= lds_s AND lds_e;
     END IF;
+END PROCESS;
+  
+PROCESS (clk, nreset)
+  BEGIN
     IF nreset='0' THEN
       S_state <= "00";
       as_s <= '1';
@@ -548,6 +525,10 @@ PROCESS (clk, nreset, state, as_s, as_e, rw_s, rw_e, uds_s, uds_e, lds_s, lds_e,
           END CASE;
       END IF;
     END IF;
+END PROCESS;
+
+PROCESS (clk, nreset)
+  BEGIN    
     IF nreset='0' THEN
       as_e <= '1';
       rw_e <= '1';
@@ -586,8 +567,8 @@ PROCESS (clk, nreset, state, as_s, as_e, rw_s, rw_e, uds_s, uds_e, lds_s, lds_e,
                    clkena_e <= '1';
         END CASE;
       END IF;
-    END IF;
-  END PROCESS;
-
+    END IF; 
+END PROCESS;
+ 
 END;
 

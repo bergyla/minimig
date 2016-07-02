@@ -298,7 +298,7 @@ begin
   )
   port map(
 	clk            => clk,              --: in std_logic;
-	Reset          => Reset,            --: in std_logic;
+	--Reset          => Reset,            --: in std_logic;
 	clkena_lw      => clkena_lw,        --: in std_logic:='1';
 	execOPC        => execOPC,          --: in bit;
 	exe_condition  => exe_condition,    --: in std_logic;
@@ -415,6 +415,9 @@ begin
   process (byte, long_start, reg_QB, data_write_tmp, exec, data_read, data_write_mux, memmaskmux, bf_ext_out,
 		   data_write_muxin, memmask, oddout, addr)
   begin
+  
+    data_write_mux <= (others => '0');  -- ABER 20160701 - no latches default = 0
+    
 	if exec(write_reg) = '1' then
 	  data_write_muxin <= reg_QB; -- 32 bits
 	else
@@ -578,7 +581,7 @@ begin
   -----------------------------------------------------------------------------
   -- set OP1out
   -----------------------------------------------------------------------------
-  process (reg_QA, store_in_tmp, ea_data, long_start, addr, exec, memmaskmux)
+  process (reg_QA, store_in_tmp, ea_data, long_start, addr, exec, memmaskmux, data_write_tmp)  -- ABER 20160701 missing data in sensitivity list
   begin
 	OP1out <= reg_QA;
 	if exec(OP1out_zero) = '1' then
@@ -1293,7 +1296,7 @@ PROCESS (clk, IPL, setstate, state, exec_write_back, set_direct_data, next_micro
 	build_bcd, set_Z_error, trapd, movem_run, last_data_read, set, set_V_Flag, z_error, trap_trace, trap_interrupt,
 	SVmode, preSVmode, stop, long_done, ea_only, setstate, execOPC, exec_write_back, exe_datatype,
 	datatype, interrupt, c_out, trapmake, rot_cnt, brief, addr,
-	long_start, set_datatype, sndOPC, set_exec, exec, ea_build_now, reg_QA, reg_QB, make_berr, trap_berr)
+	long_start, set_datatype, sndOPC, set_exec, exec, ea_build_now, reg_QA, reg_QB, make_berr, trap_berr, last_data_in) -- ABER 20160701 add missing signal in sensitivity list
   begin
 	TG68_PC_brw        <= '0';
 	setstate           <= "00";
@@ -1311,7 +1314,7 @@ PROCESS (clk, IPL, setstate, state, exec_write_back, set_direct_data, next_micro
 	setstackaddr       <= '0';
 	writePC            <= '0';
 	ea_build_now       <= '0';
-	--set_rot_bits       <= "XX";  -- ABER 20160615 non synthesable !
+	set_rot_bits       <= "00";  -- ABER 20160615 non synthesable !
 	set_rot_cnt        <= "000001";
 	dest_hbits         <= '0';
 	source_lowbits     <= '0';

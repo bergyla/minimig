@@ -203,7 +203,7 @@ package TG68K_Pack is
 		);
 	port(
 		clk                     : in  std_logic;
-		Reset                   : in  std_logic;
+		--Reset                   : in  std_logic;
 		clkena_lw               : in  std_logic:='1';
 		execOPC                 : in  bit;
 		exe_condition           : in  std_logic;
