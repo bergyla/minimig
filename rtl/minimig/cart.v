@@ -42,27 +42,27 @@
 
 module cart
 (
-  input  wire           clk,
-  input  wire           clk7_en,
-  input  wire           clk7n_en,
-  input  wire           cpu_rst,
-  input  wire [ 24-1:1] cpu_address_in,
-  input  wire           _cpu_as,
-  input  wire           cpu_rd,
-  input  wire           cpu_hwr,
-  input  wire           cpu_lwr,
-  input  wire [ 32-1:0] cpu_vbr,
-  input  wire [  9-1:1] reg_address_in,
-  input  wire [ 16-1:0] reg_data_in,
-  input  wire           dbr,
-  input  wire           ovl,
-  input  wire           freeze,
-  output wire [ 16-1:0] cart_data_out,
-  output reg            int7 = 1'b0,
-  output wire           sel_cart,
-  output wire           ovr,
-//  output reg            aron = 1'b1
-  output wire           aron
+    input  wire           clk,
+    input  wire           clk7_en,
+    input  wire           clk7n_en,
+    input  wire           cpu_rst,
+    input  wire [ 24-1:1] cpu_address_in,
+    input  wire           _cpu_as,
+    input  wire           cpu_rd,
+    input  wire           cpu_hwr,
+    input  wire           cpu_lwr,
+    input  wire [ 32-1:0] cpu_vbr,
+    input  wire [  9-1:1] reg_address_in,
+    input  wire [ 16-1:0] reg_data_in,
+    input  wire           dbr,
+    input  wire           ovl,
+    input  wire           freeze,
+    output wire [ 16-1:0] cart_data_out,
+    output reg            int7 = 1'b0,
+    output wire           sel_cart,
+    output wire           ovr,
+    //  output reg            aron = 1'b1
+    output wire           aron
 );
 
 
@@ -94,9 +94,8 @@ always @(*)
     end
 
 
+initial begin
 integer n;
-begin
-initial
     for (n=0; n<256;n=n+1)
         custom_mirror[n] = 0;
 end

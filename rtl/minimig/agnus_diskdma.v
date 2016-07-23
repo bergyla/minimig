@@ -4,19 +4,19 @@
 
 module agnus_diskdma
 (
-	input 	clk,		    		//bus clock
-  input clk7_en,
-	output	dma,					//true if disk dma engine uses it's cycle
-	input	dmal,					//Paula requests dma
-	input	dmas,					//Paula special dma
-	input	speed,
-	input	turbo,
-	input	[8:0] hpos,				//horizontal beam counter (advanced by 4 CCKs)
-	output	wr,						//write (disk dma writes to memory)
-	input 	[8:1] reg_address_in,	//register address inputs
-	output 	[8:1] reg_address_out,	//register address outputs
-	input	[15:0] data_in,			//bus data in
-	output	reg [20:1] address_out	//chip address out current disk dma pointer
+    input 	clk,		    		//bus clock
+    input   clk7_en,
+    output	dma,					//true if disk dma engine uses it's cycle
+    input	dmal,					//Paula requests dma
+    input	dmas,					//Paula special dma
+    input	speed,
+    input	turbo,
+    input	[8:0] hpos,				//horizontal beam counter (advanced by 4 CCKs)
+    output	wr,						//write (disk dma writes to memory)
+    input 	[8:1] reg_address_in,	//register address inputs
+    output 	[8:1] reg_address_out,	//register address outputs
+    input	[15:0] data_in,			//bus data in
+    output	reg [20:1] address_out	//chip address out current disk dma pointer
 );
 //register names and adresses
 parameter DSKPTH  = 9'h020;

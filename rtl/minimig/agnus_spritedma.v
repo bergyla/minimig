@@ -86,21 +86,21 @@ but is one line shorter.
 `timescale 1ns/1ps
 
 module agnus_spritedma (
-  input   clk,              // bus clock
-  input clk7_en,
-  input reset,
-  input aga,
-  input  ecs,            // enable ECS extension bits
-  output  reg reqdma,          // sprite dma engine requests dma cycle
-  input  ackdma,            // agnus dma priority logic grants dma cycle
-  input  [8:0] hpos,          // agnus internal horizontal position counter (advanced by 4 CCKs)
-  input  [10:0] vpos,        // vertical beam counter
-  input  vbl,            // vertical blanking
-  input  vblend,            // last line of vertical blanking
-  input  [8:1] reg_address_in,    // register address inputs
-  output   reg [8:1] reg_address_out,  // register address outputs
-  input  [15:0] data_in,        // bus data in
-  output  [20:1] address_out      // chip address out
+    input   clk,              // bus clock
+    input   clk7_en,
+    input   reset,
+    input   aga,
+    input   ecs,            // enable ECS extension bits
+    output  reg reqdma,          // sprite dma engine requests dma cycle
+    input   ackdma,            // agnus dma priority logic grants dma cycle
+    input   [8:0] hpos,          // agnus internal horizontal position counter (advanced by 4 CCKs)
+    input   [10:0] vpos,        // vertical beam counter
+    input   vbl,            // vertical blanking
+    input   vblend,            // last line of vertical blanking
+    input   [8:1] reg_address_in,    // register address inputs
+    output  reg [8:1] reg_address_out,  // register address outputs
+    input   [15:0] data_in,        // bus data in
+    output  [20:1] address_out      // chip address out
 );
 
 

@@ -27,7 +27,7 @@
 //                                                                            //
 // dma slot allocation:                                                       //
 // channel #0 : $0E                                                           //
-// channel #1 : $10                                                           //
+// channel : $10                                                           //
 // channel #2 : $12                                                           //
 // channel #3 : $14                                                           //
 //                                                                            //
@@ -80,14 +80,14 @@ assign audlcsel = {~reg_address_in[5],reg_address_in[4]};
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (audlcena & ~reg_address_in[1]) // AUDxLCH
-      audlch[audlcsel] <= #1 data_in[4:0];
+      audlch[audlcsel] <= data_in[4:0];
   end
 end
 
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (audlcena & reg_address_in[1]) // AUDxLCL
-      audlcl[audlcsel] <= #1 data_in[15:1];
+      audlcl[audlcsel] <= data_in[15:1];
   end
 end
 
@@ -136,7 +136,7 @@ assign address_out[20:1] = audptout[20:1];
 always @ (posedge clk) begin
   if (clk7_en) begin
     if (dmal)
-      audpt[channel] <= #1 dmas ? audlcout[20:1] : audptout[20:1] + 1'b1;
+      audpt[channel] <= dmas ? audlcout[20:1] : audptout[20:1] + 1'b1;
   end
 end
 

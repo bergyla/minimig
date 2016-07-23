@@ -53,17 +53,17 @@ always @(desc or shift)
 		5'h1F : shift_onehot = 18'h08000;
  	endcase
 
-/*
+`define hardwaremult 
+
+`ifdef hardwaremult
+/*    
 MULT18X18 multiplier_1
 (
 	.dataa({2'b00,new_val[15:0]}),  // 18-bit multiplier input
 	.datab(shift_onehot),     	// 18-bit multiplier input
 	.result(shifted_new)			// 36-bit multiplier output
 );
-*/
-assign shifted_new = ({2'b00,new_val[15:0]})*shift_onehot;
 
-/*
 MULT18X18 multiplier_2
 (
 	.dataa({2'b00,old_val[15:0]}),	// 18-bit multiplier input
@@ -71,7 +71,17 @@ MULT18X18 multiplier_2
 	.result(shifted_old)			// 36-bit multiplier output
 );
 */
+
+assign shifted_new = ({1'b0,new_val[15:0]})*shift_onehot;   //  unsigned 17*18 will fit in MULT18x18 Xilinx - let Tool choose
+assign shifted_old = ({1'b0,old_val[15:0]})*shift_onehot;   //  unsigned 17*18 will fit in MULT18x18 Xilinx - let Tool choose
+
+`else
+
+assign shifted_new = ({2'b00,new_val[15:0]})*shift_onehot;
 assign shifted_old = ({2'b00,old_val[15:0]})*shift_onehot;
+
+`endif
+
 
 assign out = desc ? shifted_new[15:0] | shifted_old[31:16] : shifted_new[31:16] | shifted_old[15:0];
 

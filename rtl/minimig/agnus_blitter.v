@@ -80,23 +80,23 @@
 
 module agnus_blitter
 (
-	input 	clk,	 					// bus clock
-  input clk7_en,
-	input 	reset,	 					// reset
-	input	ecs,						// enable ECS extensions
-	input	clkena,						// enables blitter operation (used to slow it down)
-	input	enadma,						// no other dma channel is granted the bus
-	output	reqdma,						// blitter requests dma cycle
-	input	ackdma,						// agnus dma priority logic grants dma cycle
-	output	we,							// write enable (blitter writes to memory)
-	output	reg zero,					// blitter zero status
-	output	reg busy,					// blitter busy status
-	output	int3,						// blitter finish interrupt request
-	input 	[15:0] data_in,	    		// bus data in
-	output	[15:0] data_out,			// bus data out
-	input 	[8:1] reg_address_in,		// register address inputs
-	output 	[20:1] address_out, 		// chip address outputs
-	output 	reg [8:1] reg_address_out	// register address outputs
+    input   clk,	 					// bus clock
+    input   clk7_en,
+    input   reset,	 					// reset
+    input   ecs,						// enable ECS extensions
+    input   clkena,						// enables blitter operation (used to slow it down)
+    input   enadma,						// no other dma channel is granted the bus
+    output  reqdma,						// blitter requests dma cycle
+    input   ackdma,						// agnus dma priority logic grants dma cycle
+    output  we,							// write enable (blitter writes to memory)
+    output  reg zero,					// blitter zero status
+    output  reg busy,					// blitter busy status
+    output  int3,						// blitter finish interrupt request
+    input   [15:0] data_in,	    		// bus data in
+    output  [15:0] data_out,			// bus data out
+    input   [8:1] reg_address_in,		// register address inputs
+    output  [20:1] address_out, 		// chip address outputs
+    output  reg [8:1] reg_address_out	// register address outputs
 );
 
 `timescale 1ns/1ps

@@ -1,18 +1,18 @@
 module cia_int
 (
-  input   clk,          // clock
-  input clk7_en,
-  input  wr,          // write enable
-  input   reset,         // reset
-  input   icrs,        // intterupt control register select
-  input  ta,          // ta (set TA bit in ICR register)
-  input  tb,            // tb (set TB bit in ICR register)
-  input  alrm,         // alrm (set ALRM bit ICR register)
-  input   flag,         // flag (set FLG bit in ICR register)
-  input   ser,        // ser (set SP bit in ICR register)
-  input   [7:0] data_in,    // bus data in
-  output   [7:0] data_out,    // bus data out
-  output  irq          // intterupt out
+    input   clk,          // clock
+    input clk7_en,
+    input  wr,          // write enable
+    input   reset,         // reset
+    input   icrs,        // intterupt control register select
+    input  ta,          // ta (set TA bit in ICR register)
+    input  tb,            // tb (set TB bit in ICR register)
+    input  alrm,         // alrm (set ALRM bit ICR register)
+    input   flag,         // flag (set FLG bit in ICR register)
+    input   ser,        // ser (set SP bit in ICR register)
+    input   [7:0] data_in,    // bus data in
+    output   [7:0] data_out,    // bus data out
+    output  irq          // intterupt out
 );
 
 reg  [4:0] icr = 5'd0;      // interrupt register

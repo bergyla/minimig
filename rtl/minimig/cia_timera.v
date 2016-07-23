@@ -1,18 +1,18 @@
 module cia_timera
 (
-  input   clk,            // clock
-  input clk7_en,
-  input  wr,            // write enable
-  input   reset,           // reset
-  input   tlo,          // timer low byte select
-  input  thi,           // timer high byte select
-  input  tcr,          // timer control register
-  input   [7:0] data_in,      // bus data in
-  output   [7:0] data_out,      // bus data out
-  input  eclk,            // count enable
-  output  tmra_ovf,        // timer A underflow
-  output  spmode,          // serial port mode
-  output  irq            // intterupt out
+    input   clk,            // clock
+    input clk7_en,
+    input  wr,            // write enable
+    input   reset,           // reset
+    input   tlo,          // timer low byte select
+    input  thi,           // timer high byte select
+    input  tcr,          // timer control register
+    input   [7:0] data_in,      // bus data in
+    output   [7:0] data_out,      // bus data out
+    input  eclk,            // count enable
+    output  tmra_ovf,        // timer A underflow
+    output  spmode,          // serial port mode
+    output  irq            // intterupt out
 );
 
 reg    [15:0] tmr;        // timer

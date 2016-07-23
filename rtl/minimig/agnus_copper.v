@@ -57,21 +57,21 @@
 
 module agnus_copper
 (
-	input 	clk,	 					// bus clock
-  input clk7_en,
-	input 	reset,	 					// system reset (synchronous)
-	input	ecs,						// enable ECS chipset features
-	output	reqdma,						// copper requests dma cycle
-	input	ackdma,						// agnus dma priority logic grants dma cycle
-	input	enadma,						// current slot is not used by any higher priority DMA channel
-	input	sof,						// start of frame input
-	input	blit_busy,					// blitter busy flag input
-	input	[7:0] vpos,					// vertical beam counter
-	input	[8:0] hpos,					// horizontal beam counter
-	input 	[15:0] data_in,	    		// data bus input
-	input 	[8:1] reg_address_in,		// register address input
-	output 	reg [8:1] reg_address_out,	// register address output
-	output 	reg [20:1] address_out 		// chip address output
+    input   clk,	 					// bus clock
+    input   clk7_en,
+    input   reset,	 					// system reset (synchronous)
+    input   ecs,						// enable ECS chipset features
+    output  reqdma,						// copper requests dma cycle
+    input   ackdma,						// agnus dma priority logic grants dma cycle
+    input   enadma,						// current slot is not used by any higher priority DMA channel
+    input   sof,						// start of frame input
+    input   blit_busy,					// blitter busy flag input
+    input   [7:0] vpos,					// vertical beam counter
+    input   [8:0] hpos,					// horizontal beam counter
+    input   [15:0] data_in,	    		// data bus input
+    input   [8:1] reg_address_in,		// register address input
+    output  reg [8:1] reg_address_out,	// register address output
+    output  reg [20:1] address_out 		// chip address output
 );
 
 // register names and adresses		

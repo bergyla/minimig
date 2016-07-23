@@ -3,21 +3,21 @@
 
 module agnus_blitter_adrgen
 (
-	input	clk,					// bus clock
-  input clk7_en,
-	input	reset,					// reset
-  input first_line_pixel,
-	input	[1:0] ptrsel,			// pointer register selection
-	input	[1:0] modsel,			// modulo register selection
-	input	enaptr,					// enable pointer selection and update
-	input	incptr,					// increase selected pointer register
-	input	decptr,					// decrease selected pointer register
-	input	addmod,					// add selected modulo register to selected pointer register
-	input	submod,					// substract selected modulo register from selected pointer register
-	output	sign_out,				// sign output (used for line mode)
-	input	[15:0] data_in,			// bus data in
-	input	[8:1] reg_address_in,	// register address input
-	output	[20:1] address_out		// generated address out
+    input   clk,					// bus clock
+    input   clk7_en,
+    input   reset,					// reset
+    input   first_line_pixel,
+    input   [1:0] ptrsel,			// pointer register selection
+    input   [1:0] modsel,			// modulo register selection
+    input   enaptr,					// enable pointer selection and update
+    input   incptr,					// increase selected pointer register
+    input   decptr,					// decrease selected pointer register
+    input   addmod,					// add selected modulo register to selected pointer register
+    input   submod,					// substract selected modulo register from selected pointer register
+    output  sign_out,				// sign output (used for line mode)
+    input   [15:0] data_in,			// bus data in
+    input   [8:1] reg_address_in,	// register address input
+    output  [20:1] address_out		// generated address out
 );
 
 //register names and addresses

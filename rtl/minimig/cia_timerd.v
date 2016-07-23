@@ -5,18 +5,18 @@
 
 module cia_timerd
 (
-  input   clk,            // clock
-  input clk7_en,
-  input  wr,            // write enable
-  input   reset,           // reset
-  input   tlo,          // timer low byte select
-  input   tme,          // timer mid byte select
-  input  thi,           // timer high byte select
-  input  tcr,          // timer control register
-  input   [7:0] data_in,      // bus data in
-  output   reg [7:0] data_out,    // bus data out
-  input  count,            // count enable
-  output  irq            // intterupt out
+    input   clk,            // clock
+    input clk7_en,
+    input  wr,            // write enable
+    input   reset,           // reset
+    input   tlo,          // timer low byte select
+    input   tme,          // timer mid byte select
+    input  thi,           // timer high byte select
+    input  tcr,          // timer control register
+    input   [7:0] data_in,      // bus data in
+    output   reg [7:0] data_out,    // bus data out
+    input  count,            // count enable
+    output  irq            // intterupt out
 );
 
   reg    latch_ena;        // timer d output latch enable

@@ -57,10 +57,11 @@ module minimig_mist_top (
     input   SPI_SS2,                // fpga
     input   SPI_SS3,                // OSD
     input   SPI_SS4,                // "sniff" mode
-    input   CONF_DATA0,             // SPI_SS for user_io
-    output  rst_out
+    input   CONF_DATA0//,             // SPI_SS for user_io
+    //output  rst_out
 );
 
+wire rst_out;
 
 ////////////////////////////////////////
 // internal signals                   //
